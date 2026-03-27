@@ -60,7 +60,12 @@
       "Bash(docker compose:*)",
       "Bash(docker info:*)",
       "Bash(npm ls:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(npx @better-auth/cli generate --config ./src/lib/auth/index.ts)",
+      "Bash(npx @better-auth/cli migrate --config ./src/lib/auth/index.ts -y)",
+      "Bash(npx @better-auth/cli generate --config ./src/lib/auth/index.ts -y)"
     ]
   }
 }
