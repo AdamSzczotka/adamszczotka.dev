@@ -56,7 +56,11 @@
       "Bash(rm -rf .git)",
       "Bash(cp -r . \"C:/Users/Euforia/Documents/GitHub/adamszczotka.dev/\")",
       "Bash(npm install:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker info:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
