@@ -65,7 +65,8 @@
       "mcp__context7__query-docs",
       "Bash(npx @better-auth/cli generate --config ./src/lib/auth/index.ts)",
       "Bash(npx @better-auth/cli migrate --config ./src/lib/auth/index.ts -y)",
-      "Bash(npx @better-auth/cli generate --config ./src/lib/auth/index.ts -y)"
+      "Bash(npx @better-auth/cli generate --config ./src/lib/auth/index.ts -y)",
+      "Bash(find /c/Users/Euforia/Documents/GitHub/sova-agency.pl_html/nowa_strona/assets -type f -name *.scss)"
     ]
   }
 }
