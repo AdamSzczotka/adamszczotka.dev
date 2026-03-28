@@ -69,7 +69,8 @@
       "Bash(find /c/Users/Euforia/Documents/GitHub/sova-agency.pl_html/nowa_strona/assets -type f -name *.scss)",
       "Bash(rm -rf .next)",
       "Bash(mv src/middleware.ts src/proxy.ts)",
-      "Bash(taskkill //F //IM node.exe)"
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(npm view:*)"
     ]
   }
 }
