@@ -55,6 +55,24 @@ export function HeroBlock({ data }: { data: HeroData }) {
             </div>
           </div>
         </div>
+
+          {/* Tech stack */}
+          <div className="mt-20 flex flex-wrap justify-center sm:justify-start gap-4">
+            {["TS", "RN", "NX", "PY", "DJ", "PG", "DK", "GC", "NG"].map((icon, i) => {
+              const names = ["TypeScript", "React Native", "Next.js", "Python", "Django", "PostgreSQL", "Docker", "GCP", "Nginx"];
+              return (
+                <div
+                  key={icon}
+                  className="tech-logo group relative w-10 h-10 border border-border rounded-sm flex items-center justify-center bg-surface"
+                  title={names[i]}
+                >
+                  <span className="font-mono text-[10px] font-medium text-muted group-hover:text-accent transition-colors">
+                    {icon}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
       </div>
     </section>
   );

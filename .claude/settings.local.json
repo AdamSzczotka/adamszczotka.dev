@@ -70,7 +70,11 @@
       "Bash(rm -rf .next)",
       "Bash(mv src/middleware.ts src/proxy.ts)",
       "Bash(taskkill //F //IM node.exe)",
-      "Bash(npm view:*)"
+      "Bash(npm view:*)",
+      "Bash(docker exec:*)",
+      "Bash(taskkill:*)",
+      "Bash(find src/app/[locale] -type f)",
+      "Bash(ls src/components/layout/locale-*.tsx)"
     ]
   }
 }

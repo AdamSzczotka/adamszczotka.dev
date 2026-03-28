@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { LocaleSwitcher } from "./locale-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
 const links = [
@@ -12,13 +14,17 @@ const links = [
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isPolish = pathname.startsWith("/pl");
+  const prefix = isPolish ? "/pl" : "";
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-border">
         <nav className="mx-auto max-w-5xl flex items-center justify-between px-6 h-16">
           <Link
-            href="/"
+            href={`${prefix}/`}
             className="text-sm font-medium tracking-tight text-foreground hover:text-accent transition-colors"
           >
             adam szczotka
@@ -28,12 +34,13 @@ export function Nav() {
             {links.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={`${prefix}${link.href}`}
                 className="text-sm text-muted hover:text-foreground transition-colors"
               >
                 {link.label}
               </Link>
             ))}
+            <LocaleSwitcher />
             <ThemeToggle />
           </div>
 
@@ -71,14 +78,17 @@ export function Nav() {
             {links.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={`${prefix}${link.href}`}
                 onClick={() => setOpen(false)}
                 className="text-lg text-muted hover:text-foreground transition-colors"
               >
                 {link.label}
               </Link>
             ))}
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <LocaleSwitcher />
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       )}

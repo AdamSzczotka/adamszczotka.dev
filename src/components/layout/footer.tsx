@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "./locale-link";
 
 export function Footer() {
   return (
@@ -37,12 +37,12 @@ export function Footer() {
             >
               FormattedAI
             </a>
-            <Link
+            <LocaleLink
               href="/privacy"
               className="hover:text-foreground transition-colors"
             >
               Privacy
-            </Link>
+            </LocaleLink>
           </div>
         </div>
       </div>
