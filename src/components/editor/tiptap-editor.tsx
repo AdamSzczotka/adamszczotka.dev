@@ -2,23 +2,45 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
+import TiptapImage from "@tiptap/extension-image";
+import TiptapLink from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { common, createLowlight } from "lowlight";
 import { useCallback, useRef, useState } from "react";
+
+const lowlight = createLowlight(common);
 
 interface TiptapEditorProps {
   content: string;
   onSave: (html: string) => Promise<void>;
 }
 
-function MenuBar({ editor, onImageUpload }: { editor: ReturnType<typeof useEditor> | null; onImageUpload: () => void }) {
+function MenuBar({
+  editor,
+  onImageUpload,
+}: {
+  editor: ReturnType<typeof useEditor> | null;
+  onImageUpload: () => void;
+}) {
   if (!editor) return null;
 
   const setLink = () => {
     const url = window.prompt("URL:");
     if (!url) return;
     editor.chain().focus().setLink({ href: url, target: "_blank" }).run();
+  };
+
+  const insertCallout = (type: "info" | "warning" | "tip") => {
+    const colors = { info: "#3b82f6", warning: "#f59e0b", tip: "#22c55e" };
+    const labels = { info: "Info", warning: "Warning", tip: "Tip" };
+    editor
+      .chain()
+      .focus()
+      .insertContent(
+        `<blockquote style="border-left: 3px solid ${colors[type]}; padding: 12px 16px; background: ${colors[type]}11;"><strong>${labels[type]}:</strong> </blockquote>`,
+      )
+      .run();
   };
 
   const groups = [
@@ -28,7 +50,7 @@ function MenuBar({ editor, onImageUpload }: { editor: ReturnType<typeof useEdito
         { label: "B", action: () => editor.chain().focus().toggleBold().run(), active: editor.isActive("bold"), title: "Bold" },
         { label: "I", action: () => editor.chain().focus().toggleItalic().run(), active: editor.isActive("italic"), title: "Italic" },
         { label: "S", action: () => editor.chain().focus().toggleStrike().run(), active: editor.isActive("strike"), title: "Strikethrough" },
-        { label: "Code", action: () => editor.chain().focus().toggleCode().run(), active: editor.isActive("code"), title: "Inline code" },
+        { label: "`", action: () => editor.chain().focus().toggleCode().run(), active: editor.isActive("code"), title: "Inline code" },
       ],
     },
     {
@@ -42,9 +64,9 @@ function MenuBar({ editor, onImageUpload }: { editor: ReturnType<typeof useEdito
     {
       label: "Block",
       buttons: [
-        { label: "List", action: () => editor.chain().focus().toggleBulletList().run(), active: editor.isActive("bulletList"), title: "Bullet list" },
-        { label: "1.", action: () => editor.chain().focus().toggleOrderedList().run(), active: editor.isActive("orderedList"), title: "Ordered list" },
-        { label: "{ }", action: () => editor.chain().focus().toggleCodeBlock().run(), active: editor.isActive("codeBlock"), title: "Code block" },
+        { label: "UL", action: () => editor.chain().focus().toggleBulletList().run(), active: editor.isActive("bulletList"), title: "Bullet list" },
+        { label: "OL", action: () => editor.chain().focus().toggleOrderedList().run(), active: editor.isActive("orderedList"), title: "Ordered list" },
+        { label: "</>", action: () => editor.chain().focus().toggleCodeBlock().run(), active: editor.isActive("codeBlock"), title: "Code block" },
         { label: "\"", action: () => editor.chain().focus().toggleBlockquote().run(), active: editor.isActive("blockquote"), title: "Quote" },
         { label: "---", action: () => editor.chain().focus().setHorizontalRule().run(), active: false, title: "Divider" },
       ],
@@ -54,6 +76,14 @@ function MenuBar({ editor, onImageUpload }: { editor: ReturnType<typeof useEdito
       buttons: [
         { label: "Link", action: setLink, active: editor.isActive("link"), title: "Add link" },
         { label: "Img", action: onImageUpload, active: false, title: "Upload image" },
+      ],
+    },
+    {
+      label: "Callout",
+      buttons: [
+        { label: "Info", action: () => insertCallout("info"), active: false, title: "Info callout" },
+        { label: "Warn", action: () => insertCallout("warning"), active: false, title: "Warning callout" },
+        { label: "Tip", action: () => insertCallout("tip"), active: false, title: "Tip callout" },
       ],
     },
   ];
@@ -92,15 +122,20 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
-      StarterKit,
-      Image.configure({ inline: false, allowBase64: false }),
-      Link.configure({ openOnClick: false, HTMLAttributes: { target: "_blank", rel: "noopener noreferrer" } }),
-      Placeholder.configure({ placeholder: "Start writing..." }),
+      StarterKit.configure({ codeBlock: false }),
+      CodeBlockLowlight.configure({ lowlight }),
+      TiptapImage.configure({ inline: false, allowBase64: false }),
+      TiptapLink.configure({
+        openOnClick: false,
+        HTMLAttributes: { target: "_blank", rel: "noopener noreferrer" },
+      }),
+      Placeholder.configure({ placeholder: "Start writing your content..." }),
     ],
     content,
     editorProps: {
       attributes: {
-        class: "prose prose-neutral dark:prose-invert max-w-none p-6 min-h-[500px] focus:outline-none",
+        class:
+          "prose prose-neutral dark:prose-invert max-w-none p-6 min-h-[500px] focus:outline-none",
       },
     },
   });
@@ -119,11 +154,18 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
       formData.append("file", file);
 
       try {
-        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
         const data = await res.json();
 
         if (data.url) {
-          editor.chain().focus().setImage({ src: data.url, alt: file.name }).run();
+          editor
+            .chain()
+            .focus()
+            .setImage({ src: data.url, alt: file.name })
+            .run();
         } else {
           alert(data.error || "Upload failed");
         }
@@ -166,7 +208,9 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
 
       <div className="flex items-center justify-between border-t border-border p-2">
         <span className="text-xs text-muted px-2">
-          {editor ? `${editor.storage.characterCount?.characters?.() ?? "—"} chars` : ""}
+          {editor
+            ? `${editor.getText().length} chars`
+            : ""}
         </span>
         <button
           type="button"

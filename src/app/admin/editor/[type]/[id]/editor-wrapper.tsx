@@ -2,17 +2,27 @@
 
 import { TiptapEditor } from "@/components/editor/tiptap-editor";
 import { saveContent, saveMetadata } from "./actions";
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+}
 
 interface Metadata {
   title: string;
   slug: string;
   excerpt: string;
   description: string;
+  coverImage: string;
   imageUrl: string;
   liveUrl: string;
   githubUrl: string;
   isPublished: boolean;
+  category: string;
+  locale: string;
+  selectedTagIds: number[];
 }
 
 interface EditorWrapperProps {
@@ -20,12 +30,15 @@ interface EditorWrapperProps {
   id: number;
   content: string;
   metadata: Metadata;
+  allTags: Tag[];
 }
 
-export function EditorWrapper({ type, id, content, metadata: initial }: EditorWrapperProps) {
+export function EditorWrapper({ type, id, content, metadata: initial, allTags }: EditorWrapperProps) {
   const [meta, setMeta] = useState(initial);
   const [metaSaving, setMetaSaving] = useState(false);
   const [metaSaved, setMetaSaved] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const handleMetaSave = async () => {
     setMetaSaving(true);
@@ -35,10 +48,39 @@ export function EditorWrapper({ type, id, content, metadata: initial }: EditorWr
     setTimeout(() => setMetaSaved(false), 2000);
   };
 
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setCoverUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.url) {
+        setMeta({ ...meta, coverImage: data.url });
+      }
+    } catch {
+      alert("Upload failed");
+    } finally {
+      setCoverUploading(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
+    }
+  };
+
+  const toggleTag = (tagId: number) => {
+    const ids = meta.selectedTagIds.includes(tagId)
+      ? meta.selectedTagIds.filter((id) => id !== tagId)
+      : [...meta.selectedTagIds, tagId];
+    setMeta({ ...meta, selectedTagIds: ids });
+  };
+
   const isPost = type === "post";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Metadata panel */}
       <div className="border border-border rounded-sm p-6 space-y-4">
         <div className="flex items-center justify-between">
@@ -46,9 +88,7 @@ export function EditorWrapper({ type, id, content, metadata: initial }: EditorWr
             Settings
           </h2>
           <div className="flex items-center gap-3">
-            {metaSaved && (
-              <span className="text-xs text-green-500">Saved</span>
-            )}
+            {metaSaved && <span className="text-xs text-green-500">Saved</span>}
             <button
               onClick={handleMetaSave}
               disabled={metaSaving}
@@ -59,6 +99,7 @@ export function EditorWrapper({ type, id, content, metadata: initial }: EditorWr
           </div>
         </div>
 
+        {/* Title + Slug */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs text-muted mb-1">Title</label>
@@ -78,6 +119,46 @@ export function EditorWrapper({ type, id, content, metadata: initial }: EditorWr
           </div>
         </div>
 
+        {/* Locale + Category (posts) / Locale (projects) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-xs text-muted mb-1">Language</label>
+            <select
+              value={meta.locale}
+              onChange={(e) => setMeta({ ...meta, locale: e.target.value })}
+              className="w-full border border-border bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-accent rounded-sm"
+            >
+              <option value="en">English</option>
+              <option value="pl">Polski</option>
+            </select>
+          </div>
+          {isPost && (
+            <div>
+              <label className="block text-xs text-muted mb-1">Category</label>
+              <select
+                value={meta.category}
+                onChange={(e) => setMeta({ ...meta, category: e.target.value })}
+                className="w-full border border-border bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-accent rounded-sm"
+              >
+                <option value="TECH">Tech</option>
+                <option value="PERSONAL">Personal</option>
+              </select>
+            </div>
+          )}
+          {isPost && (
+            <label className="flex items-center gap-2 cursor-pointer self-end pb-2">
+              <input
+                type="checkbox"
+                checked={meta.isPublished}
+                onChange={(e) => setMeta({ ...meta, isPublished: e.target.checked })}
+                className="accent-accent"
+              />
+              <span className="text-sm">Published</span>
+            </label>
+          )}
+        </div>
+
+        {/* Excerpt (posts) */}
         {isPost && (
           <div>
             <label className="block text-xs text-muted mb-1">Excerpt</label>
@@ -90,6 +171,7 @@ export function EditorWrapper({ type, id, content, metadata: initial }: EditorWr
           </div>
         )}
 
+        {/* Description + URLs (projects) */}
         {!isPost && (
           <>
             <div>
@@ -101,15 +183,7 @@ export function EditorWrapper({ type, id, content, metadata: initial }: EditorWr
                 className="w-full border border-border bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-accent rounded-sm resize-none"
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs text-muted mb-1">Image URL</label>
-                <input
-                  value={meta.imageUrl}
-                  onChange={(e) => setMeta({ ...meta, imageUrl: e.target.value })}
-                  className="w-full border border-border bg-transparent px-3 py-2 text-sm font-mono focus:outline-none focus:border-accent rounded-sm"
-                />
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs text-muted mb-1">Live URL</label>
                 <input
@@ -130,17 +204,67 @@ export function EditorWrapper({ type, id, content, metadata: initial }: EditorWr
           </>
         )}
 
-        {isPost && (
-          <label className="flex items-center gap-2 cursor-pointer">
+        {/* Cover Image */}
+        <div>
+          <label className="block text-xs text-muted mb-1">Cover Image</label>
+          <div className="flex items-center gap-4">
+            {meta.coverImage ? (
+              <div className="relative w-32 h-20 border border-border rounded-sm overflow-hidden bg-background">
+                <img src={meta.coverImage} alt="Cover" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setMeta({ ...meta, coverImage: "" })}
+                  className="absolute top-1 right-1 w-5 h-5 flex items-center justify-center bg-background/80 text-xs text-muted hover:text-red-500 rounded-sm"
+                >
+                  x
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => coverInputRef.current?.click()}
+                disabled={coverUploading}
+                className="border border-dashed border-border px-4 py-3 text-xs text-muted hover:border-accent hover:text-accent transition-colors rounded-sm disabled:opacity-50"
+              >
+                {coverUploading ? "Uploading..." : "Upload cover image"}
+              </button>
+            )}
             <input
-              type="checkbox"
-              checked={meta.isPublished}
-              onChange={(e) => setMeta({ ...meta, isPublished: e.target.checked })}
-              className="accent-accent"
+              ref={coverInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleCoverUpload}
             />
-            <span className="text-sm">Published</span>
-          </label>
-        )}
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label className="block text-xs text-muted mb-2">Tags</label>
+          <div className="flex flex-wrap gap-2">
+            {allTags.map((tag) => {
+              const selected = meta.selectedTagIds.includes(tag.id);
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => toggleTag(tag.id)}
+                  className={`px-2.5 py-1 text-xs font-mono rounded-sm border transition-colors ${
+                    selected
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-border text-muted hover:border-accent/50"
+                  }`}
+                >
+                  {tag.name}
+                </button>
+              );
+            })}
+            {allTags.length === 0 && (
+              <span className="text-xs text-muted">No tags. Create some in Tags section.</span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Content editor */}
