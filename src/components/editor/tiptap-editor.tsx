@@ -12,7 +12,7 @@ interface TiptapEditorProps {
   onSave: (html: string) => Promise<void>;
 }
 
-function MenuBar({ editor, onImageUpload }: { editor: ReturnType<typeof useEditor>; onImageUpload: () => void }) {
+function MenuBar({ editor, onImageUpload }: { editor: ReturnType<typeof useEditor> | null; onImageUpload: () => void }) {
   if (!editor) return null;
 
   const setLink = () => {
