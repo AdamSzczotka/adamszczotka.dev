@@ -90,6 +90,7 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Image.configure({ inline: false, allowBase64: false }),
