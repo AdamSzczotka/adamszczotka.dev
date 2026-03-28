@@ -2,43 +2,83 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useState } from "react";
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
+import Placeholder from "@tiptap/extension-placeholder";
+import { useCallback, useRef, useState } from "react";
 
 interface TiptapEditorProps {
   content: string;
   onSave: (html: string) => Promise<void>;
 }
 
-function MenuBar({ editor }: { editor: ReturnType<typeof useEditor> }) {
+function MenuBar({ editor, onImageUpload }: { editor: ReturnType<typeof useEditor>; onImageUpload: () => void }) {
   if (!editor) return null;
 
-  const buttons = [
-    { label: "B", action: () => editor.chain().focus().toggleBold().run(), active: editor.isActive("bold") },
-    { label: "I", action: () => editor.chain().focus().toggleItalic().run(), active: editor.isActive("italic") },
-    { label: "H2", action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(), active: editor.isActive("heading", { level: 2 }) },
-    { label: "H3", action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(), active: editor.isActive("heading", { level: 3 }) },
-    { label: "List", action: () => editor.chain().focus().toggleBulletList().run(), active: editor.isActive("bulletList") },
-    { label: "1.", action: () => editor.chain().focus().toggleOrderedList().run(), active: editor.isActive("orderedList") },
-    { label: "Code", action: () => editor.chain().focus().toggleCodeBlock().run(), active: editor.isActive("codeBlock") },
-    { label: "Quote", action: () => editor.chain().focus().toggleBlockquote().run(), active: editor.isActive("blockquote") },
-    { label: "---", action: () => editor.chain().focus().setHorizontalRule().run(), active: false },
+  const setLink = () => {
+    const url = window.prompt("URL:");
+    if (!url) return;
+    editor.chain().focus().setLink({ href: url, target: "_blank" }).run();
+  };
+
+  const groups = [
+    {
+      label: "Text",
+      buttons: [
+        { label: "B", action: () => editor.chain().focus().toggleBold().run(), active: editor.isActive("bold"), title: "Bold" },
+        { label: "I", action: () => editor.chain().focus().toggleItalic().run(), active: editor.isActive("italic"), title: "Italic" },
+        { label: "S", action: () => editor.chain().focus().toggleStrike().run(), active: editor.isActive("strike"), title: "Strikethrough" },
+        { label: "Code", action: () => editor.chain().focus().toggleCode().run(), active: editor.isActive("code"), title: "Inline code" },
+      ],
+    },
+    {
+      label: "Heading",
+      buttons: [
+        { label: "H1", action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(), active: editor.isActive("heading", { level: 1 }), title: "Heading 1" },
+        { label: "H2", action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(), active: editor.isActive("heading", { level: 2 }), title: "Heading 2" },
+        { label: "H3", action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(), active: editor.isActive("heading", { level: 3 }), title: "Heading 3" },
+      ],
+    },
+    {
+      label: "Block",
+      buttons: [
+        { label: "List", action: () => editor.chain().focus().toggleBulletList().run(), active: editor.isActive("bulletList"), title: "Bullet list" },
+        { label: "1.", action: () => editor.chain().focus().toggleOrderedList().run(), active: editor.isActive("orderedList"), title: "Ordered list" },
+        { label: "{ }", action: () => editor.chain().focus().toggleCodeBlock().run(), active: editor.isActive("codeBlock"), title: "Code block" },
+        { label: "\"", action: () => editor.chain().focus().toggleBlockquote().run(), active: editor.isActive("blockquote"), title: "Quote" },
+        { label: "---", action: () => editor.chain().focus().setHorizontalRule().run(), active: false, title: "Divider" },
+      ],
+    },
+    {
+      label: "Insert",
+      buttons: [
+        { label: "Link", action: setLink, active: editor.isActive("link"), title: "Add link" },
+        { label: "Img", action: onImageUpload, active: false, title: "Upload image" },
+      ],
+    },
   ];
 
   return (
-    <div className="flex flex-wrap gap-1 border-b border-border p-2">
-      {buttons.map((btn) => (
-        <button
-          key={btn.label}
-          type="button"
-          onClick={btn.action}
-          className={`px-2 py-1 text-xs font-mono rounded-sm transition-colors ${
-            btn.active
-              ? "bg-accent text-accent-foreground"
-              : "hover:bg-foreground/5"
-          }`}
-        >
-          {btn.label}
-        </button>
+    <div className="flex flex-wrap items-center gap-px border-b border-border p-1.5 bg-surface/50">
+      {groups.map((group, gi) => (
+        <div key={group.label} className="flex items-center">
+          {gi > 0 && <div className="w-px h-5 bg-border mx-1.5" />}
+          {group.buttons.map((btn) => (
+            <button
+              key={btn.label}
+              type="button"
+              onClick={btn.action}
+              title={btn.title}
+              className={`px-2 py-1 text-xs font-mono rounded-sm transition-colors ${
+                btn.active
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted hover:text-foreground hover:bg-foreground/5"
+              }`}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
       ))}
     </div>
   );
@@ -46,16 +86,56 @@ function MenuBar({ editor }: { editor: ReturnType<typeof useEditor> }) {
 
 export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    immediatelyRender: false,
+    extensions: [
+      StarterKit,
+      Image.configure({ inline: false, allowBase64: false }),
+      Link.configure({ openOnClick: false, HTMLAttributes: { target: "_blank", rel: "noopener noreferrer" } }),
+      Placeholder.configure({ placeholder: "Start writing..." }),
+    ],
     content,
     editorProps: {
       attributes: {
-        class: "prose prose-neutral dark:prose-invert max-w-none p-4 min-h-[400px] focus:outline-none",
+        class: "prose prose-neutral dark:prose-invert max-w-none p-6 min-h-[500px] focus:outline-none",
       },
     },
   });
+
+  const handleImageUpload = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file || !editor) return;
+
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        const data = await res.json();
+
+        if (data.url) {
+          editor.chain().focus().setImage({ src: data.url, alt: file.name }).run();
+        } else {
+          alert(data.error || "Upload failed");
+        }
+      } catch {
+        alert("Upload failed");
+      } finally {
+        setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    },
+    [editor],
+  );
 
   const handleSave = async () => {
     if (!editor) return;
@@ -65,10 +145,29 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
   };
 
   return (
-    <div className="border border-border rounded-sm">
-      <MenuBar editor={editor} />
+    <div className="border border-border rounded-sm overflow-hidden">
+      <MenuBar editor={editor} onImageUpload={handleImageUpload} />
+
+      {uploading && (
+        <div className="px-4 py-1.5 text-xs text-accent bg-accent/5 border-b border-border">
+          Uploading image...
+        </div>
+      )}
+
       <EditorContent editor={editor} />
-      <div className="flex justify-end border-t border-border p-2">
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      <div className="flex items-center justify-between border-t border-border p-2">
+        <span className="text-xs text-muted px-2">
+          {editor ? `${editor.storage.characterCount?.characters?.() ?? "—"} chars` : ""}
+        </span>
         <button
           type="button"
           onClick={handleSave}
