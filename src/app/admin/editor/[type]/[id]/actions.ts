@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { posts, projects, postTags, projectTags } from "@/lib/db/schema";
+import { posts, projects, postTags, projectTags, relatedPosts } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/session";
@@ -44,11 +44,31 @@ export async function saveMetadata(
     category?: string;
     locale?: string;
     selectedTagIds?: number[];
+    categoryId?: number | null;
+    seriesId?: number | null;
+    seriesOrder?: number | null;
+    metaDescription?: string;
+    ogImage?: string;
+    relatedPostIds?: number[];
   },
 ) {
   await requireAdmin();
 
   if (type === "post") {
+    const isPublished = data.isPublished ?? false;
+
+    // Only set publishedAt on first publish (when it's not already set)
+    let publishedAtUpdate = {};
+    if (isPublished) {
+      const [existing] = await db
+        .select({ publishedAt: posts.publishedAt })
+        .from(posts)
+        .where(eq(posts.id, id));
+      if (!existing?.publishedAt) {
+        publishedAtUpdate = { publishedAt: new Date() };
+      }
+    }
+
     await db
       .update(posts)
       .set({
@@ -56,9 +76,15 @@ export async function saveMetadata(
         slug: data.slug,
         excerpt: data.excerpt || null,
         coverImage: data.coverImage || null,
-        isPublished: data.isPublished ?? false,
+        isPublished: isPublished,
         category: (data.category as "TECH" | "PERSONAL") || "TECH",
         locale: (data.locale as "en" | "pl") || "en",
+        categoryId: data.categoryId ?? null,
+        seriesId: data.seriesId ?? null,
+        seriesOrder: data.seriesOrder ?? null,
+        metaDescription: data.metaDescription || null,
+        ogImage: data.ogImage || null,
+        ...publishedAtUpdate,
       })
       .where(eq(posts.id, id));
 
@@ -72,8 +98,26 @@ export async function saveMetadata(
       }
     }
 
+    // Update related posts
+    if (data.relatedPostIds) {
+      await db.delete(relatedPosts).where(eq(relatedPosts.postId, id));
+      if (data.relatedPostIds.length > 0) {
+        await db.insert(relatedPosts).values(
+          data.relatedPostIds.map((relatedPostId, index) => ({
+            postId: id,
+            relatedPostId,
+            position: index,
+          })),
+        );
+      }
+    }
+
+    const locale = data.locale || "en";
     revalidatePath("/admin/posts");
-    revalidatePath(`/blog/${data.slug}`);
+    revalidatePath(`/${locale}/blog/${data.slug}`);
+    revalidatePath(`/${locale}/blog`);
+    revalidatePath("/feed.xml");
+    revalidatePath("/llms.txt");
   } else if (type === "project") {
     await db
       .update(projects)
@@ -99,7 +143,8 @@ export async function saveMetadata(
       }
     }
 
+    const locale = data.locale || "en";
     revalidatePath("/admin/projects");
-    revalidatePath(`/projects/${data.slug}`);
+    revalidatePath(`/${locale}/projects/${data.slug}`);
   }
 }
