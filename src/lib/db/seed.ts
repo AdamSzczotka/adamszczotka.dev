@@ -52,7 +52,9 @@ async function seed() {
     .values({
       title: "FormattedAI.pl",
       slug: "formattedai",
-      description: "Privacy-first developer tools. 100% client-side processing, zero cookies, zero tracking.",
+      coverImage: "/uploads/formatted_min.avif",
+      imageUrl: "/uploads/formatted_ai_main.avif",
+      description: "Privacy-first developer tools suite. 100% client-side processing, zero cookies, zero tracking. Includes CSS/JS minifiers, AVIF/WebP converter, Markdown editor, SEO/GEO analyzer, and article formatter. Built with Next.js and TypeScript.",
       content: `<h2>The Problem</h2>
 <p>Every formatting and conversion tool on the market sends your data to external servers. For developers working under NDA, this is a direct violation of their agreements. On top of that, most tools track users with cookies, analytics, and advertising pixels.</p>
 
@@ -95,6 +97,8 @@ async function seed() {
     .values({
       title: "TutorHub",
       slug: "tutorhub",
+      coverImage: "/uploads/tutorhub_mini.avif",
+      imageUrl: "/uploads/tutorhub.avif",
       description: "B2B tutoring school management system. Django monolith replacing Excel-based workflows.",
       content: `<h2>The Problem</h2>
 <p>A tutoring school with 200+ active students was managing everything in Excel: student records, teacher schedules, lesson tracking, payment status, and parent communication. The owner spent 10+ hours per week on administrative tasks that should have been automated.</p>

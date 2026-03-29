@@ -1,10 +1,13 @@
 import Link from "next/link";
+import Image from "next/image";
 
 interface ProjectData {
   id: number;
   title: string;
   slug: string;
   description: string | null;
+  coverImage: string | null;
+  imageUrl: string | null;
   liveUrl: string | null;
   githubUrl: string | null;
 }
@@ -52,10 +55,24 @@ export function ProjectShowcaseBlock({
     </div>
   );
 
+  const imageSrc = project.coverImage || project.imageUrl;
+
   const imageBlock = (
     <div className="flex-1 w-full">
-      <div className="card-frame border border-border rounded-sm aspect-video bg-background flex items-center justify-center">
-        <span className="font-mono text-sm text-muted/40">{project.slug}</span>
+      <div className="card-frame border border-border rounded-sm aspect-video bg-background overflow-hidden">
+        {imageSrc ? (
+          <Image
+            src={imageSrc}
+            alt={project.title}
+            width={640}
+            height={360}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="font-mono text-sm text-muted/40">{project.slug}</span>
+          </div>
+        )}
       </div>
     </div>
   );
