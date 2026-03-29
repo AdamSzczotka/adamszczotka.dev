@@ -7,6 +7,48 @@ import type { Metadata } from "next";
 import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
+import { ImageSlider } from "@/components/ui/image-slider";
+
+const PROJECT_SLIDES: Record<string, { src: string; alt: string; title: string; description: string }[]> = {
+  formattedai: [
+    {
+      src: "/uploads/formatted_ai_main.avif",
+      alt: "FormattedAI - Main dashboard",
+      title: "Dashboard",
+      description: "Landing page with all available tools and quick access navigation.",
+    },
+    {
+      src: "/uploads/formatted_ai_cssmini.avif",
+      alt: "FormattedAI - CSS Minifier",
+      title: "CSS Minifier",
+      description: "Strip comments, collapse whitespace, and optimize CSS output with real-time size comparison.",
+    },
+    {
+      src: "/uploads/formatted_jsminifeir.avif",
+      alt: "FormattedAI - JS Minifier",
+      title: "JavaScript Minifier",
+      description: "Minify and beautify JavaScript and JSON. Handles ES6+ syntax with instant size comparison.",
+    },
+    {
+      src: "/uploads/formatted_ai_avif.avif",
+      alt: "FormattedAI - AVIF Converter",
+      title: "AVIF/WebP Converter",
+      description: "Client-side image compression via WebAssembly. Convert to modern formats without any upload.",
+    },
+    {
+      src: "/uploads/formatted_ai_md.avif",
+      alt: "FormattedAI - Markdown Editor",
+      title: "Markdown Editor",
+      description: "Write and preview Markdown with live rendering, GFM support, and HTML export.",
+    },
+    {
+      src: "/uploads/formatted_ai_seogeo.avif",
+      alt: "FormattedAI - SEO/GEO Analyzer",
+      title: "SEO/GEO Analyzer",
+      description: "Generate and validate SEO metadata, Open Graph tags, and AI crawler discoverability.",
+    },
+  ],
+};
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -129,14 +171,35 @@ export default async function ProjectPage({ params }: Props) {
       </header>
 
       {/* Content */}
-      {project.content && (
-        <div className="mx-auto max-w-3xl px-6 py-16">
-          <div
-            className="prose prose-neutral dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: project.content }}
-          />
-        </div>
-      )}
+      {project.content && (() => {
+        const slides = PROJECT_SLIDES[project.slug];
+        if (slides && project.content.includes("<!--slider-->")) {
+          const [before, after] = project.content.split("<!--slider-->");
+          return (
+            <div className="mx-auto max-w-3xl px-6 py-16">
+              <div
+                className="prose prose-neutral dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: before }}
+              />
+              <div className="my-10 not-prose">
+                <ImageSlider slides={slides} />
+              </div>
+              <div
+                className="prose prose-neutral dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: after }}
+              />
+            </div>
+          );
+        }
+        return (
+          <div className="mx-auto max-w-3xl px-6 py-16">
+            <div
+              className="prose prose-neutral dark:prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: project.content }}
+            />
+          </div>
+        );
+      })()}
     </article>
   );
 }
