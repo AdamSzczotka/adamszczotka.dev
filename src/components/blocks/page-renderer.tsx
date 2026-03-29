@@ -8,6 +8,11 @@ import { ProjectShowcaseBlock } from "./project-showcase-block";
 import { BlogFeedBlock } from "./blog-feed-block";
 import { CtaBlock } from "./cta-block";
 import { TextBlock } from "./text-block";
+import { PageHeaderBlock } from "./page-header-block";
+import { RichTextBlock } from "./rich-text-block";
+import { TimelineBlock } from "./timeline-block";
+import { StatsBlock } from "./stats-block";
+import { FaqBlock } from "./faq-block";
 
 interface PageRendererProps {
   pageSlug: string;
@@ -137,6 +142,51 @@ export async function PageRenderer({ pageSlug, locale }: PageRendererProps) {
           <TextBlock
             key={block.id}
             data={data as { html?: string }}
+          />,
+        );
+        break;
+
+      case "page_header":
+        elements.push(
+          <PageHeaderBlock
+            key={block.id}
+            data={data as { title?: string; description?: string }}
+          />,
+        );
+        break;
+
+      case "rich_text":
+        elements.push(
+          <RichTextBlock
+            key={block.id}
+            data={data as { html?: string }}
+          />,
+        );
+        break;
+
+      case "timeline":
+        elements.push(
+          <TimelineBlock
+            key={block.id}
+            data={data as { items?: Array<{ year: string; title: string; description: string }> }}
+          />,
+        );
+        break;
+
+      case "stats":
+        elements.push(
+          <StatsBlock
+            key={block.id}
+            data={data as { items?: Array<{ value: string; label: string }> }}
+          />,
+        );
+        break;
+
+      case "faq":
+        elements.push(
+          <FaqBlock
+            key={block.id}
+            data={data as { items?: Array<{ question: string; answer: string }> }}
           />,
         );
         break;

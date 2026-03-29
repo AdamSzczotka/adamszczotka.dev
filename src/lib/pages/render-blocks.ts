@@ -2,7 +2,7 @@ import type { Locale } from "@/lib/i18n";
 
 export interface BlockData {
   id: number;
-  type: "hero" | "project_showcase" | "blog_feed" | "cta" | "text";
+  type: "hero" | "project_showcase" | "blog_feed" | "cta" | "text" | "page_header" | "rich_text" | "timeline" | "stats" | "faq";
   position: number;
   dataEn: Record<string, unknown>;
   dataPl: Record<string, unknown>;
