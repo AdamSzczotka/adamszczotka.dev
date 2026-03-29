@@ -17,12 +17,13 @@ interface Props {
 const content = {
   en: {
     title: "About",
-    subtitle: "Software Engineer",
+    subtitle: "Junior Software Developer",
     bio: [
-      "I am Adam Szczotka, 24 years old, a Computer Science student (6th semester) at WSTI and Software Engineer at Euforia — a marketing and web agency. I have been writing code since I was 11.",
-      "My strongest side is backend development — Python, Django, PostgreSQL, Docker — but I pick up new technologies fast. This portfolio and CMS is built with Next.js and TypeScript, which I learned specifically for this project.",
+      "I am Adam Szczotka, 24 years old, a Computer Science student at Katowice School of Information Technology (WSTI) and Junior Web Developer at Euforia — a marketing and web agency based in Żory, Poland. I have been writing code since I was 11.",
+      "At Euforia, I built an AI-powered customer service chatbot (n8n + PHP + PostgreSQL) that handles 2,000+ individual customer interactions per month. I also developed and shipped a workforce management mobile app (React Native + TypeScript) with a web dashboard — published on Google Play and App Store. I deploy and maintain infrastructure on Google Cloud Platform (Cloud Run, Cloud SQL, Firebase).",
+      "My strongest side is backend development, but I pick up new technologies fast. This portfolio and CMS is built with Next.js and TypeScript, which I learned specifically for this project.",
       "I have been tutoring math and computer science for 7 years — first 2 years privately, then 5 years at a tutoring school. That experience directly led to building TutorHub, a management system that automates the workflows I saw breaking down daily.",
-      "I also have a background in competitive cycling, including a Polish Championship medal. The discipline from years of structured training shapes how I approach engineering — consistent effort, measurable progress, and delivering results.",
+      "I also have a background in cycling, including a Polish Championship medal. The discipline from years of structured training shapes how I approach engineering — consistent effort, measurable progress, and delivering results.",
     ],
     whatDrives: "What drives me",
     whatDrivesText:
@@ -31,23 +32,27 @@ const content = {
     experienceItems: [
       {
         period: "Apr 2025 — present",
-        role: "Software Engineer",
-        company: "Euforia — marketing & web agency",
+        role: "Junior Web Developer",
+        company: "Euforia SC, Żory",
+        details: "AI chatbot (2,000+ interactions/mo), workforce management app (React Native, Google Play & App Store), GCP infrastructure",
       },
       {
-        period: "2019 — present",
+        period: "Nov 2019 — present",
         role: "Math & CS Tutor",
-        company: "Private (2 yrs) + tutoring school (5 yrs)",
+        company: "Self-employed, then tutoring school",
+        details: "7 years teaching students of all ages, managed scheduling and invoicing independently",
       },
     ],
     education: "Education",
     educationItems: [
       {
-        period: "2021 — present",
-        degree: "BSc Computer Science (6th semester)",
-        school: "WSTI",
+        period: "2023 — expected 2027",
+        degree: "Bachelor of Engineering — Computer Science",
+        school: "Katowice School of Information Technology (WSTI)",
       },
     ],
+    languages: "Languages",
+    languageItems: ["Polish — Native", "English — B2/C1"],
     sport: "Cycling",
     sportText:
       "Former cyclist with a Polish Championship medal. Years of structured training built the discipline and work ethic I bring to engineering — consistency, measurable progress, and pushing through when it gets hard.",
@@ -56,10 +61,11 @@ const content = {
   },
   pl: {
     title: "O mnie",
-    subtitle: "Software Engineer",
+    subtitle: "Junior Software Developer",
     bio: [
-      "Jestem Adam Szczotka, mam 24 lata, student informatyki (6. semestr) na WSTI i Software Engineer w Euforia — agencji marketingowej i webowej. Kod piszę od 11. roku życia.",
-      "Moja najsilniejsza strona to backend — Python, Django, PostgreSQL, Docker — ale szybko przyswajam nowe technologie. To portfolio i CMS zbudowałem w Next.js i TypeScript, których nauczyłem się specjalnie pod ten projekt.",
+      "Jestem Adam Szczotka, mam 24 lata, student informatyki na Katowickiej Wyższej Szkole Technologii Informatycznych (WSTI) i Junior Web Developer w Euforia — agencji marketingowej i webowej z Żor. Kod piszę od 11. roku życia.",
+      "W Euforia zbudowałem chatbota obsługi klienta opartego na AI (n8n + PHP + PostgreSQL), który autonomicznie obsługuje ponad 2000 indywidualnych interakcji miesięcznie. Stworzyłem też aplikację mobilną do zarządzania pracownikami (React Native + TypeScript) z dashboardem webowym — opublikowaną na Google Play i App Store. Wdrażam i utrzymuję infrastrukturę na Google Cloud Platform (Cloud Run, Cloud SQL, Firebase).",
+      "Moja najsilniejsza strona to backend, ale szybko przyswajam nowe technologie. To portfolio i CMS zbudowałem w Next.js i TypeScript, których nauczyłem się specjalnie pod ten projekt.",
       "Od 7 lat udzielam korepetycji z matematyki i informatyki — pierwsze 2 lata prywatnie, od 5 lat w szkole korepetycji. To doświadczenie bezpośrednio doprowadziło do stworzenia TutorHub — systemu zarządzania, który automatyzuje procesy, które codziennie widziałem jak się sypią.",
       "Mam też za sobą kolarstwo z medalem Mistrzostw Polski. Dyscyplina z lat strukturalnego treningu kształtuje moje podejście do inżynierii — konsekwentna praca, mierzalny postęp i dowożenie wyników.",
     ],
@@ -70,23 +76,27 @@ const content = {
     experienceItems: [
       {
         period: "kwi 2025 — teraz",
-        role: "Software Engineer",
-        company: "Euforia — agencja marketingowa i webowa",
+        role: "Junior Web Developer",
+        company: "Euforia SC, Żory",
+        details: "Chatbot AI (2000+ interakcji/mies.), aplikacja mobilna (React Native, Google Play & App Store), infrastruktura GCP",
       },
       {
-        period: "2019 — teraz",
+        period: "lis 2019 — teraz",
         role: "Korepetytor matematyki i informatyki",
-        company: "Prywatnie (2 lata) + szkoła korepetycji (5 lat)",
+        company: "Prywatnie, potem szkoła korepetycji",
+        details: "7 lat nauczania uczniów w każdym wieku, samodzielne zarządzanie grafikiem i fakturami",
       },
     ],
     education: "Wykształcenie",
     educationItems: [
       {
-        period: "2021 — teraz",
-        degree: "Informatyka, inż. (6. semestr)",
-        school: "WSTI",
+        period: "2023 — planowany 2027",
+        degree: "Inżynier — Informatyka",
+        school: "Katowicka Wyższa Szkoła Technologii Informatycznych (WSTI)",
       },
     ],
+    languages: "Języki",
+    languageItems: ["Polski — ojczysty", "Angielski — B2/C1"],
     sport: "Kolarstwo",
     sportText:
       "Były kolarz z medalem Mistrzostw Polski. Lata strukturalnego treningu zbudowały dyscyplinę i etykę pracy, które wnoszę do inżynierii — konsekwencja, mierzalny postęp i praca mimo trudności.",
@@ -98,15 +108,21 @@ const content = {
 const techStack = [
   { name: "Python", category: "Backend" },
   { name: "Django", category: "Backend" },
+  { name: "PHP", category: "Backend" },
   { name: "PostgreSQL", category: "Backend" },
+  { name: "Cloud SQL", category: "Backend" },
   { name: "TypeScript", category: "Frontend" },
-  { name: "Next.js", category: "Frontend" },
   { name: "React", category: "Frontend" },
+  { name: "React Native", category: "Frontend" },
+  { name: "Next.js", category: "Frontend" },
+  { name: "HTMX", category: "Frontend" },
   { name: "Tailwind CSS", category: "Frontend" },
+  { name: "GCP", category: "Infra" },
   { name: "Docker", category: "Infra" },
+  { name: "CI/CD", category: "Infra" },
   { name: "Nginx", category: "Infra" },
   { name: "Redis", category: "Infra" },
-  { name: "Linux / VPS", category: "Infra" },
+  { name: "n8n", category: "Infra" },
 ];
 
 const links = [
@@ -217,6 +233,9 @@ export default async function AboutPage({ params }: Props) {
                   <p className="text-xs font-mono text-[var(--muted)]">{item.period}</p>
                   <p className="mt-1 font-medium">{item.role}</p>
                   <p className="text-sm text-[var(--muted)]">{item.company}</p>
+                  {item.details && (
+                    <p className="mt-1 text-xs text-[var(--muted)]">{item.details}</p>
+                  )}
                 </div>
               ))}
             </div>
@@ -234,6 +253,16 @@ export default async function AboutPage({ params }: Props) {
             </div>
           </section>
         </div>
+
+        {/* Languages */}
+        <section className="mt-16 pt-12 border-t border-[var(--border)]">
+          <h2 className="text-lg font-semibold tracking-tight">{c.languages}</h2>
+          <div className="mt-4 space-y-2">
+            {c.languageItems.map((lang, i) => (
+              <p key={i} className="text-sm text-[var(--muted)]">{lang}</p>
+            ))}
+          </div>
+        </section>
 
         {/* Sport */}
         <section className="mt-16 pt-12 border-t border-[var(--border)]">
