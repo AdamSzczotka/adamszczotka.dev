@@ -9,7 +9,7 @@ import {
   reorderBlocks,
 } from "../actions";
 
-type BlockType = "hero" | "project_showcase" | "blog_feed" | "cta" | "text";
+type BlockType = "hero" | "project_showcase" | "blog_feed" | "cta" | "text" | "page_header" | "rich_text" | "timeline" | "stats" | "faq";
 
 interface Block {
   id: number;
@@ -38,6 +38,11 @@ const BLOCK_LABELS: Record<BlockType, string> = {
   blog_feed: "Blog Feed",
   cta: "CTA",
   text: "Text",
+  page_header: "Page Header",
+  rich_text: "Rich Text",
+  timeline: "Timeline",
+  stats: "Stats",
+  faq: "FAQ",
 };
 
 export function PageEditor({
@@ -217,6 +222,11 @@ export function PageEditor({
           <option value="blog_feed">Blog Feed</option>
           <option value="cta">CTA</option>
           <option value="text">Text</option>
+          <option value="page_header">Page Header</option>
+          <option value="rich_text">Rich Text</option>
+          <option value="timeline">Timeline</option>
+          <option value="stats">Stats</option>
+          <option value="faq">FAQ</option>
         </select>
         <button
           onClick={handleAddBlock}
@@ -276,6 +286,26 @@ function BlockForm({
     case "text":
       return (
         <TextForm data={data} isPending={isPending} onSave={onSave} />
+      );
+    case "page_header":
+      return (
+        <PageHeaderForm data={data} isPending={isPending} onSave={onSave} />
+      );
+    case "rich_text":
+      return (
+        <RichTextForm data={data} isPending={isPending} onSave={onSave} />
+      );
+    case "timeline":
+      return (
+        <TimelineForm data={data} isPending={isPending} onSave={onSave} />
+      );
+    case "stats":
+      return (
+        <StatsForm data={data} isPending={isPending} onSave={onSave} />
+      );
+    case "faq":
+      return (
+        <FaqForm data={data} isPending={isPending} onSave={onSave} />
       );
     default:
       return <p className="text-sm text-muted">Unknown block type.</p>;
@@ -500,6 +530,281 @@ function TextForm({
         />
       </div>
       <SaveButton isPending={isPending} onClick={() => onSave({ html })} />
+    </div>
+  );
+}
+
+function PageHeaderForm({
+  data,
+  isPending,
+  onSave,
+}: {
+  data: Record<string, unknown>;
+  isPending: boolean;
+  onSave: (data: Record<string, unknown>) => void;
+}) {
+  const [fields, setFields] = useState({
+    title: (data.title as string) || "",
+    description: (data.description as string) || "",
+  });
+
+  function handleChange(name: string, value: string) {
+    setFields((prev) => ({ ...prev, [name]: value }));
+  }
+
+  return (
+    <div className="space-y-3">
+      <FormField label="Title" name="title" value={fields.title} onChange={handleChange} />
+      <div>
+        <label className="mb-1 block text-xs text-muted font-mono">
+          Description
+        </label>
+        <textarea
+          value={fields.description}
+          onChange={(e) => handleChange("description", e.target.value)}
+          rows={3}
+          className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent resize-y"
+        />
+      </div>
+      <SaveButton isPending={isPending} onClick={() => onSave(fields)} />
+    </div>
+  );
+}
+
+function RichTextForm({
+  data,
+  isPending,
+  onSave,
+}: {
+  data: Record<string, unknown>;
+  isPending: boolean;
+  onSave: (data: Record<string, unknown>) => void;
+}) {
+  const [html, setHtml] = useState<string>((data.html as string) || "");
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <label className="mb-1 block text-xs text-muted font-mono">
+          HTML Content
+        </label>
+        <textarea
+          value={html}
+          onChange={(e) => setHtml(e.target.value)}
+          rows={12}
+          className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent resize-y"
+        />
+      </div>
+      <SaveButton isPending={isPending} onClick={() => onSave({ html })} />
+    </div>
+  );
+}
+
+function TimelineForm({
+  data,
+  isPending,
+  onSave,
+}: {
+  data: Record<string, unknown>;
+  isPending: boolean;
+  onSave: (data: Record<string, unknown>) => void;
+}) {
+  const [items, setItems] = useState<Array<{ year: string; title: string; description: string }>>(
+    (data.items as Array<{ year: string; title: string; description: string }>) || [{ year: "", title: "", description: "" }],
+  );
+
+  function updateItem(index: number, field: string, value: string) {
+    setItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    );
+  }
+
+  function addItem() {
+    setItems((prev) => [...prev, { year: "", title: "", description: "" }]);
+  }
+
+  function removeItem(index: number) {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  return (
+    <div className="space-y-4">
+      {items.map((item, i) => (
+        <div key={i} className="border border-border p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted font-mono">Item {i + 1}</span>
+            <button
+              onClick={() => removeItem(i)}
+              className="text-xs text-red-500 hover:text-red-400 transition-colors"
+            >
+              Remove
+            </button>
+          </div>
+          <input
+            value={item.year}
+            onChange={(e) => updateItem(i, "year", e.target.value)}
+            placeholder="Year"
+            className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent"
+          />
+          <input
+            value={item.title}
+            onChange={(e) => updateItem(i, "title", e.target.value)}
+            placeholder="Title"
+            className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent"
+          />
+          <textarea
+            value={item.description}
+            onChange={(e) => updateItem(i, "description", e.target.value)}
+            placeholder="Description"
+            rows={2}
+            className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent resize-y"
+          />
+        </div>
+      ))}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={addItem}
+          className="text-xs text-accent hover:opacity-80 transition-opacity font-mono"
+        >
+          + Add Item
+        </button>
+        <SaveButton isPending={isPending} onClick={() => onSave({ items })} />
+      </div>
+    </div>
+  );
+}
+
+function StatsForm({
+  data,
+  isPending,
+  onSave,
+}: {
+  data: Record<string, unknown>;
+  isPending: boolean;
+  onSave: (data: Record<string, unknown>) => void;
+}) {
+  const [items, setItems] = useState<Array<{ value: string; label: string }>>(
+    (data.items as Array<{ value: string; label: string }>) || [{ value: "", label: "" }],
+  );
+
+  function updateItem(index: number, field: string, value: string) {
+    setItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    );
+  }
+
+  function addItem() {
+    setItems((prev) => [...prev, { value: "", label: "" }]);
+  }
+
+  function removeItem(index: number) {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  return (
+    <div className="space-y-4">
+      {items.map((item, i) => (
+        <div key={i} className="border border-border p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted font-mono">Stat {i + 1}</span>
+            <button
+              onClick={() => removeItem(i)}
+              className="text-xs text-red-500 hover:text-red-400 transition-colors"
+            >
+              Remove
+            </button>
+          </div>
+          <input
+            value={item.value}
+            onChange={(e) => updateItem(i, "value", e.target.value)}
+            placeholder="Value (e.g. 10+)"
+            className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent"
+          />
+          <input
+            value={item.label}
+            onChange={(e) => updateItem(i, "label", e.target.value)}
+            placeholder="Label (e.g. Projects)"
+            className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent"
+          />
+        </div>
+      ))}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={addItem}
+          className="text-xs text-accent hover:opacity-80 transition-opacity font-mono"
+        >
+          + Add Stat
+        </button>
+        <SaveButton isPending={isPending} onClick={() => onSave({ items })} />
+      </div>
+    </div>
+  );
+}
+
+function FaqForm({
+  data,
+  isPending,
+  onSave,
+}: {
+  data: Record<string, unknown>;
+  isPending: boolean;
+  onSave: (data: Record<string, unknown>) => void;
+}) {
+  const [items, setItems] = useState<Array<{ question: string; answer: string }>>(
+    (data.items as Array<{ question: string; answer: string }>) || [{ question: "", answer: "" }],
+  );
+
+  function updateItem(index: number, field: string, value: string) {
+    setItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+    );
+  }
+
+  function addItem() {
+    setItems((prev) => [...prev, { question: "", answer: "" }]);
+  }
+
+  function removeItem(index: number) {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  return (
+    <div className="space-y-4">
+      {items.map((item, i) => (
+        <div key={i} className="border border-border p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted font-mono">Q&A {i + 1}</span>
+            <button
+              onClick={() => removeItem(i)}
+              className="text-xs text-red-500 hover:text-red-400 transition-colors"
+            >
+              Remove
+            </button>
+          </div>
+          <input
+            value={item.question}
+            onChange={(e) => updateItem(i, "question", e.target.value)}
+            placeholder="Question"
+            className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent"
+          />
+          <textarea
+            value={item.answer}
+            onChange={(e) => updateItem(i, "answer", e.target.value)}
+            placeholder="Answer"
+            rows={3}
+            className="w-full border border-border bg-surface px-3 py-2 text-sm rounded-sm font-mono focus:outline-none focus:border-accent resize-y"
+          />
+        </div>
+      ))}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={addItem}
+          className="text-xs text-accent hover:opacity-80 transition-opacity font-mono"
+        >
+          + Add Q&A
+        </button>
+        <SaveButton isPending={isPending} onClick={() => onSave({ items })} />
+      </div>
     </div>
   );
 }
