@@ -12,12 +12,9 @@ export function LocaleSwitcher() {
   const switchLocale = () => {
     const nextLocale = isPolish ? "en" : "pl";
     document.cookie = `locale=${nextLocale};path=/;max-age=31536000;samesite=lax`;
-    if (isPolish) {
-      const newPath = pathname.replace(/^\/pl/, "") || "/";
-      router.push(newPath);
-    } else {
-      router.push(`/pl${pathname}`);
-    }
+    // Strip existing locale prefix, then add the new one
+    const pathWithoutLocale = pathname.replace(/^\/(en|pl)/, "") || "/";
+    router.push(`/${nextLocale}${pathWithoutLocale}`);
   };
 
   return (
