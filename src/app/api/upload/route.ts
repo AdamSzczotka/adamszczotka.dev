@@ -41,17 +41,55 @@ export async function POST(request: NextRequest) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const filename = `${crypto.randomUUID()}.avif`;
+  const uuid = crypto.randomUUID();
+  const isCover = request.nextUrl.searchParams.get("type") === "cover";
 
+  await mkdir(UPLOAD_DIR, { recursive: true });
+
+  if (isCover) {
+    // Generate 4 variants for cover images
+    const heroBuffer = await sharp(buffer)
+      .resize({ width: 1920, withoutEnlargement: true })
+      .avif({ quality: 80 })
+      .toBuffer();
+
+    const cardBuffer = await sharp(buffer)
+      .resize({ width: 640, withoutEnlargement: true })
+      .avif({ quality: 80 })
+      .toBuffer();
+
+    const ogBuffer = await sharp(buffer)
+      .resize({ width: 1200, height: 630, fit: "cover" })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+
+    const blurBuffer = await sharp(buffer)
+      .resize({ width: 32 })
+      .png()
+      .toBuffer();
+
+    const blurDataUrl = `data:image/png;base64,${blurBuffer.toString("base64")}`;
+
+    await Promise.all([
+      writeFile(path.join(UPLOAD_DIR, `${uuid}-hero.avif`), heroBuffer),
+      writeFile(path.join(UPLOAD_DIR, `${uuid}-card.avif`), cardBuffer),
+      writeFile(path.join(UPLOAD_DIR, `${uuid}-og.jpg`), ogBuffer),
+    ]);
+
+    const basePath = `/uploads/${uuid}`;
+
+    return NextResponse.json({ basePath, blurDataUrl });
+  }
+
+  // Default: single optimized image (for TipTap inline images)
+  const filename = `${uuid}.avif`;
   const optimized = await sharp(buffer)
     .avif({ quality: 80 })
     .resize({ width: 1920, withoutEnlargement: true })
     .toBuffer();
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
   await writeFile(path.join(UPLOAD_DIR, filename), optimized);
 
   const url = `/uploads/${filename}`;
-
   return NextResponse.json({ url });
 }
