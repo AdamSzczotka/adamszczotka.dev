@@ -1,5 +1,5 @@
-import { PageRenderer } from "@/components/blocks/page-renderer";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <PageRenderer pageSlug="home" locale="en" />;
+  redirect("/en");
 }

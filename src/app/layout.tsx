@@ -47,6 +47,12 @@ export default function RootLayout({
             __html: `(function(){try{var d=document.documentElement,t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){d.classList.add('dark')}}catch(e){}})()`,
           }}
         />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Adam Szczotka"
+          href="/feed.xml"
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
