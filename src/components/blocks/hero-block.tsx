@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface HeroData {
   title?: string;
   subtitle?: string;
@@ -50,8 +52,15 @@ export function HeroBlock({ data }: { data: HeroData }) {
             </div>
           </div>
           <div className="flex-[2] flex justify-center">
-            <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-sm border border-border bg-surface flex items-center justify-center">
-              <span className="text-4xl sm:text-5xl font-bold text-muted/30 select-none">AS</span>
+            <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-sm border border-border bg-surface overflow-hidden">
+              <Image
+                src="/uploads/hero-adam.avif"
+                alt="Adam Szczotka"
+                width={224}
+                height={224}
+                className="w-full h-full object-cover"
+                priority
+              />
             </div>
           </div>
         </div>
