@@ -1,12 +1,30 @@
 import { db } from "@/lib/db";
-import { posts, comments } from "@/lib/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import {
+  posts,
+  comments,
+  postTags,
+  tags,
+  categories,
+  series,
+} from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
-import { CommentForm } from "@/app/(public)/blog/[slug]/comment-form";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
+import { generatePostMetadata } from "@/lib/utils/seo";
+import { blogPostJsonLd } from "@/lib/utils/structured-data";
+import { getRelatedPosts } from "@/lib/utils/related-posts";
+import type { TocEntry } from "@/lib/utils/toc";
+import { PostHero } from "@/components/blog/post-hero";
+import { TableOfContents } from "@/components/blog/table-of-contents";
+import { ShareButtons } from "@/components/blog/share-buttons";
+import { SeriesNav } from "@/components/blog/series-nav";
+import { RelatedPosts } from "@/components/blog/related-posts";
+import { CommentForm } from "@/app/(public)/blog/[slug]/comment-form";
+import { CommentThread } from "@/components/blog/comment-thread";
+import type { CommentData } from "@/components/blog/comment-thread";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -25,7 +43,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .from(posts)
     .where(and(eq(posts.slug, slug), eq(posts.locale, currentLocale)));
 
-  // Fallback to EN
   if (!post && currentLocale !== "en") {
     [post] = await db
       .select()
@@ -34,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   if (!post) return { title: "Not Found" };
-  return { title: post.title, description: post.excerpt || undefined };
+  return generatePostMetadata(post, currentLocale);
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -52,7 +69,6 @@ export default async function BlogPostPage({ params }: Props) {
       ),
     );
 
-  // Fallback to EN if not found for this locale
   if (!post && currentLocale !== "en") {
     [post] = await db
       .select()
@@ -68,83 +84,239 @@ export default async function BlogPostPage({ params }: Props) {
 
   if (!post) notFound();
 
+  // Fetch tags
+  const postTagRows = await db
+    .select({ tagId: tags.id, tagName: tags.name })
+    .from(postTags)
+    .innerJoin(tags, eq(postTags.tagId, tags.id))
+    .where(eq(postTags.postId, post.id));
+  const postTagList = postTagRows.map((r) => ({ id: r.tagId, name: r.tagName }));
+
+  // Fetch category name
+  let categoryName: string | undefined;
+  if (post.categoryId) {
+    const [cat] = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.id, post.categoryId))
+      .limit(1);
+    if (cat) {
+      categoryName = currentLocale === "pl" ? cat.namePl : cat.nameEn;
+    }
+  }
+
+  // Fetch series data
+  let seriesData: typeof series.$inferSelect | null = null;
+  let seriesPosts: {
+    id: number;
+    title: string;
+    slug: string;
+    seriesOrder: number | null;
+  }[] = [];
+  if (post.seriesId) {
+    const [s] = await db
+      .select()
+      .from(series)
+      .where(eq(series.id, post.seriesId))
+      .limit(1);
+    if (s) {
+      seriesData = s;
+      seriesPosts = await db
+        .select({
+          id: posts.id,
+          title: posts.title,
+          slug: posts.slug,
+          seriesOrder: posts.seriesOrder,
+        })
+        .from(posts)
+        .where(
+          and(
+            eq(posts.seriesId, post.seriesId),
+            eq(posts.locale, currentLocale),
+            eq(posts.isPublished, true),
+          ),
+        )
+        .orderBy(posts.seriesOrder);
+    }
+  }
+
+  // Fetch related posts
+  const relatedPosts = await getRelatedPosts(post.id, currentLocale, 3);
+
+  // Fetch comments (ordered asc for proper tree building)
   const approvedComments = await db
-    .select()
+    .select({
+      id: comments.id,
+      postId: comments.postId,
+      parentId: comments.parentId,
+      authorName: comments.authorName,
+      content: comments.content,
+      createdAt: comments.createdAt,
+    })
     .from(comments)
     .where(
       and(eq(comments.postId, post.id), eq(comments.status, "APPROVED")),
     )
-    .orderBy(desc(comments.createdAt));
+    .orderBy(comments.createdAt);
 
   const translations = await getTranslations(currentLocale);
   const dateLocale = currentLocale === "pl" ? "pl-PL" : "en-US";
+  const toc = (post.toc as TocEntry[]) || [];
+  const url = `https://adamszczotka.dev/${currentLocale}/blog/${post.slug}`;
+
+  // JSON-LD structured data
+  const jsonLd = blogPostJsonLd({ ...post, locale: currentLocale });
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-24">
-      <header>
-        <time className="text-xs text-muted font-mono">
-          {post.createdAt.toLocaleDateString(dateLocale, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </time>
-        <h1 className="mt-2 text-3xl font-medium tracking-tight">
-          {post.title}
-        </h1>
-        {post.excerpt && (
-          <p className="mt-4 text-lg text-muted">{post.excerpt}</p>
-        )}
-      </header>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-      {post.content && (
-        <div
-          className="prose prose-neutral dark:prose-invert mt-12 max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
-      )}
+      <PostHero
+        post={post}
+        tags={postTagList}
+        locale={currentLocale}
+        categoryName={categoryName}
+      />
 
-      <section className="mt-16 border-t border-border pt-12">
-        <h2 className="text-lg font-medium">{t(translations, "blog.comments", "Comments")}</h2>
-
-        {approvedComments.length > 0 && (
-          <div className="mt-6 space-y-6">
-            {approvedComments.map((comment) => (
-              <div key={comment.id}>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-medium">
-                    {comment.authorName}
-                  </span>
-                  <time className="text-xs text-muted font-mono">
-                    {comment.createdAt.toLocaleDateString(dateLocale, {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </time>
-                </div>
-                <p className="mt-1 text-sm text-muted">{comment.content}</p>
-              </div>
-            ))}
+      <div className="mx-auto max-w-5xl px-6">
+        {/* Mobile TOC */}
+        {toc.length >= 2 && (
+          <div className="lg:hidden mt-8 mb-12 border border-[var(--border)] p-4 rounded-sm">
+            <TableOfContents headings={toc} />
           </div>
         )}
 
-        <div className="mt-8">
-          <h3 className="text-sm font-medium">{t(translations, "blog.leave_comment", "Leave a comment")}</h3>
-          <div className="mt-4">
-            <CommentForm
-              postId={post.id}
-              translations={{
-                submitted: t(translations, "blog.comment_submitted", "Comment submitted. It will appear after moderation."),
-                yourName: t(translations, "blog.your_name", "Your name"),
-                yourComment: t(translations, "blog.your_comment", "Your comment"),
-                submit: t(translations, "blog.submit_comment", "Submit Comment"),
-                submitting: t(translations, "blog.submitting", "Submitting..."),
-              }}
-            />
+        <div className="lg:flex lg:gap-12">
+          {/* Sidebar */}
+          <aside className="hidden lg:block lg:w-56 shrink-0">
+            <div className="sticky top-24">
+              <TableOfContents headings={toc} />
+              <div className="mt-8 pt-8 border-t border-[var(--border)]">
+                <ShareButtons url={url} title={post.title} />
+              </div>
+            </div>
+          </aside>
+
+          {/* Content */}
+          <article className="min-w-0 flex-1">
+            <header className="sr-only">
+              <h1>{post.title}</h1>
+              <address>Adam Szczotka</address>
+              <time dateTime={(post.publishedAt || post.createdAt).toISOString()}>
+                {(post.publishedAt || post.createdAt).toLocaleDateString(
+                  dateLocale,
+                  { year: "numeric", month: "long", day: "numeric" },
+                )}
+              </time>
+            </header>
+
+            {post.content && (
+              <div
+                className="prose prose-neutral dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+            )}
+
+            <footer>
+              {/* Mobile share */}
+              <div className="lg:hidden mt-12 pt-8 border-t border-[var(--border)]">
+                <ShareButtons url={url} title={post.title} />
+              </div>
+            </footer>
+          </article>
+        </div>
+
+        {seriesData && (
+          <SeriesNav
+            series={seriesData}
+            posts={seriesPosts}
+            currentPostId={post.id}
+            locale={currentLocale}
+          />
+        )}
+      </div>
+
+      <RelatedPosts posts={relatedPosts} locale={currentLocale} />
+
+      {/* Comment section */}
+      <section className="mx-auto max-w-3xl px-6 pb-24">
+        <div className="border-t border-[var(--border)] pt-12">
+          <h2 className="text-lg font-medium">
+            {t(translations, "blog.comments", "Comments")}
+          </h2>
+
+          {approvedComments.length > 0 && (
+            <div className="mt-6">
+              <CommentThread
+                comments={approvedComments as CommentData[]}
+                postId={post.id}
+                dateLocale={dateLocale}
+                replyLabel={t(translations, "blog.reply", "Reply")}
+                translations={{
+                  submitted: t(
+                    translations,
+                    "blog.comment_submitted",
+                    "Comment submitted. It will appear after moderation.",
+                  ),
+                  yourName: t(translations, "blog.your_name", "Your name"),
+                  yourComment: t(
+                    translations,
+                    "blog.your_comment",
+                    "Your comment",
+                  ),
+                  submit: t(
+                    translations,
+                    "blog.submit_comment",
+                    "Submit Comment",
+                  ),
+                  submitting: t(
+                    translations,
+                    "blog.submitting",
+                    "Submitting...",
+                  ),
+                }}
+              />
+            </div>
+          )}
+
+          <div className="mt-8">
+            <h3 className="text-sm font-medium">
+              {t(translations, "blog.leave_comment", "Leave a comment")}
+            </h3>
+            <div className="mt-4">
+              <CommentForm
+                postId={post.id}
+                translations={{
+                  submitted: t(
+                    translations,
+                    "blog.comment_submitted",
+                    "Comment submitted. It will appear after moderation.",
+                  ),
+                  yourName: t(translations, "blog.your_name", "Your name"),
+                  yourComment: t(
+                    translations,
+                    "blog.your_comment",
+                    "Your comment",
+                  ),
+                  submit: t(
+                    translations,
+                    "blog.submit_comment",
+                    "Submit Comment",
+                  ),
+                  submitting: t(
+                    translations,
+                    "blog.submitting",
+                    "Submitting...",
+                  ),
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>
-    </article>
+    </>
   );
 }

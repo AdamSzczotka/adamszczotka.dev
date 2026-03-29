@@ -5,7 +5,11 @@ import { comments } from "@/lib/db/schema";
 import { revalidatePath } from "next/cache";
 import sanitizeHtml from "sanitize-html";
 
-export async function addComment(postId: number, formData: FormData) {
+export async function addComment(
+  postId: number,
+  formData: FormData,
+  parentId?: number | null,
+) {
   const authorName = (formData.get("authorName") as string).trim();
   const rawContent = (formData.get("content") as string).trim();
 
@@ -28,6 +32,7 @@ export async function addComment(postId: number, formData: FormData) {
 
   await db.insert(comments).values({
     postId,
+    parentId: parentId ?? null,
     authorName: sanitizeHtml(authorName, {
       allowedTags: [],
       allowedAttributes: {},

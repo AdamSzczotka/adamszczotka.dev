@@ -273,16 +273,24 @@ export const relatedPosts = pgTable(
 
 // ── Comments ────────────────────────────────────────────────────────
 
-export const comments = pgTable("comments", {
-  id: serial("id").primaryKey(),
-  postId: integer("post_id")
-    .references(() => posts.id, { onDelete: "cascade" })
-    .notNull(),
-  authorName: varchar("author_name", { length: 100 }).notNull(),
-  content: text("content").notNull(),
-  status: commentStatusEnum("status").default("PENDING").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const comments = pgTable(
+  "comments",
+  {
+    id: serial("id").primaryKey(),
+    postId: integer("post_id")
+      .references(() => posts.id, { onDelete: "cascade" })
+      .notNull(),
+    parentId: integer("parent_id").references((): any => comments.id, {
+      onDelete: "cascade",
+    }),
+    authorName: varchar("author_name", { length: 100 }).notNull(),
+    content: text("content").notNull(),
+    status: commentStatusEnum("status").default("PENDING").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("comments_post_id_idx").on(table.postId)],
+);
+
 
 // ── Translations (static UI strings) ────────────────────────────────
 
