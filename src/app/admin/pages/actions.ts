@@ -33,7 +33,7 @@ export async function deletePage(id: number) {
 
 export async function addBlock(
   pageId: number,
-  type: "hero" | "project_showcase" | "blog_feed" | "cta" | "text",
+  type: "hero" | "project_showcase" | "blog_feed" | "cta" | "text" | "page_header" | "rich_text" | "timeline" | "stats" | "faq",
   position: number,
 ) {
   await requireAdmin();
