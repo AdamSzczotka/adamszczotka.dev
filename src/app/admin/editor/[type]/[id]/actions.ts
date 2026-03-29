@@ -5,12 +5,20 @@ import { posts, projects, postTags, projectTags } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/session";
+import { calculateReadTime } from "@/lib/utils/read-time";
+import { extractToc } from "@/lib/utils/toc";
 
 export async function saveContent(type: string, id: number, html: string) {
   await requireAdmin();
 
   if (type === "post") {
-    await db.update(posts).set({ content: html }).where(eq(posts.id, id));
+    const { toc, html: enrichedHtml } = extractToc(html);
+    const readTimeMinutes = calculateReadTime(html);
+
+    await db
+      .update(posts)
+      .set({ content: enrichedHtml, readTimeMinutes, toc })
+      .where(eq(posts.id, id));
     revalidatePath(`/admin/editor/post/${id}`);
     revalidatePath("/admin/posts");
   } else if (type === "project") {
