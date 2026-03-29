@@ -47,7 +47,7 @@ export function ProjectShowcaseBlock({
         )}
         <Link
           href={`${prefix}/projects/${project.slug}`}
-          className="btn-spring text-sm text-accent hover:underline px-4 py-2"
+          className="btn-spring text-sm border border-border px-4 py-2 hover:border-accent/50 rounded-sm"
         >
           Case Study
         </Link>
