@@ -20,7 +20,7 @@ const content = {
     subtitle: "Junior Software Developer",
     bio: [
       "I am Adam Szczotka, 24 years old, a Computer Science student at Katowice School of Information Technology (WSTI) and Junior Web Developer at Euforia — a marketing and web agency based in Żory, Poland. I have been writing code since I was 11.",
-      "At Euforia, I built an AI-powered customer service chatbot (n8n + PHP + PostgreSQL) that handles 2,000+ individual customer interactions per month. I also developed and shipped a mobile app (React Native + TypeScript) with a web dashboard — published on Google Play and App Store. I deploy and maintain infrastructure on Google Cloud Platform (Cloud Run, Cloud SQL, Firebase).",
+      "At Euforia, I build and ship web applications and mobile apps for clients — from AI-powered automation to production infrastructure on GCP. I work across the full stack, from backend APIs to React Native mobile apps published on app stores.",
       "My strongest side is backend development, but I pick up new technologies fast. This portfolio and CMS is built with Next.js and TypeScript, which I learned specifically for this project.",
       "I have been tutoring math and computer science for 7 years — first 2 years privately, then 5 years at a tutoring school. That experience directly led to building TutorHub, a management system that automates the workflows I saw breaking down daily.",
       "I also have a background in cycling, including a Polish Championship medal. The discipline from years of structured training shapes how I approach engineering — consistent effort, measurable progress, and delivering results.",
@@ -34,7 +34,7 @@ const content = {
         period: "Apr 2025 — present",
         role: "Junior Web Developer",
         company: "Euforia SC, Żory",
-        details: "AI chatbot (2,000+ interactions/mo), mobile app (React Native, Google Play & App Store), GCP infrastructure",
+        details: "Web and mobile apps, AI automation, GCP infrastructure",
       },
       {
         period: "Nov 2019 — present",
@@ -64,7 +64,7 @@ const content = {
     subtitle: "Junior Software Developer",
     bio: [
       "Jestem Adam Szczotka, mam 24 lata, student informatyki na Katowickiej Wyższej Szkole Technologii Informatycznych (WSTI) i Junior Web Developer w Euforia — agencji marketingowej i webowej z Żor. Kod piszę od 11. roku życia.",
-      "W Euforia zbudowałem chatbota obsługi klienta opartego na AI (n8n + PHP + PostgreSQL), który autonomicznie obsługuje ponad 2000 indywidualnych interakcji miesięcznie. Stworzyłem też aplikację mobilną do zarządzania pracownikami (React Native + TypeScript) z dashboardem webowym — opublikowaną na Google Play i App Store. Wdrażam i utrzymuję infrastrukturę na Google Cloud Platform (Cloud Run, Cloud SQL, Firebase).",
+      "W Euforia buduję i wdrażam aplikacje webowe i mobilne dla klientów — od automatyzacji opartej na AI po infrastrukturę produkcyjną na GCP. Pracuję w pełnym stacku, od backendowych API po aplikacje mobilne w React Native publikowane w sklepach.",
       "Moja najsilniejsza strona to backend, ale szybko przyswajam nowe technologie. To portfolio i CMS zbudowałem w Next.js i TypeScript, których nauczyłem się specjalnie pod ten projekt.",
       "Od 7 lat udzielam korepetycji z matematyki i informatyki — pierwsze 2 lata prywatnie, od 5 lat w szkole korepetycji. To doświadczenie bezpośrednio doprowadziło do stworzenia TutorHub — systemu zarządzania, który automatyzuje procesy, które codziennie widziałem jak się sypią.",
       "Mam też za sobą kolarstwo z medalem Mistrzostw Polski. Dyscyplina z lat strukturalnego treningu kształtuje moje podejście do inżynierii — konsekwentna praca, mierzalny postęp i dowożenie wyników.",
@@ -78,7 +78,7 @@ const content = {
         period: "kwi 2025 — teraz",
         role: "Junior Web Developer",
         company: "Euforia SC, Żory",
-        details: "Chatbot AI (2000+ interakcji/mies.), aplikacja mobilna (React Native, Google Play & App Store), infrastruktura GCP",
+        details: "Aplikacje webowe i mobilne, automatyzacja AI, infrastruktura GCP",
       },
       {
         period: "lis 2019 — teraz",
