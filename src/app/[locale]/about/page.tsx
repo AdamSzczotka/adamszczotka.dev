@@ -20,7 +20,7 @@ const content = {
     subtitle: "Junior Software Developer",
     bio: [
       "I am Adam Szczotka, 24 years old, a Computer Science student at Katowice School of Information Technology (WSTI) and Junior Web Developer at Euforia — a marketing and web agency based in Żory, Poland. I have been writing code since I was 11.",
-      "At Euforia, I built an AI-powered customer service chatbot (n8n + PHP + PostgreSQL) that handles 2,000+ individual customer interactions per month. I also developed and shipped a workforce management mobile app (React Native + TypeScript) with a web dashboard — published on Google Play and App Store. I deploy and maintain infrastructure on Google Cloud Platform (Cloud Run, Cloud SQL, Firebase).",
+      "At Euforia, I built an AI-powered customer service chatbot (n8n + PHP + PostgreSQL) that handles 2,000+ individual customer interactions per month. I also developed and shipped a mobile app (React Native + TypeScript) with a web dashboard — published on Google Play and App Store. I deploy and maintain infrastructure on Google Cloud Platform (Cloud Run, Cloud SQL, Firebase).",
       "My strongest side is backend development, but I pick up new technologies fast. This portfolio and CMS is built with Next.js and TypeScript, which I learned specifically for this project.",
       "I have been tutoring math and computer science for 7 years — first 2 years privately, then 5 years at a tutoring school. That experience directly led to building TutorHub, a management system that automates the workflows I saw breaking down daily.",
       "I also have a background in cycling, including a Polish Championship medal. The discipline from years of structured training shapes how I approach engineering — consistent effort, measurable progress, and delivering results.",
@@ -34,7 +34,7 @@ const content = {
         period: "Apr 2025 — present",
         role: "Junior Web Developer",
         company: "Euforia SC, Żory",
-        details: "AI chatbot (2,000+ interactions/mo), workforce management app (React Native, Google Play & App Store), GCP infrastructure",
+        details: "AI chatbot (2,000+ interactions/mo), mobile app (React Native, Google Play & App Store), GCP infrastructure",
       },
       {
         period: "Nov 2019 — present",
