@@ -165,7 +165,7 @@ async function seed() {
 
     // Hero section
     { key: "home.hero.name", en: "Adam Szczotka", pl: "Adam Szczotka" },
-    { key: "home.hero.subtitle", en: "Software Engineer & Product Architect", pl: "Inżynier Oprogramowania & Architekt Produktów" },
+    { key: "home.hero.subtitle", en: "Junior Software Developer", pl: "Junior Software Developer" },
     { key: "home.hero.description", en: "Coding since age 11. I build scalable backends, fast mobile apps, and privacy-first web tools. I deliver business value, not just code.", pl: "Koduję od 11. roku życia. Buduję skalowalne backendy, szybkie aplikacje mobilne i bezpieczne narzędzia webowe (Privacy-First). Dowożę wartość biznesową, nie tylko kod." },
     { key: "home.hero.cta_projects", en: "View my projects", pl: "Zobacz moje projekty" },
     { key: "home.hero.cta_github", en: "GitHub", pl: "GitHub" },
@@ -204,7 +204,7 @@ async function seed() {
     { key: "projects.source_code", en: "Source Code", pl: "Kod źródłowy" },
 
     // About page - bio
-    { key: "about.bio_1", en: "I am Adam Szczotka, a Software Engineer and Product Architect. I have been coding since the age of 11. I build scalable backends, fast mobile applications, and privacy-first web tools.", pl: "Jestem Adam Szczotka, Software Engineer i Architekt Produktów. Koduję od 11. roku życia. Buduję skalowalne backendy, szybkie aplikacje mobilne i narzędzia webowe z naciskiem na prywatność." },
+    { key: "about.bio_1", en: "I am Adam Szczotka, a Junior Software Developer. I have been coding since the age of 11. I build scalable backends, fast mobile applications, and privacy-first web tools.", pl: "Jestem Adam Szczotka, Software Engineer i Architekt Produktów. Koduję od 11. roku życia. Buduję skalowalne backendy, szybkie aplikacje mobilne i narzędzia webowe z naciskiem na prywatność." },
     { key: "about.bio_2", en: "My approach is shaped by discipline built through years of competitive sports and a personal transformation that included losing 70 kg. That same discipline drives how I build software: methodically, with attention to detail, and always delivering business value.", pl: "Moje podejście kształtuje dyscyplina zbudowana przez lata sportu wyczynowego i osobista transformacja, w tym utrata 70 kg. Ta sama dyscyplina napędza sposób, w jaki buduję oprogramowanie: metodycznie, z dbałością o szczegóły i zawsze dostarczając wartość biznesową." },
     { key: "about.bio_3", en: "I believe in building tools that respect user privacy. My projects like FormattedAI are 100% client-side with zero cookies and zero tracking. When I write code, I think about the person using it.", pl: "Wierzę w budowanie narzędzi, które szanują prywatność użytkowników. Moje projekty, takie jak FormattedAI, działają w 100% po stronie klienta — zero ciasteczek, zero śledzenia. Kiedy piszę kod, myślę o osobie, która go używa." },
 
@@ -300,14 +300,14 @@ async function seed() {
           position: 0,
           dataEn: {
             title: "Adam Szczotka",
-            subtitle: "Software Engineer & Product Architect",
+            subtitle: "Junior Software Developer",
             description: "Coding since age 11. I build scalable backends, fast mobile apps, and privacy-first web tools. I deliver business value, not just code.",
             buttonText: "View my projects",
             buttonUrl: "#projects",
           },
           dataPl: {
             title: "Adam Szczotka",
-            subtitle: "Inżynier Oprogramowania & Architekt Produktów",
+            subtitle: "Junior Software Developer",
             description: "Koduję od 11. roku życia. Buduję skalowalne backendy, szybkie aplikacje mobilne i bezpieczne narzędzia webowe (Privacy-First). Dowożę wartość biznesową, nie tylko kod.",
             buttonText: "Zobacz moje projekty",
             buttonUrl: "#projects",
@@ -373,12 +373,12 @@ async function seed() {
         dataEn: {
           title: "About",
           description:
-            "Software Engineer & Product Architect. Coding since age 11.",
+            "Junior Software Developer. Coding since age 11.",
         },
         dataPl: {
           title: "O mnie",
           description:
-            "Inżynier Oprogramowania & Architekt Produktów. Koduję od 11. roku życia.",
+            "Junior Software Developer. Koduję od 11. roku życia.",
         },
       },
       {
@@ -386,7 +386,7 @@ async function seed() {
         type: "rich_text",
         position: 1,
         dataEn: {
-          html: "<p>I am Adam Szczotka, a Software Engineer and Product Architect. I have been coding since the age of 11. I build scalable backends, fast mobile applications, and privacy-first web tools.</p><p>My approach is shaped by discipline built through years of competitive sports and a personal transformation that included losing 70 kg. That same discipline drives how I build software: methodically, with attention to detail, and always delivering business value.</p>",
+          html: "<p>I am Adam Szczotka, a Junior Software Developer. I have been coding since the age of 11. I build scalable backends, fast mobile applications, and privacy-first web tools.</p><p>My approach is shaped by discipline built through years of competitive sports and a personal transformation that included losing 70 kg. That same discipline drives how I build software: methodically, with attention to detail, and always delivering business value.</p>",
         },
         dataPl: {
           html: "<p>Jestem Adam Szczotka, Software Engineer i Architekt Produktów. Koduję od 11. roku życia. Buduję skalowalne backendy, szybkie aplikacje mobilne i narzędzia webowe z naciskiem na prywatność.</p><p>Moje podejście kształtuje dyscyplina zbudowana przez lata sportu wyczynowego i osobista transformacja, w tym utrata 70 kg. Ta sama dyscyplina napędza sposób, w jaki buduję oprogramowanie: metodycznie, z dbałością o szczegóły i zawsze dostarczając wartość biznesową.</p>",
