@@ -13,39 +13,39 @@ const PROJECT_SLIDES: Record<string, { src: string; alt: string; title: string; 
   formattedai: [
     {
       src: "/uploads/formatted_ai_main.avif",
-      alt: "FormattedAI - Main dashboard",
-      title: "Dashboard",
-      description: "Landing page with all available tools and quick access navigation.",
+      alt: "FormattedAI - Homepage",
+      title: "Homepage",
+      description: "Landing page with all available tools. Built with vanilla HTML/SCSS/JS, no frameworks.",
     },
     {
-      src: "/uploads/formatted_ai_cssmini.avif",
-      alt: "FormattedAI - CSS Minifier",
-      title: "CSS Minifier",
-      description: "Strip comments, collapse whitespace, and optimize CSS output with real-time size comparison.",
-    },
-    {
-      src: "/uploads/formatted_jsminifeir.avif",
-      alt: "FormattedAI - JS Minifier",
-      title: "JavaScript Minifier",
-      description: "Minify and beautify JavaScript and JSON. Handles ES6+ syntax with instant size comparison.",
+      src: "/uploads/formatted_ai_md.avif",
+      alt: "FormattedAI - Markdown Formatter",
+      title: "Markdown Formatter",
+      description: "Convert AI-generated markdown (ChatGPT, Claude) into formatted text. Export to HTML, DOCX, or copy to Google Docs.",
     },
     {
       src: "/uploads/formatted_ai_avif.avif",
       alt: "FormattedAI - AVIF Converter",
-      title: "AVIF/WebP Converter",
-      description: "Client-side image compression via WebAssembly. Convert to modern formats without any upload.",
+      title: "AVIF Converter",
+      description: "Client-side image compression via WebAssembly (jSquash). Batch convert PNG/JPG/WebP to AVIF with ZIP download.",
     },
     {
-      src: "/uploads/formatted_ai_md.avif",
-      alt: "FormattedAI - Markdown Editor",
-      title: "Markdown Editor",
-      description: "Write and preview Markdown with live rendering, GFM support, and HTML export.",
+      src: "/uploads/formatted_ai_cssmini.avif",
+      alt: "FormattedAI - CSS Minifier",
+      title: "CSS Minifier & Formatter",
+      description: "Minify or beautify CSS using CSSO. Real-time size comparison, runs entirely in the browser.",
+    },
+    {
+      src: "/uploads/formatted_jsminifeir.avif",
+      alt: "FormattedAI - JS Minifier",
+      title: "JS Minifier & Formatter",
+      description: "Minify or beautify JavaScript using Terser. Handles ES6+ syntax, instant output with size savings.",
     },
     {
       src: "/uploads/formatted_ai_seogeo.avif",
-      alt: "FormattedAI - SEO/GEO Analyzer",
-      title: "SEO/GEO Analyzer",
-      description: "Generate and validate SEO metadata, Open Graph tags, and AI crawler discoverability.",
+      alt: "FormattedAI - SEO/GEO Tag Generator",
+      title: "SEO & GEO Tag Generator",
+      description: "Generate meta tags, Open Graph, Twitter Cards, JSON-LD, llms.txt, and AI-optimized robots.txt for search and AI crawlers.",
     },
   ],
 };
@@ -173,20 +173,43 @@ export default async function ProjectPage({ params }: Props) {
       {/* Content */}
       {project.content && (() => {
         const slides = PROJECT_SLIDES[project.slug];
-        if (slides && project.content.includes("<!--slider-->")) {
-          const [before, after] = project.content.split("<!--slider-->");
+        const markerRegex = /<div[^>]*data-slider[^>]*><\/div>/;
+        const match = slides ? project.content.match(markerRegex) : null;
+        if (slides && match) {
+          const idx = project.content.indexOf(match[0]);
+          const before = project.content.slice(0, idx);
+          const after = project.content.slice(idx + match[0].length);
           return (
             <div className="mx-auto max-w-3xl px-6 py-16">
               <div
                 className="prose prose-neutral dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: before }}
               />
-              <div className="my-10 not-prose">
+              <div className="my-10">
                 <ImageSlider slides={slides} />
               </div>
               <div
                 className="prose prose-neutral dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: after }}
+              />
+            </div>
+          );
+        }
+        // Fallback: if no marker but slides exist, inject after <h2>Tools</h2>
+        if (slides && project.content.includes("<h2>Tools</h2>")) {
+          const parts = project.content.split("<h2>Tools</h2>");
+          return (
+            <div className="mx-auto max-w-3xl px-6 py-16">
+              <div
+                className="prose prose-neutral dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: parts[0] + "<h2>Tools</h2>" }}
+              />
+              <div className="my-10">
+                <ImageSlider slides={slides} />
+              </div>
+              <div
+                className="prose prose-neutral dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: parts.slice(1).join("") }}
               />
             </div>
           );
