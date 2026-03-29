@@ -51,14 +51,15 @@ export function HeroBlock({ data }: { data: HeroData }) {
               </a>
             </div>
           </div>
-          <div className="flex-[2] flex justify-center">
-            <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-sm border border-border bg-surface overflow-hidden">
+          <div className="flex-[2] flex justify-end">
+            <div className="w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-sm border border-border bg-surface overflow-hidden shadow-lg shadow-black/10 dark:shadow-black/30">
               <Image
                 src="/uploads/hero-adam.avif"
                 alt="Adam Szczotka"
-                width={224}
-                height={224}
+                width={320}
+                height={320}
                 className="w-full h-full object-cover"
+                style={{ objectPosition: "center 30%" }}
                 priority
               />
             </div>
