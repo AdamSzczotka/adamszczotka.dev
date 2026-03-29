@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "allow": [
       "Bash(cd:*)",
@@ -74,7 +77,13 @@
       "Bash(docker exec:*)",
       "Bash(taskkill:*)",
       "Bash(find src/app/[locale] -type f)",
-      "Bash(ls src/components/layout/locale-*.tsx)"
+      "Bash(ls src/components/layout/locale-*.tsx)",
+      "Bash(xargs grep:*)",
+      "Bash(ls:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npx dotenv:*)",
+      "Bash(ls \"C:/Users/Euforia/Documents/GitHub/adamszczotka.dev/src/app/\\(public\\)/\")",
+      "Bash(ls \"src/app/[locale]/privacy/page.tsx\" \"src/app/\\(public\\)/privacy/page.tsx\")"
     ]
   }
 }

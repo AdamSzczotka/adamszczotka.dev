@@ -1,11 +1,15 @@
 import { db } from "@/lib/db";
-import { posts } from "@/lib/db/schema";
-import { desc, eq, and } from "drizzle-orm";
-import Link from "next/link";
+import { posts, postTags, tags, categories } from "@/lib/db/schema";
+import { desc, eq, and, sql } from "drizzle-orm";
 import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import type { Metadata } from "next";
+import { BlogHeader } from "@/components/blog/blog-header";
+import { CategoryFilter } from "@/components/blog/category-filter";
+import { BlogGrid } from "@/components/blog/blog-grid";
+import { BlogCard } from "@/components/blog/blog-card";
+import { Suspense } from "react";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -13,6 +17,7 @@ export function generateStaticParams() {
 
 interface Props {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ category?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -23,67 +28,121 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function BlogPage({ params }: Props) {
+export default async function BlogPage({ params, searchParams }: Props) {
   const { locale } = await params;
+  const { category } = await searchParams;
   const currentLocale = locale as Locale;
   const translations = await getTranslations(currentLocale);
+  const localePath = currentLocale === "pl" ? "/pl" : "";
+
+  // Resolve category filter
+  let categoryId: number | undefined;
+  if (category) {
+    const [cat] = await db
+      .select({ id: categories.id })
+      .from(categories)
+      .where(eq(categories.slug, category))
+      .limit(1);
+    if (cat) categoryId = cat.id;
+  }
+
+  // Query posts with conditions
+  const conditions = [
+    eq(posts.locale, currentLocale),
+    eq(posts.isPublished, true),
+  ];
+  if (categoryId !== undefined) {
+    conditions.push(eq(posts.categoryId, categoryId));
+  }
 
   const publishedPosts = await db
     .select()
     .from(posts)
-    .where(
-      and(
-        eq(posts.locale, currentLocale),
-        eq(posts.category, "TECH"),
-        eq(posts.isPublished, true),
-      ),
-    )
-    .orderBy(desc(posts.createdAt));
+    .where(and(...conditions))
+    .orderBy(desc(posts.publishedAt), desc(posts.createdAt));
 
-  const localePath = currentLocale === "pl" ? "/pl" : "";
-  const dateLocale = currentLocale === "pl" ? "pl-PL" : "en-US";
+  // Fetch tags for all posts
+  const postIds = publishedPosts.map((p) => p.id);
+  let tagsByPostId: Record<number, { id: number; name: string }[]> = {};
+
+  if (postIds.length > 0) {
+    const tagRows = await db
+      .select({
+        postId: postTags.postId,
+        tagId: tags.id,
+        tagName: tags.name,
+      })
+      .from(postTags)
+      .innerJoin(tags, eq(postTags.tagId, tags.id))
+      .where(
+        sql`${postTags.postId} IN (${sql.join(
+          postIds.map((id) => sql`${id}`),
+          sql`, `,
+        )})`,
+      );
+
+    tagsByPostId = tagRows.reduce(
+      (acc, row) => {
+        if (!acc[row.postId]) acc[row.postId] = [];
+        acc[row.postId].push({ id: row.tagId, name: row.tagName });
+        return acc;
+      },
+      {} as Record<number, { id: number; name: string }[]>,
+    );
+  }
+
+  // Fetch all categories for name lookup
+  const allCategories = await db.select().from(categories);
+  const categoryMap = new Map(allCategories.map((c) => [c.id, c]));
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-24">
-      <h1 className="text-3xl font-medium tracking-tight">
-        {t(translations, "blog.title", "Blog")}
-      </h1>
-      <p className="mt-2 text-muted">
-        {t(translations, "blog.description", "Thoughts on engineering, architecture, and building products.")}
-      </p>
+    <>
+      <BlogHeader
+        title={t(translations, "blog.title", "Blog")}
+        description={t(
+          translations,
+          "blog.description",
+          "Thoughts on engineering, architecture, and building products.",
+        )}
+      />
 
-      <div className="mt-12 divide-y divide-border">
-        {publishedPosts.map((post) => (
-          <Link
-            key={post.id}
-            href={`${localePath}/blog/${post.slug}`}
-            className="block py-6 group"
-          >
-            <div className="flex items-baseline justify-between gap-4">
-              <h2 className="font-medium group-hover:text-accent transition-colors">
-                {post.title}
-              </h2>
-              <time className="shrink-0 text-xs text-muted font-mono">
-                {post.createdAt.toLocaleDateString(dateLocale, {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </time>
-            </div>
-            {post.excerpt && (
-              <p className="mt-2 text-sm text-muted leading-relaxed">
-                {post.excerpt}
-              </p>
-            )}
-          </Link>
-        ))}
-        {publishedPosts.length === 0 && (
-          <p className="py-6 text-sm text-muted">
+      <div className="mx-auto max-w-5xl px-6 pb-24">
+        <div className="mb-8">
+          <Suspense>
+            <CategoryFilter basePath={`${localePath}/blog`} />
+          </Suspense>
+        </div>
+
+        {publishedPosts.length === 0 ? (
+          <p className="py-12 text-sm text-[var(--muted)]">
             {t(translations, "home.blog.empty", "No posts yet.")}
           </p>
+        ) : (
+          <BlogGrid>
+            {publishedPosts.map((post, index) => {
+              const cat = post.categoryId
+                ? categoryMap.get(post.categoryId)
+                : null;
+              const categoryName = cat
+                ? currentLocale === "pl"
+                  ? cat.namePl
+                  : cat.nameEn
+                : undefined;
+
+              return (
+                <BlogCard
+                  key={post.id}
+                  post={post}
+                  tags={tagsByPostId[post.id] || []}
+                  locale={currentLocale}
+                  featured={index === 0}
+                  categoryName={categoryName}
+                />
+              );
+            })}
+          </BlogGrid>
         )}
       </div>
-    </section>
+    </>
   );
 }

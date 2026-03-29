@@ -193,3 +193,83 @@ body {
 .btn-spring:active {
   transform: translateY(0) scale(0.98);
 }
+
+/* -- Blog prose overrides -- */
+.prose {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 6rem;
+}
+.prose h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  scroll-margin-top: 6rem;
+}
+.prose code:not(pre code) {
+  font-family: var(--font-jetbrains-mono);
+  font-size: 0.875em;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.15em 0.35em;
+  font-weight: 400;
+}
+.prose pre {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-family: var(--font-jetbrains-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.prose blockquote {
+  border-left-width: 2px;
+  border-left-color: var(--accent);
+  font-style: normal;
+  color: var(--muted);
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.prose a:hover {
+  border-bottom-color: var(--accent);
+}
+.prose img {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.prose hr {
+  border-color: var(--border);
+}
+
+/* -- Card neumorphic -- */
+.card-neumorphic {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.02);
+}
+.dark .card-neumorphic {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* -- Cover image dark mode -- */
+.dark .prose img,
+.dark .cover-image {
+  opacity: 0.9;
+}
