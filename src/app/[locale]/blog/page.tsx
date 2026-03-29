@@ -75,13 +75,14 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const translations = await getTranslations(currentLocale);
   const localePath = currentLocale === "pl" ? "/pl" : "";
 
-  // Resolve category filter
+  // Resolve category filter -- default to "tech" if no param
+  const activeCategory = category || "tech";
   let categoryId: number | undefined;
-  if (category) {
+  if (activeCategory !== "all") {
     const [cat] = await db
       .select({ id: categories.id })
       .from(categories)
-      .where(eq(categories.slug, category))
+      .where(eq(categories.slug, activeCategory))
       .limit(1);
     if (cat) categoryId = cat.id;
   }

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 const CATEGORIES = [
-  { slug: "", label: "All" },
+  { slug: "all", label: "All" },
   { slug: "tech", label: "Tech" },
   { slug: "personal", label: "Personal" },
 ];
@@ -15,15 +15,13 @@ interface CategoryFilterProps {
 
 export function CategoryFilter({ basePath }: CategoryFilterProps) {
   const searchParams = useSearchParams();
-  const active = searchParams.get("category") || "";
+  const active = searchParams.get("category") || "tech";
 
   return (
     <div className="flex flex-wrap gap-2">
       {CATEGORIES.map((cat) => {
         const isActive = cat.slug === active;
-        const href = cat.slug
-          ? `${basePath}?category=${cat.slug}`
-          : basePath;
+        const href = `${basePath}?category=${cat.slug}`;
 
         return (
           <Link
