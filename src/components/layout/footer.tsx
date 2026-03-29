@@ -20,8 +20,8 @@ export function Footer() {
   const ft = isPolish ? footerTranslations.pl : footerTranslations.en;
   return (
     <footer className="border-t border-border mt-auto bg-surface">
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-muted">
+      <div className="mx-auto max-w-5xl px-6 py-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted">
           <span>&copy; 2026 Adam Szczotka</span>
 
           <div className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-green-500/20 bg-green-500/5 text-green-500">

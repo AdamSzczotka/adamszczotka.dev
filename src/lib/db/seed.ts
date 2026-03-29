@@ -230,6 +230,25 @@ async function seed() {
     { key: "admin.block", en: "block", pl: "blok" },
     { key: "admin.blocks", en: "blocks", pl: "bloków" },
     { key: "admin.on", en: "on", pl: "przy" },
+
+    // Privacy Policy
+    { key: "privacy.title", en: "Privacy Policy", pl: "Polityka prywatności" },
+    { key: "privacy.last_updated", en: "Last updated: April 2026", pl: "Ostatnia aktualizacja: kwiecień 2026" },
+    { key: "privacy.intro", en: "This website respects your privacy. Here is exactly what data is collected and why.", pl: "Ta strona szanuje Twoją prywatność. Oto dokładnie jakie dane są zbierane i dlaczego." },
+    { key: "privacy.hosting_title", en: "Hosting & Infrastructure", pl: "Hosting i infrastruktura" },
+    { key: "privacy.hosting_text", en: "This site is hosted on Vercel. Vercel may collect standard server logs (IP address, browser type, access times) for operational purposes. No additional tracking or analytics services are used.", pl: "Strona jest hostowana na Vercel. Vercel może zbierać standardowe logi serwera (adres IP, typ przeglądarki, czas dostępu) w celach operacyjnych. Nie są używane żadne dodatkowe usługi śledzenia ani analityki." },
+    { key: "privacy.cookies_title", en: "Cookies", pl: "Ciasteczka (cookies)" },
+    { key: "privacy.cookies_text", en: "This site uses only essential cookies: a theme preference (light/dark) and a language preference (EN/PL). No tracking cookies, no analytics cookies, no third-party cookies.", pl: "Ta strona używa wyłącznie niezbędnych ciasteczek: preferencja motywu (jasny/ciemny) i preferencja języka (EN/PL). Brak ciasteczek śledzących, analitycznych ani zewnętrznych." },
+    { key: "privacy.comments_title", en: "Comments", pl: "Komentarze" },
+    { key: "privacy.comments_text", en: "If you leave a comment on a blog post, your name and comment text are stored in the database. Comments are moderated before publication. No email address is required or collected.", pl: "Jeśli zostawisz komentarz pod wpisem na blogu, Twoje imię i treść komentarza są zapisywane w bazie danych. Komentarze są moderowane przed publikacją. Adres e-mail nie jest wymagany ani zbierany." },
+    { key: "privacy.auth_title", en: "Authentication", pl: "Uwierzytelnianie" },
+    { key: "privacy.auth_text", en: "The admin panel uses GitHub OAuth for authentication. No user passwords are stored. Authentication data is limited to session management for authorized administrators only.", pl: "Panel administracyjny używa GitHub OAuth do uwierzytelniania. Żadne hasła użytkowników nie są przechowywane. Dane uwierzytelniania ograniczają się do zarządzania sesjami wyłącznie dla autoryzowanych administratorów." },
+    { key: "privacy.third_party_title", en: "Third-party Services", pl: "Usługi zewnętrzne" },
+    { key: "privacy.third_party_text", en: "This site does not use Google Analytics, Facebook Pixel, or any other tracking service. External links (GitHub, LinkedIn) are standard hyperlinks with no tracking parameters.", pl: "Ta strona nie korzysta z Google Analytics, Facebook Pixel ani żadnych innych usług śledzących. Linki zewnętrzne (GitHub, LinkedIn) to standardowe odnośniki bez parametrów śledzenia." },
+    { key: "privacy.rights_title", en: "Your Rights", pl: "Twoje prawa" },
+    { key: "privacy.rights_text", en: "You can request deletion of any comment you have made by contacting me directly. Since no personal data beyond comments is collected, there is nothing else to delete.", pl: "Możesz poprosić o usunięcie komentarza, kontaktując się ze mną bezpośrednio. Ponieważ nie są zbierane żadne dane osobowe poza komentarzami, nie ma nic więcej do usunięcia." },
+    { key: "privacy.contact_title", en: "Contact", pl: "Kontakt" },
+    { key: "privacy.contact_text", en: "If you have questions about this privacy policy, contact me at", pl: "Jeśli masz pytania dotyczące tej polityki prywatności, skontaktuj się ze mną pod adresem" },
   ];
 
   const insertedTranslations = await db
