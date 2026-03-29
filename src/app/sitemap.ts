@@ -5,6 +5,24 @@ import { eq } from "drizzle-orm";
 
 const BASE_URL = "https://adamszczotka.dev";
 
+function withAlternates(
+  url: string,
+  enPath: string,
+  plPath: string,
+  opts: Partial<MetadataRoute.Sitemap[number]> = {},
+): MetadataRoute.Sitemap[number] {
+  return {
+    url,
+    alternates: {
+      languages: {
+        en: `${BASE_URL}${enPath}`,
+        pl: `${BASE_URL}${plPath}`,
+      },
+    },
+    ...opts,
+  };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const publishedPosts = await db
     .select({ slug: posts.slug, locale: posts.locale, createdAt: posts.createdAt })
@@ -15,33 +33,74 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select({ slug: projects.slug, locale: projects.locale, createdAt: projects.createdAt })
     .from(projects);
 
-  const staticPages = [
-    { url: BASE_URL, changeFrequency: "weekly" as const, priority: 1.0 },
-    { url: `${BASE_URL}/en`, changeFrequency: "weekly" as const, priority: 1.0 },
-    { url: `${BASE_URL}/pl`, changeFrequency: "weekly" as const, priority: 1.0 },
-    { url: `${BASE_URL}/en/blog`, changeFrequency: "daily" as const, priority: 0.8 },
-    { url: `${BASE_URL}/pl/blog`, changeFrequency: "daily" as const, priority: 0.8 },
-    { url: `${BASE_URL}/en/projects`, changeFrequency: "weekly" as const, priority: 0.8 },
-    { url: `${BASE_URL}/pl/projects`, changeFrequency: "weekly" as const, priority: 0.8 },
-    { url: `${BASE_URL}/en/about`, changeFrequency: "monthly" as const, priority: 0.8 },
-    { url: `${BASE_URL}/pl/about`, changeFrequency: "monthly" as const, priority: 0.8 },
-    { url: `${BASE_URL}/en/privacy`, changeFrequency: "monthly" as const, priority: 0.6 },
-    { url: `${BASE_URL}/pl/privacy`, changeFrequency: "monthly" as const, priority: 0.6 },
+  const staticPages: MetadataRoute.Sitemap = [
+    withAlternates(`${BASE_URL}/en`, "/en", "/pl", {
+      changeFrequency: "weekly",
+      priority: 1.0,
+    }),
+    withAlternates(`${BASE_URL}/pl`, "/en", "/pl", {
+      changeFrequency: "weekly",
+      priority: 1.0,
+    }),
+    withAlternates(`${BASE_URL}/en/blog`, "/en/blog", "/pl/blog", {
+      changeFrequency: "daily",
+      priority: 0.8,
+    }),
+    withAlternates(`${BASE_URL}/pl/blog`, "/en/blog", "/pl/blog", {
+      changeFrequency: "daily",
+      priority: 0.8,
+    }),
+    withAlternates(`${BASE_URL}/en/projects`, "/en/projects", "/pl/projects", {
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }),
+    withAlternates(`${BASE_URL}/pl/projects`, "/en/projects", "/pl/projects", {
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }),
+    withAlternates(`${BASE_URL}/en/about`, "/en/about", "/pl/about", {
+      changeFrequency: "monthly",
+      priority: 0.8,
+    }),
+    withAlternates(`${BASE_URL}/pl/about`, "/en/about", "/pl/about", {
+      changeFrequency: "monthly",
+      priority: 0.8,
+    }),
+    withAlternates(`${BASE_URL}/en/privacy`, "/en/privacy", "/pl/privacy", {
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }),
+    withAlternates(`${BASE_URL}/pl/privacy`, "/en/privacy", "/pl/privacy", {
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }),
   ];
 
-  const postEntries: MetadataRoute.Sitemap = publishedPosts.map((post) => ({
-    url: `${BASE_URL}/${post.locale}/blog/${post.slug}`,
-    lastModified: post.createdAt,
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
-  }));
+  const postEntries: MetadataRoute.Sitemap = publishedPosts.map((post) =>
+    withAlternates(
+      `${BASE_URL}/${post.locale}/blog/${post.slug}`,
+      `/en/blog/${post.slug}`,
+      `/pl/blog/${post.slug}`,
+      {
+        lastModified: post.createdAt,
+        changeFrequency: "weekly",
+        priority: 0.6,
+      },
+    ),
+  );
 
-  const projectEntries: MetadataRoute.Sitemap = allProjects.map((project) => ({
-    url: `${BASE_URL}/${project.locale}/projects/${project.slug}`,
-    lastModified: project.createdAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
+  const projectEntries: MetadataRoute.Sitemap = allProjects.map((project) =>
+    withAlternates(
+      `${BASE_URL}/${project.locale}/projects/${project.slug}`,
+      `/en/projects/${project.slug}`,
+      `/pl/projects/${project.slug}`,
+      {
+        lastModified: project.createdAt,
+        changeFrequency: "monthly",
+        priority: 0.6,
+      },
+    ),
+  );
 
   return [...staticPages, ...postEntries, ...projectEntries];
 }

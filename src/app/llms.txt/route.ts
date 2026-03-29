@@ -25,11 +25,11 @@ export async function GET() {
     .orderBy(desc(projects.createdAt));
 
   const blogSection = publishedPosts
-    .map((post) => `- [${post.title}](${SITE_URL}/blog/${post.slug}): ${post.excerpt ?? ""}`)
+    .map((post) => `- [${post.title}](${SITE_URL}/en/blog/${post.slug}): ${post.excerpt ?? ""}`)
     .join("\n");
 
   const projectSection = allProjects
-    .map((project) => `- [${project.title}](${SITE_URL}/projects/${project.slug}): ${project.description ?? ""}`)
+    .map((project) => `- [${project.title}](${SITE_URL}/en/projects/${project.slug}): ${project.description ?? ""}`)
     .join("\n");
 
   const content = `# adamszczotka.dev
@@ -43,8 +43,8 @@ ${blogSection || "No posts published yet."}
 ${projectSection || "No projects listed yet."}
 
 ## Pages
-- [About](${SITE_URL}/about): Background, skills, experience
-- [Privacy Policy](${SITE_URL}/privacy): Privacy policy and data handling
+- [About](${SITE_URL}/en/about): Background, skills, experience
+- [Privacy Policy](${SITE_URL}/en/privacy): Privacy policy and data handling
 `;
 
   return new Response(content, {

@@ -45,6 +45,12 @@ export function blogPostJsonLd(post: PostForJsonLd): object {
       name: "Adam Szczotka",
       url: SITE_URL,
     },
+    publisher: {
+      "@type": "Person",
+      name: "Adam Szczotka",
+      url: SITE_URL,
+    },
+    inLanguage: post.locale === "pl" ? "pl-PL" : "en-US",
   };
 }
 
@@ -71,6 +77,50 @@ export function websiteJsonLd(): object {
       name: "Adam Szczotka",
       url: SITE_URL,
     },
+  };
+}
+
+export function collectionPageJsonLd(
+  name: string,
+  description: string,
+  url: string,
+): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url,
+    author: {
+      "@type": "Person",
+      name: "Adam Szczotka",
+      url: SITE_URL,
+    },
+  };
+}
+
+export function creativeWorkJsonLd(project: {
+  title: string;
+  description?: string | null;
+  url: string;
+  githubUrl?: string | null;
+  liveUrl?: string | null;
+}): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.description || "",
+    url: project.url,
+    author: {
+      "@type": "Person",
+      name: "Adam Szczotka",
+      url: SITE_URL,
+    },
+    ...(project.liveUrl ? { mainEntityOfPage: project.liveUrl } : {}),
+    ...(project.githubUrl
+      ? { codeRepository: project.githubUrl }
+      : {}),
   };
 }
 

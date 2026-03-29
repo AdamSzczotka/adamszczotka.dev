@@ -33,9 +33,11 @@ export function generatePostMetadata(
     ogImage = post.ogImage.startsWith("http")
       ? post.ogImage
       : `${SITE_URL}${post.ogImage}`;
-  } else if (post.coverImage) {
+  } else if (post.coverImage && !post.coverImage.includes(".")) {
+    // New basePath format (no extension) — OG variant exists
     ogImage = `${SITE_URL}${post.coverImage}-og.jpg`;
   } else {
+    // Old format with extension or no cover — use dynamic OG
     ogImage = `${SITE_URL}/api/og?title=${encodeURIComponent(post.title)}`;
   }
 
@@ -47,6 +49,7 @@ export function generatePostMetadata(
       languages: {
         en: `${SITE_URL}/en/blog/${post.slug}`,
         pl: `${SITE_URL}/pl/blog/${post.slug}`,
+        "x-default": `${SITE_URL}/en/blog/${post.slug}`,
       },
     },
     openGraph: {
@@ -54,8 +57,9 @@ export function generatePostMetadata(
       title: post.title,
       description,
       url: canonicalUrl,
+      locale: locale === "pl" ? "pl_PL" : "en_US",
       publishedTime: (post.publishedAt || post.createdAt).toISOString(),
-      images: [{ url: ogImage }],
+      images: [{ url: ogImage, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
@@ -86,6 +90,7 @@ export function generatePageMetadata(
       languages: {
         en: `${SITE_URL}/en/${page.slug}`,
         pl: `${SITE_URL}/pl/${page.slug}`,
+        "x-default": `${SITE_URL}/en/${page.slug}`,
       },
     },
     openGraph: {
@@ -93,9 +98,12 @@ export function generatePageMetadata(
       title: page.title,
       description: description || "",
       url: canonicalUrl,
+      locale: locale === "pl" ? "pl_PL" : "en_US",
       images: [
         {
           url: `${SITE_URL}/api/og?title=${encodeURIComponent(page.title)}`,
+          width: 1200,
+          height: 630,
         },
       ],
     },
@@ -103,6 +111,9 @@ export function generatePageMetadata(
       card: "summary_large_image",
       title: page.title,
       description: description || "",
+      images: [
+        `${SITE_URL}/api/og?title=${encodeURIComponent(page.title)}`,
+      ],
     },
     robots: {
       index: true,
