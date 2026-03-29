@@ -1,5 +1,13 @@
 import { db } from "./index";
-import { projects, tags, projectTags, translations, pages, pageBlocks } from "./schema";
+import {
+  projects,
+  tags,
+  projectTags,
+  translations,
+  pages,
+  pageBlocks,
+  categories,
+} from "./schema";
 import { eq, and } from "drizzle-orm";
 
 async function seed() {
@@ -22,6 +30,19 @@ async function seed() {
 
   const insertedTags = await db.insert(tags).values(tagData).onConflictDoNothing().returning();
   console.log(`Inserted ${insertedTags.length} tags`);
+
+  // ── Categories ─────────────────────────────────────────────────────
+  const categoryData = [
+    { slug: "tech", nameEn: "Tech", namePl: "Tech", position: 0 },
+    { slug: "personal", nameEn: "Personal", namePl: "Osobiste", position: 1 },
+  ];
+
+  const insertedCategories = await db
+    .insert(categories)
+    .values(categoryData)
+    .onConflictDoNothing()
+    .returning();
+  console.log(`Inserted ${insertedCategories.length} categories`);
 
   // FormattedAI — insert or fetch existing
   let [formattedai] = await db.select().from(projects).where(and(eq(projects.slug, "formattedai"), eq(projects.locale, "en")));
@@ -330,6 +351,103 @@ async function seed() {
     console.log("Seeded: Homepage with 5 page blocks");
   } else {
     console.log("Homepage already exists, skipping page blocks");
+  }
+
+  // ── About Page ─────────────────────────────────────────────────────
+  const [aboutPage] = await db
+    .insert(pages)
+    .values({ slug: "about", title: "About" })
+    .onConflictDoNothing()
+    .returning();
+
+  if (aboutPage) {
+    await db.insert(pageBlocks).values([
+      {
+        pageId: aboutPage.id,
+        type: "page_header",
+        position: 0,
+        dataEn: {
+          title: "About",
+          description:
+            "Software Engineer & Product Architect. Coding since age 11.",
+        },
+        dataPl: {
+          title: "O mnie",
+          description:
+            "Inżynier Oprogramowania & Architekt Produktów. Koduję od 11. roku życia.",
+        },
+      },
+      {
+        pageId: aboutPage.id,
+        type: "rich_text",
+        position: 1,
+        dataEn: {
+          html: "<p>I am Adam Szczotka, a Software Engineer and Product Architect. I have been coding since the age of 11. I build scalable backends, fast mobile applications, and privacy-first web tools.</p><p>My approach is shaped by discipline built through years of competitive sports and a personal transformation that included losing 70 kg. That same discipline drives how I build software: methodically, with attention to detail, and always delivering business value.</p>",
+        },
+        dataPl: {
+          html: "<p>Jestem Adam Szczotka, Software Engineer i Architekt Produktów. Koduję od 11. roku życia. Buduję skalowalne backendy, szybkie aplikacje mobilne i narzędzia webowe z naciskiem na prywatność.</p><p>Moje podejście kształtuje dyscyplina zbudowana przez lata sportu wyczynowego i osobista transformacja, w tym utrata 70 kg. Ta sama dyscyplina napędza sposób, w jaki buduję oprogramowanie: metodycznie, z dbałością o szczegóły i zawsze dostarczając wartość biznesową.</p>",
+        },
+      },
+      {
+        pageId: aboutPage.id,
+        type: "cta",
+        position: 2,
+        dataEn: {
+          heading: "Want to work together?",
+          text: "I am open to interesting B2B projects, consulting, and architecture discussions.",
+          buttonText: "Get in touch",
+          email: "contact@adamszczotka.dev",
+        },
+        dataPl: {
+          heading: "Chcesz współpracować?",
+          text: "Jestem otwarty na ciekawe projekty B2B, konsulting i dyskusje o architekturze.",
+          buttonText: "Skontaktuj się",
+          email: "contact@adamszczotka.dev",
+        },
+      },
+    ]);
+    console.log("Seeded: About page with 3 blocks");
+  } else {
+    console.log("About page already exists, skipping");
+  }
+
+  // ── Privacy Page ───────────────────────────────────────────────────
+  const [privacyPage] = await db
+    .insert(pages)
+    .values({ slug: "privacy", title: "Privacy Policy" })
+    .onConflictDoNothing()
+    .returning();
+
+  if (privacyPage) {
+    await db.insert(pageBlocks).values([
+      {
+        pageId: privacyPage.id,
+        type: "page_header",
+        position: 0,
+        dataEn: {
+          title: "Privacy Policy",
+          description: "Last updated: April 2026",
+        },
+        dataPl: {
+          title: "Polityka Prywatności",
+          description: "Ostatnia aktualizacja: kwiecień 2026",
+        },
+      },
+      {
+        pageId: privacyPage.id,
+        type: "rich_text",
+        position: 1,
+        dataEn: {
+          html: "<p>This website respects your privacy. Here is exactly what data is collected and why.</p><h2>Hosting & Infrastructure</h2><p>This site is hosted on Vercel. Vercel may collect standard server logs (IP address, browser type, access times) for operational purposes. No additional tracking or analytics services are used.</p><h2>Cookies</h2><p>This site uses only essential cookies: a theme preference (light/dark) and a language preference (EN/PL). No tracking cookies, no analytics cookies, no third-party cookies.</p><h2>Comments</h2><p>If you leave a comment on a blog post, your name and comment text are stored in the database. Comments are moderated before publication. No email address is required or collected.</p><h2>Authentication</h2><p>The admin panel uses GitHub OAuth for authentication. No user passwords are stored. Authentication data is limited to session management for authorized administrators only.</p><h2>Your Rights</h2><p>You can request deletion of any comment you have made by contacting me directly. Since no personal data beyond comments is collected, there is nothing else to delete.</p>",
+        },
+        dataPl: {
+          html: "<p>Ta strona szanuje Twoją prywatność. Oto dokładnie jakie dane są zbierane i dlaczego.</p><h2>Hosting i infrastruktura</h2><p>Strona jest hostowana na Vercel. Vercel może zbierać standardowe logi serwera (adres IP, typ przeglądarki, czas dostępu) w celach operacyjnych. Nie są używane żadne dodatkowe usługi śledzenia ani analityki.</p><h2>Ciasteczka (cookies)</h2><p>Ta strona używa wyłącznie niezbędnych ciasteczek: preferencja motywu (jasny/ciemny) i preferencja języka (EN/PL). Brak ciasteczek śledzących, analitycznych ani zewnętrznych.</p><h2>Komentarze</h2><p>Jeśli zostawisz komentarz pod wpisem na blogu, Twoje imię i treść komentarza są zapisywane w bazie danych. Komentarze są moderowane przed publikacją. Adres e-mail nie jest wymagany ani zbierany.</p><h2>Uwierzytelnianie</h2><p>Panel administracyjny używa GitHub OAuth do uwierzytelniania. Żadne hasła użytkowników nie są przechowywane. Dane uwierzytelniania ograniczają się do zarządzania sesjami wyłącznie dla autoryzowanych administratorów.</p><h2>Twoje prawa</h2><p>Możesz poprosić o usunięcie komentarza, kontaktując się ze mną bezpośrednio. Ponieważ nie są zbierane żadne dane osobowe poza komentarzami, nie ma nic więcej do usunięcia.</p>",
+        },
+      },
+    ]);
+    console.log("Seeded: Privacy page with 2 blocks");
+  } else {
+    console.log("Privacy page already exists, skipping");
   }
 
   process.exit(0);
