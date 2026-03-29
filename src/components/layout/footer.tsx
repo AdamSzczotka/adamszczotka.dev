@@ -1,6 +1,23 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { LocaleLink } from "./locale-link";
 
+const footerTranslations = {
+  en: {
+    status: "All systems operational",
+    privacy: "Privacy",
+  },
+  pl: {
+    status: "Wszystkie systemy sprawne",
+    privacy: "Prywatnosc",
+  },
+};
+
 export function Footer() {
+  const pathname = usePathname();
+  const isPolish = pathname.startsWith("/pl");
+  const ft = isPolish ? footerTranslations.pl : footerTranslations.en;
   return (
     <footer className="border-t border-border mt-auto bg-surface">
       <div className="mx-auto max-w-5xl px-6 py-10">
@@ -9,7 +26,7 @@ export function Footer() {
 
           <div className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-green-500/20 bg-green-500/5 text-green-500">
             <span className="pulse-dot" />
-            All systems operational
+            {ft.status}
           </div>
 
           <div className="flex items-center gap-4 text-xs">
@@ -41,7 +58,7 @@ export function Footer() {
               href="/privacy"
               className="hover:text-foreground transition-colors"
             >
-              Privacy
+              {ft.privacy}
             </LocaleLink>
           </div>
         </div>

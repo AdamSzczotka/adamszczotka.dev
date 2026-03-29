@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
+import { getTranslations, t } from "@/lib/i18n/get-translations";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -54,6 +55,8 @@ export default async function ProjectPage({ params }: Props) {
 
   if (!project) notFound();
 
+  const translations = await getTranslations(currentLocale);
+
   return (
     <article className="mx-auto max-w-3xl px-6 py-24">
       <h1 className="text-3xl font-medium tracking-tight">{project.title}</h1>
@@ -69,7 +72,7 @@ export default async function ProjectPage({ params }: Props) {
             rel="noopener noreferrer"
             className="border border-border px-3 py-1.5 hover:bg-foreground/5 transition-colors rounded-sm"
           >
-            View Live
+            {t(translations, "projects.view_live", "View Live")}
           </a>
         )}
         {project.githubUrl && (
@@ -79,7 +82,7 @@ export default async function ProjectPage({ params }: Props) {
             rel="noopener noreferrer"
             className="border border-border px-3 py-1.5 hover:bg-foreground/5 transition-colors rounded-sm"
           >
-            Source Code
+            {t(translations, "projects.source_code", "Source Code")}
           </a>
         )}
       </div>

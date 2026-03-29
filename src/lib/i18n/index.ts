@@ -8,3 +8,12 @@ export function getLocaleFromPath(pathname: string): Locale {
     ? (segment as Locale)
     : defaultLocale;
 }
+
+export async function getLocaleFromCookies(): Promise<Locale> {
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("locale")?.value;
+  return locales.includes(locale as Locale)
+    ? (locale as Locale)
+    : defaultLocale;
+}

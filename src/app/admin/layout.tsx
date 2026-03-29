@@ -1,16 +1,8 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-
-const navItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: "grid" },
-  { href: "/admin/posts", label: "Posts", icon: "file-text" },
-  { href: "/admin/projects", label: "Projects", icon: "folder" },
-  { href: "/admin/pages", label: "Pages", icon: "layout" },
-  { href: "/admin/tags", label: "Tags", icon: "tag" },
-  { href: "/admin/comments", label: "Comments", icon: "message" },
-  { href: "/admin/translations", label: "Translations", icon: "globe" },
-];
+import { getLocaleFromCookies } from "@/lib/i18n";
+import { getTranslations, t } from "@/lib/i18n/get-translations";
 
 const icons: Record<string, React.ReactNode> = {
   grid: (
@@ -65,12 +57,25 @@ export default async function AdminLayout({
     return <>{children}</>;
   }
 
+  const locale = await getLocaleFromCookies();
+  const translations = await getTranslations(locale);
+
+  const navItems = [
+    { href: "/admin/dashboard", label: t(translations, "admin.dashboard", "Dashboard"), icon: "grid" },
+    { href: "/admin/posts", label: t(translations, "admin.posts", "Posts"), icon: "file-text" },
+    { href: "/admin/projects", label: t(translations, "admin.projects", "Projects"), icon: "folder" },
+    { href: "/admin/pages", label: t(translations, "admin.pages", "Pages"), icon: "layout" },
+    { href: "/admin/tags", label: t(translations, "admin.tags", "Tags"), icon: "tag" },
+    { href: "/admin/comments", label: t(translations, "admin.comments", "Comments"), icon: "message" },
+    { href: "/admin/translations", label: t(translations, "admin.translations", "Translations"), icon: "globe" },
+  ];
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       <aside className="w-60 shrink-0 border-r border-border bg-surface hidden sm:block">
         <div className="p-4 border-b border-border">
           <p className="text-xs font-mono text-muted uppercase tracking-widest">
-            Admin
+            {t(translations, "admin.title", "Admin")}
           </p>
           <p className="mt-1 text-sm truncate">{session.user.name}</p>
         </div>
@@ -91,7 +96,7 @@ export default async function AdminLayout({
             href="/"
             className="flex items-center gap-3 px-3 py-2 text-xs text-muted hover:text-foreground transition-colors"
           >
-            Back to site
+            {t(translations, "admin.back_to_site", "Back to site")}
           </Link>
         </div>
       </aside>

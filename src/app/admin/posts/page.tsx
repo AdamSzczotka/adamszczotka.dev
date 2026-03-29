@@ -4,9 +4,14 @@ import { desc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/session";
 import Link from "next/link";
 import { togglePublished, deletePost } from "./actions";
+import { getLocaleFromCookies } from "@/lib/i18n";
+import { getTranslations, t } from "@/lib/i18n/get-translations";
 
 export default async function AdminPostsPage() {
   await requireAdmin();
+
+  const locale = await getLocaleFromCookies();
+  const translations = await getTranslations(locale);
 
   const allPosts = await db
     .select()
@@ -16,18 +21,18 @@ export default async function AdminPostsPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-medium">Posts</h1>
+        <h1 className="text-2xl font-medium">{t(translations, "admin.posts", "Posts")}</h1>
         <Link
           href="/admin/posts/new"
           className="bg-accent text-accent-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity rounded-sm"
         >
-          New Post
+          {t(translations, "admin.new_post", "New Post")}
         </Link>
       </div>
 
       <div className="mt-8 border border-border divide-y divide-border">
         {allPosts.length === 0 && (
-          <p className="p-6 text-sm text-muted">No posts yet.</p>
+          <p className="p-6 text-sm text-muted">{t(translations, "admin.no_posts", "No posts yet.")}</p>
         )}
         {allPosts.map((post) => (
           <div key={post.id} className="flex items-center justify-between p-4">
@@ -58,7 +63,7 @@ export default async function AdminPostsPage() {
                       : "border-border text-muted"
                   }`}
                 >
-                  {post.isPublished ? "Published" : "Draft"}
+                  {post.isPublished ? t(translations, "admin.published", "Published") : t(translations, "admin.draft", "Draft")}
                 </button>
               </form>
               <form
@@ -71,7 +76,7 @@ export default async function AdminPostsPage() {
                   type="submit"
                   className="text-xs text-red-500 hover:text-red-400 transition-colors"
                 >
-                  Delete
+                  {t(translations, "admin.delete", "Delete")}
                 </button>
               </form>
             </div>

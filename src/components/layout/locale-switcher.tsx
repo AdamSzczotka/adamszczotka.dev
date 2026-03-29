@@ -10,6 +10,8 @@ export function LocaleSwitcher() {
   const currentLocale = isPolish ? "pl" : "en";
 
   const switchLocale = () => {
+    const nextLocale = isPolish ? "en" : "pl";
+    document.cookie = `locale=${nextLocale};path=/;max-age=31536000;samesite=lax`;
     if (isPolish) {
       const newPath = pathname.replace(/^\/pl/, "") || "/";
       router.push(newPath);

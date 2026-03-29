@@ -3,11 +3,20 @@
 import { useState } from "react";
 import { addComment } from "./actions";
 
-interface CommentFormProps {
-  postId: number;
+interface CommentFormTranslations {
+  submitted: string;
+  yourName: string;
+  yourComment: string;
+  submit: string;
+  submitting: string;
 }
 
-export function CommentForm({ postId }: CommentFormProps) {
+interface CommentFormProps {
+  postId: number;
+  translations?: CommentFormTranslations;
+}
+
+export function CommentForm({ postId, translations }: CommentFormProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState("");
 
@@ -26,7 +35,7 @@ export function CommentForm({ postId }: CommentFormProps) {
   if (status === "success") {
     return (
       <p className="text-sm text-muted border border-border p-4 rounded-sm">
-        Comment submitted. It will appear after moderation.
+        {translations?.submitted || "Comment submitted. It will appear after moderation."}
       </p>
     );
   }
@@ -38,7 +47,7 @@ export function CommentForm({ postId }: CommentFormProps) {
         type="text"
         required
         maxLength={100}
-        placeholder="Your name"
+        placeholder={translations?.yourName || "Your name"}
         className="w-full border border-border bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-accent rounded-sm"
       />
       <textarea
@@ -46,7 +55,7 @@ export function CommentForm({ postId }: CommentFormProps) {
         required
         maxLength={2000}
         rows={4}
-        placeholder="Your comment"
+        placeholder={translations?.yourComment || "Your comment"}
         className="w-full border border-border bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-accent rounded-sm resize-none"
       />
       {status === "error" && (
@@ -57,7 +66,7 @@ export function CommentForm({ postId }: CommentFormProps) {
         disabled={status === "submitting"}
         className="border border-border px-4 py-2 text-sm hover:bg-foreground/5 transition-colors rounded-sm disabled:opacity-50"
       >
-        {status === "submitting" ? "Submitting..." : "Submit Comment"}
+        {status === "submitting" ? (translations?.submitting || "Submitting...") : (translations?.submit || "Submit Comment")}
       </button>
     </form>
   );

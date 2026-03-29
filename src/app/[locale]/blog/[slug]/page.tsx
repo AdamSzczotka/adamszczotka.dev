@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { CommentForm } from "@/app/(public)/blog/[slug]/comment-form";
+import { getTranslations, t } from "@/lib/i18n/get-translations";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -75,6 +76,7 @@ export default async function BlogPostPage({ params }: Props) {
     )
     .orderBy(desc(comments.createdAt));
 
+  const translations = await getTranslations(currentLocale);
   const dateLocale = currentLocale === "pl" ? "pl-PL" : "en-US";
 
   return (
@@ -103,7 +105,7 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       <section className="mt-16 border-t border-border pt-12">
-        <h2 className="text-lg font-medium">Comments</h2>
+        <h2 className="text-lg font-medium">{t(translations, "blog.comments", "Comments")}</h2>
 
         {approvedComments.length > 0 && (
           <div className="mt-6 space-y-6">
@@ -128,9 +130,18 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         <div className="mt-8">
-          <h3 className="text-sm font-medium">Leave a comment</h3>
+          <h3 className="text-sm font-medium">{t(translations, "blog.leave_comment", "Leave a comment")}</h3>
           <div className="mt-4">
-            <CommentForm postId={post.id} />
+            <CommentForm
+              postId={post.id}
+              translations={{
+                submitted: t(translations, "blog.comment_submitted", "Comment submitted. It will appear after moderation."),
+                yourName: t(translations, "blog.your_name", "Your name"),
+                yourComment: t(translations, "blog.your_comment", "Your comment"),
+                submit: t(translations, "blog.submit_comment", "Submit Comment"),
+                submitting: t(translations, "blog.submitting", "Submitting..."),
+              }}
+            />
           </div>
         </div>
       </section>

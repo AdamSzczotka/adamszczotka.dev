@@ -6,11 +6,18 @@ import { useState } from "react";
 import { LocaleSwitcher } from "./locale-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
-const links = [
-  { href: "/projects", label: "Projects" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
-];
+const linksMap = {
+  en: [
+    { href: "/projects", label: "Projects" },
+    { href: "/blog", label: "Blog" },
+    { href: "/about", label: "About" },
+  ],
+  pl: [
+    { href: "/projects", label: "Projekty" },
+    { href: "/blog", label: "Blog" },
+    { href: "/about", label: "O mnie" },
+  ],
+};
 
 export function Nav() {
   const [open, setOpen] = useState(false);
@@ -18,6 +25,7 @@ export function Nav() {
 
   const isPolish = pathname.startsWith("/pl");
   const prefix = isPolish ? "/pl" : "";
+  const links = isPolish ? linksMap.pl : linksMap.en;
 
   return (
     <>

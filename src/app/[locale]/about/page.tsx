@@ -32,20 +32,13 @@ export default async function AboutPage({ params }: Props) {
 
       <div className="mt-8 space-y-6 text-muted leading-relaxed">
         <p>
-          I am Adam Szczotka, a Software Engineer and Product Architect. I have
-          been coding since the age of 11. I build scalable backends, fast
-          mobile applications, and privacy-first web tools.
+          {t(translations, "about.bio_1", "I am Adam Szczotka, a Software Engineer and Product Architect. I have been coding since the age of 11. I build scalable backends, fast mobile applications, and privacy-first web tools.")}
         </p>
         <p>
-          My approach is shaped by discipline built through years of competitive
-          sports and a personal transformation that included losing 70 kg. That
-          same discipline drives how I build software: methodically, with
-          attention to detail, and always delivering business value.
+          {t(translations, "about.bio_2", "My approach is shaped by discipline built through years of competitive sports and a personal transformation that included losing 70 kg. That same discipline drives how I build software: methodically, with attention to detail, and always delivering business value.")}
         </p>
         <p>
-          I believe in building tools that respect user privacy. My projects
-          like FormattedAI are 100% client-side with zero cookies and zero
-          tracking. When I write code, I think about the person using it.
+          {t(translations, "about.bio_3", "I believe in building tools that respect user privacy. My projects like FormattedAI are 100% client-side with zero cookies and zero tracking. When I write code, I think about the person using it.")}
         </p>
       </div>
 

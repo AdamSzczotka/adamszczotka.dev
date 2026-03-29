@@ -3,9 +3,14 @@ import { comments, posts } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/session";
 import { approveComment, rejectComment } from "./actions";
+import { getLocaleFromCookies } from "@/lib/i18n";
+import { getTranslations, t } from "@/lib/i18n/get-translations";
 
 export default async function AdminCommentsPage() {
   await requireAdmin();
+
+  const locale = await getLocaleFromCookies();
+  const translations = await getTranslations(locale);
 
   const pendingComments = await db
     .select({
@@ -22,15 +27,15 @@ export default async function AdminCommentsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="text-2xl font-medium">Comment Moderation</h1>
+      <h1 className="text-2xl font-medium">{t(translations, "admin.comment_moderation", "Comment Moderation")}</h1>
       <p className="mt-1 text-sm text-muted">
-        {pendingComments.length} pending
+        {pendingComments.length} {t(translations, "admin.pending", "pending")}
       </p>
 
       <div className="mt-8 space-y-4">
         {pendingComments.length === 0 && (
           <p className="text-sm text-muted border border-border p-6">
-            No pending comments.
+            {t(translations, "admin.no_pending", "No pending comments.")}
           </p>
         )}
         {pendingComments.map((comment) => (
@@ -39,7 +44,7 @@ export default async function AdminCommentsPage() {
               <div>
                 <p className="text-sm font-medium">{comment.authorName}</p>
                 <p className="text-xs text-muted">
-                  on {comment.postTitle} &middot;{" "}
+                  {t(translations, "admin.on", "on")} {comment.postTitle} &middot;{" "}
                   {comment.createdAt.toLocaleDateString("en-US")}
                 </p>
               </div>
@@ -54,7 +59,7 @@ export default async function AdminCommentsPage() {
                     type="submit"
                     className="text-xs border border-green-500/30 text-green-500 px-2 py-1 rounded-sm hover:bg-green-500/10 transition-colors"
                   >
-                    Approve
+                    {t(translations, "admin.approve", "Approve")}
                   </button>
                 </form>
                 <form
@@ -67,7 +72,7 @@ export default async function AdminCommentsPage() {
                     type="submit"
                     className="text-xs border border-red-500/30 text-red-500 px-2 py-1 rounded-sm hover:bg-red-500/10 transition-colors"
                   >
-                    Reject
+                    {t(translations, "admin.reject", "Reject")}
                   </button>
                 </form>
               </div>
