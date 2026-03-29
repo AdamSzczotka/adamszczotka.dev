@@ -24,7 +24,7 @@ export function Nav() {
   const pathname = usePathname();
 
   const isPolish = pathname.startsWith("/pl");
-  const prefix = isPolish ? "/pl" : "";
+  const prefix = isPolish ? "/pl" : "/en";
   const links = isPolish ? linksMap.pl : linksMap.en;
 
   return (
