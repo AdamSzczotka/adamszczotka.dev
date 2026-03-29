@@ -48,6 +48,62 @@ const PROJECT_SLIDES: Record<string, { src: string; alt: string; title: string; 
       description: "Generate meta tags, Open Graph, Twitter Cards, JSON-LD, llms.txt, and AI-optimized robots.txt for search and AI crawlers.",
     },
   ],
+  tutorhub: [
+    {
+      src: "/uploads/tutorhub_dashbord.avif",
+      alt: "TutorHub - Dashboard",
+      title: "Dashboard",
+      description: "Admin overview with key stats: students, tutors, upcoming lessons, pending invoices, and revenue tracking.",
+    },
+    {
+      src: "/uploads/tutorhub_calendar.avif",
+      alt: "TutorHub - Calendar",
+      title: "Lesson Calendar",
+      description: "FullCalendar-based scheduling with tutor/room resource views, recurring lessons, and conflict detection.",
+    },
+    {
+      src: "/uploads/tutorhub_attend.avif",
+      alt: "TutorHub - Attendance",
+      title: "Attendance Tracking",
+      description: "Real-time attendance marking with present/absent/late/excused statuses, check-in times, and monthly reports.",
+    },
+    {
+      src: "/uploads/tutorhub_fak.avif",
+      alt: "TutorHub - Invoicing",
+      title: "Automated Invoicing",
+      description: "Monthly invoices auto-generated via Celery Beat. Net/VAT/Gross calculations, PDF generation, overdue detection.",
+    },
+    {
+      src: "/uploads/tutorhub_messa.avif",
+      alt: "TutorHub - Messages",
+      title: "Messaging System",
+      description: "Threaded conversations with group chat, file attachments, read receipts, and reply support.",
+    },
+    {
+      src: "/uploads/tutorhub_przemdioty.avif",
+      alt: "TutorHub - Subjects",
+      title: "Subject Management",
+      description: "Subject catalog with education levels (7A, 3LO), tutor expertise matching, and per-subject pricing.",
+    },
+    {
+      src: "/uploads/tutorhub_raportsd.avif",
+      alt: "TutorHub - Reports",
+      title: "Reports & Analytics",
+      description: "Attendance reports with PDF export, revenue breakdowns, tutor utilization, and student retention metrics.",
+    },
+    {
+      src: "/uploads/tutorhub_logi.avif",
+      alt: "TutorHub - Audit Logs",
+      title: "Audit Logs",
+      description: "Full CRUD audit trail with user activity logging, IP tracking, and timestamps for compliance.",
+    },
+    {
+      src: "/uploads/tutorhub_system.avif",
+      alt: "TutorHub - System Settings",
+      title: "System Settings",
+      description: "Configurable school name, lesson duration, cancellation notice, makeup expiry, invoice prefix, and notifications.",
+    },
+  ],
 };
 
 export function generateStaticParams() {
