@@ -127,7 +127,36 @@ export const pageBlockTypeEnum = pgEnum("page_block_type", [
   "blog_feed",
   "cta",
   "text",
+  "rich_text",
+  "timeline",
+  "stats",
+  "page_header",
+  "faq",
 ]);
+
+// ── Categories ─────────────────────────────────────────────────────
+
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  nameEn: varchar("name_en", { length: 100 }).notNull(),
+  namePl: varchar("name_pl", { length: 100 }).notNull(),
+  position: integer("position").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Series ─────────────────────────────────────────────────────────
+
+export const series = pgTable("series", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  nameEn: varchar("name_en", { length: 255 }).notNull(),
+  namePl: varchar("name_pl", { length: 255 }).notNull(),
+  descriptionEn: text("description_en"),
+  descriptionPl: text("description_pl"),
+  coverImage: text("cover_image"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
 // ── Projects ────────────────────────────────────────────────────────
 
@@ -164,10 +193,33 @@ export const posts = pgTable(
     coverImage: text("cover_image"),
     isPublished: boolean("is_published").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    // New columns for CMS expansion
+    categoryId: integer("category_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
+    seriesId: integer("series_id").references(() => series.id, {
+      onDelete: "set null",
+    }),
+    seriesOrder: integer("series_order"),
+    coverBlurDataUrl: text("cover_blur_data_url"),
+    metaDescription: text("meta_description"),
+    ogImage: text("og_image"),
+    readTimeMinutes: integer("read_time_minutes").default(0).notNull(),
+    toc: jsonb("toc").default([]).notNull(),
+    previewToken: varchar("preview_token", { length: 64 }),
+    publishedAt: timestamp("published_at"),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
   },
   (table) => [
     uniqueIndex("posts_locale_slug_idx").on(table.locale, table.slug),
     index("posts_category_idx").on(table.category),
+    index("posts_category_id_idx").on(table.categoryId),
+    index("posts_series_id_idx").on(table.seriesId),
+    index("posts_published_at_idx").on(table.publishedAt),
+    index("posts_preview_token_idx").on(table.previewToken),
   ],
 );
 
@@ -196,6 +248,28 @@ export const postTags = pgTable("post_tags", {
     .references(() => tags.id, { onDelete: "cascade" })
     .notNull(),
 });
+
+// ── Related Posts (junction) ────────────────────────────────────────
+
+export const relatedPosts = pgTable(
+  "related_posts",
+  {
+    postId: integer("post_id")
+      .references(() => posts.id, { onDelete: "cascade" })
+      .notNull(),
+    relatedPostId: integer("related_post_id")
+      .references(() => posts.id, { onDelete: "cascade" })
+      .notNull(),
+    position: integer("position").default(0).notNull(),
+  },
+  (table) => [
+    index("related_posts_post_id_idx").on(table.postId),
+    uniqueIndex("related_posts_unique_idx").on(
+      table.postId,
+      table.relatedPostId,
+    ),
+  ],
+);
 
 // ── Comments ────────────────────────────────────────────────────────
 
@@ -230,6 +304,9 @@ export const pages = pgTable("pages", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  metaDescriptionEn: text("meta_description_en"),
+  metaDescriptionPl: text("meta_description_pl"),
+  isPublished: boolean("is_published").default(true).notNull(),
 });
 
 export const pageBlocks = pgTable(
@@ -258,5 +335,38 @@ export const pageBlocksRelations = relations(pageBlocks, ({ one }) => ({
   page: one(pages, {
     fields: [pageBlocks.pageId],
     references: [pages.id],
+  }),
+}));
+
+// ── Category & Series Relations ────────────────────────────────────
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  posts: many(posts),
+}));
+
+export const seriesRelations = relations(series, ({ many }) => ({
+  posts: many(posts),
+}));
+
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  categoryRef: one(categories, {
+    fields: [posts.categoryId],
+    references: [categories.id],
+  }),
+  seriesRef: one(series, {
+    fields: [posts.seriesId],
+    references: [series.id],
+  }),
+  relatedPosts: many(relatedPosts),
+}));
+
+export const relatedPostsRelations = relations(relatedPosts, ({ one }) => ({
+  post: one(posts, {
+    fields: [relatedPosts.postId],
+    references: [posts.id],
+  }),
+  relatedPost: one(posts, {
+    fields: [relatedPosts.relatedPostId],
+    references: [posts.id],
   }),
 }));
