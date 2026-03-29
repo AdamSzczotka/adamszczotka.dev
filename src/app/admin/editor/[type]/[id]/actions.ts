@@ -7,13 +7,17 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/session";
 import { calculateReadTime } from "@/lib/utils/read-time";
 import { extractToc } from "@/lib/utils/toc";
+import sanitizeHtml from "sanitize-html";
+import { CONTENT_SANITIZE_OPTIONS } from "@/lib/utils/sanitize";
 
 export async function saveContent(type: string, id: number, html: string) {
   await requireAdmin();
 
+  const sanitized = sanitizeHtml(html, CONTENT_SANITIZE_OPTIONS);
+
   if (type === "post") {
-    const { toc, html: enrichedHtml } = extractToc(html);
-    const readTimeMinutes = calculateReadTime(html);
+    const { toc, html: enrichedHtml } = extractToc(sanitized);
+    const readTimeMinutes = calculateReadTime(sanitized);
 
     await db
       .update(posts)
@@ -22,7 +26,7 @@ export async function saveContent(type: string, id: number, html: string) {
     revalidatePath(`/admin/editor/post/${id}`);
     revalidatePath("/admin/posts");
   } else if (type === "project") {
-    await db.update(projects).set({ content: html }).where(eq(projects.id, id));
+    await db.update(projects).set({ content: sanitized }).where(eq(projects.id, id));
     revalidatePath(`/admin/editor/project/${id}`);
     revalidatePath("/admin/projects");
   }

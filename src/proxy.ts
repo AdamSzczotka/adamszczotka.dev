@@ -9,15 +9,18 @@ export default function proxy(request: NextRequest) {
   }
 
   // ── Admin auth protection ────────────────────────────────────────
-  const sessionCookie = request.cookies.get("better-auth.session_token");
+  // Middleware validates token format for UX; the real security gate
+  // is requireAdmin() in every server action and page component.
+  const sessionToken = request.cookies.get("better-auth.session_token")?.value;
+  const isValidFormat = sessionToken && sessionToken.length >= 32;
 
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    if (!sessionCookie) {
+    if (!isValidFormat) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
   }
 
-  if (pathname === "/admin/login" && sessionCookie) {
+  if (pathname === "/admin/login" && isValidFormat) {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 

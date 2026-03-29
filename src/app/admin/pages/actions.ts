@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
+import sanitizeHtml from "sanitize-html";
+import { CONTENT_SANITIZE_OPTIONS } from "@/lib/utils/sanitize";
 
 export async function createPage(formData: FormData) {
   await requireAdmin();
@@ -55,6 +57,11 @@ export async function updateBlock(
   data: Record<string, unknown>,
 ) {
   await requireAdmin();
+
+  // Sanitize any HTML content in block data before storing
+  if (typeof data.html === "string") {
+    data.html = sanitizeHtml(data.html, CONTENT_SANITIZE_OPTIONS);
+  }
 
   if (locale === "en") {
     await db
