@@ -8,7 +8,7 @@ import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import { ImageSlider } from "@/components/ui/image-slider";
-import { creativeWorkJsonLd } from "@/lib/utils/structured-data";
+import { creativeWorkJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -217,7 +217,7 @@ export default async function ProjectPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <article>
       {/* Hero */}

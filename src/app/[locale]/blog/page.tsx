@@ -10,7 +10,7 @@ import { CategoryFilter } from "@/components/blog/category-filter";
 import { BlogGrid } from "@/components/blog/blog-grid";
 import { BlogCard } from "@/components/blog/blog-card";
 import { Suspense } from "react";
-import { collectionPageJsonLd } from "@/lib/utils/structured-data";
+import { collectionPageJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -146,7 +146,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <BlogHeader
         title={t(translations, "blog.title", "Blog")}

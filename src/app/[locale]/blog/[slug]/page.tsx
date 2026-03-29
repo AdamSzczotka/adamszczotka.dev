@@ -14,7 +14,7 @@ import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import { generatePostMetadata } from "@/lib/utils/seo";
-import { blogPostJsonLd } from "@/lib/utils/structured-data";
+import { blogPostJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 import { getRelatedPosts } from "@/lib/utils/related-posts";
 import type { TocEntry } from "@/lib/utils/toc";
 import { PostHero } from "@/components/blog/post-hero";
@@ -171,7 +171,7 @@ export default async function BlogPostPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
       <PostHero

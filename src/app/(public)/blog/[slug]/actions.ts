@@ -1,7 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { comments } from "@/lib/db/schema";
+import { comments, posts } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import sanitizeHtml from "sanitize-html";
 import { headers } from "next/headers";
@@ -49,6 +50,27 @@ export async function addComment(
 
   if (rawContent.length > 2000) {
     return { error: "Comment too long (max 2000 characters)." };
+  }
+
+  // Verify post exists and is published (prevent IDOR)
+  const [post] = await db
+    .select({ id: posts.id })
+    .from(posts)
+    .where(and(eq(posts.id, postId), eq(posts.isPublished, true)));
+
+  if (!post) {
+    return { error: "Invalid post." };
+  }
+
+  // Verify parentId belongs to the same post
+  if (parentId) {
+    const [parentComment] = await db
+      .select({ id: comments.id })
+      .from(comments)
+      .where(and(eq(comments.id, parentId), eq(comments.postId, postId)));
+    if (!parentComment) {
+      return { error: "Invalid parent comment." };
+    }
   }
 
   const content = sanitizeHtml(rawContent, {

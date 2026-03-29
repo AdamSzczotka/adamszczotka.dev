@@ -1,5 +1,9 @@
 const SITE_URL = "https://adamszczotka.dev";
 
+export function safeJsonLd(data: object): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 interface PostForJsonLd {
   title: string;
   slug: string;

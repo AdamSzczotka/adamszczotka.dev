@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { requireAdmin } from "@/lib/auth/session";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 
@@ -47,13 +46,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  }).catch(() => null);
-
-  const isLoggedIn = !!session;
-
-  if (!isLoggedIn) {
+  let session;
+  try {
+    session = await requireAdmin();
+  } catch {
+    // requireAdmin() calls redirect() which throws — render children only (login page)
     return <>{children}</>;
   }
 

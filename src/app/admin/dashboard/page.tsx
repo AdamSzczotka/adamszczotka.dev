@@ -1,21 +1,13 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { posts, comments } from "@/lib/db/schema";
 import { eq, count } from "drizzle-orm";
 import Link from "next/link";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
+import { requireAdmin } from "@/lib/auth/session";
 
 export default async function AdminDashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect("/admin/login");
-  }
+  const session = await requireAdmin();
 
   const locale = await getLocaleFromCookies();
   const translations = await getTranslations(locale);

@@ -2,7 +2,7 @@ import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import type { Metadata } from "next";
 import { PageRenderer } from "@/components/blocks/page-renderer";
-import { websiteJsonLd } from "@/lib/utils/structured-data";
+import { websiteJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -69,7 +69,7 @@ export default async function HomePage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <PageRenderer pageSlug="home" locale={currentLocale} />
     </>

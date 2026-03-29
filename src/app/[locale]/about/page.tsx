@@ -2,7 +2,7 @@ import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { personJsonLd } from "@/lib/utils/structured-data";
+import { personJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -182,7 +182,7 @@ export default async function AboutPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <article className="mx-auto max-w-4xl px-6 pt-32 pb-24">
         {/* Hero: photo + intro */}

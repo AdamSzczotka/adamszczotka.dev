@@ -58,6 +58,17 @@ export async function updateBlock(
 ) {
   await requireAdmin();
 
+  // Sanitize dangerous URI schemes in URL fields
+  const urlFields = ["buttonUrl", "liveUrl", "githubUrl", "email"];
+  for (const field of urlFields) {
+    if (typeof data[field] === "string") {
+      const val = (data[field] as string).trim().toLowerCase();
+      if (val.startsWith("javascript:") || val.startsWith("data:") || val.startsWith("vbscript:")) {
+        data[field] = "";
+      }
+    }
+  }
+
   // Sanitize any HTML content in block data before storing
   if (typeof data.html === "string") {
     data.html = sanitizeHtml(data.html, CONTENT_SANITIZE_OPTIONS);

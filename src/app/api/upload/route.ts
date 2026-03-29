@@ -9,14 +9,15 @@ import crypto from "crypto";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const ADMIN_EMAILS = ["adam.szczotka0@gmail.com"];
 
 export async function POST(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session || !ADMIN_EMAILS.includes(session.user.email)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   const formData = await request.formData();
