@@ -10,6 +10,9 @@ import { CategoryFilter } from "@/components/blog/category-filter";
 import { BlogGrid } from "@/components/blog/blog-grid";
 import { BlogCard } from "@/components/blog/blog-card";
 import { Suspense } from "react";
+import { collectionPageJsonLd } from "@/lib/utils/structured-data";
+
+const SITE_URL = "https://adamszczotka.dev";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -23,8 +26,45 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const translations = await getTranslations(locale as Locale);
+  const title = t(translations, "blog.title", "Blog");
+  const description = t(
+    translations,
+    "blog.description",
+    "Thoughts on engineering, architecture, and building products.",
+  );
+
   return {
-    title: t(translations, "blog.title", "Blog"),
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/blog`,
+      languages: {
+        en: `${SITE_URL}/en/blog`,
+        pl: `${SITE_URL}/pl/blog`,
+        "x-default": `${SITE_URL}/en/blog`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}/blog`,
+      type: "website",
+      locale: locale === "pl" ? "pl_PL" : "en_US",
+      images: [
+        {
+          url: `${SITE_URL}/api/og?title=${encodeURIComponent(title)}`,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${SITE_URL}/api/og?title=${encodeURIComponent(title)}`],
+    },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -95,8 +135,18 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const allCategories = await db.select().from(categories);
   const categoryMap = new Map(allCategories.map((c) => [c.id, c]));
 
+  const jsonLd = collectionPageJsonLd(
+    t(translations, "blog.title", "Blog"),
+    t(translations, "blog.description", "Thoughts on engineering, architecture, and building products."),
+    `${SITE_URL}/${currentLocale}/blog`,
+  );
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <BlogHeader
         title={t(translations, "blog.title", "Blog")}
         description={t(

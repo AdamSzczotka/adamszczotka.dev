@@ -6,6 +6,9 @@ import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import type { Metadata } from "next";
+import { collectionPageJsonLd } from "@/lib/utils/structured-data";
+
+const SITE_URL = "https://adamszczotka.dev";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -18,8 +21,45 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const translations = await getTranslations(locale as Locale);
+  const title = t(translations, "projects.title", "Projects");
+  const description = t(
+    translations,
+    "projects.description",
+    "Case studies and things I have built.",
+  );
+
   return {
-    title: t(translations, "projects.title", "Projects"),
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/projects`,
+      languages: {
+        en: `${SITE_URL}/en/projects`,
+        pl: `${SITE_URL}/pl/projects`,
+        "x-default": `${SITE_URL}/en/projects`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}/projects`,
+      type: "website",
+      locale: locale === "pl" ? "pl_PL" : "en_US",
+      images: [
+        {
+          url: `${SITE_URL}/api/og?title=${encodeURIComponent(title)}`,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${SITE_URL}/api/og?title=${encodeURIComponent(title)}`],
+    },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -45,8 +85,19 @@ export default async function ProjectsPage({ params }: Props) {
 
   const localePath = currentLocale === "pl" ? "/pl" : "";
 
+  const jsonLd = collectionPageJsonLd(
+    t(translations, "projects.title", "Projects"),
+    t(translations, "projects.description", "Case studies and things I have built."),
+    `${SITE_URL}/${currentLocale}/projects`,
+  );
+
   return (
-    <section className="mx-auto max-w-5xl px-6 py-24">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <section className="mx-auto max-w-5xl px-6 py-24">
       <h1 className="text-3xl font-medium tracking-tight">
         {t(translations, "projects.title", "Projects")}
       </h1>
@@ -80,5 +131,6 @@ export default async function ProjectsPage({ params }: Props) {
         )}
       </div>
     </section>
+    </>
   );
 }

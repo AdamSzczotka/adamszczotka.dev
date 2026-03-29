@@ -8,6 +8,9 @@ import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import { ImageSlider } from "@/components/ui/image-slider";
+import { creativeWorkJsonLd } from "@/lib/utils/structured-data";
+
+const SITE_URL = "https://adamszczotka.dev";
 
 const PROJECT_SLIDES: Record<string, { src: string; alt: string; title: string; description: string }[]> = {
   formattedai: [
@@ -131,9 +134,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   if (!project) return { title: "Not Found" };
+
+  const title = project.title;
+  const description = project.description || "";
+
   return {
-    title: project.title,
-    description: project.description || undefined,
+    title,
+    description: description || undefined,
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/projects/${slug}`,
+      languages: {
+        en: `${SITE_URL}/en/projects/${slug}`,
+        pl: `${SITE_URL}/pl/projects/${slug}`,
+        "x-default": `${SITE_URL}/en/projects/${slug}`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}/projects/${slug}`,
+      type: "website",
+      locale: locale === "pl" ? "pl_PL" : "en_US",
+      images: [
+        {
+          url: project.coverImage
+            ? `${SITE_URL}${project.coverImage}`
+            : `${SITE_URL}/api/og?title=${encodeURIComponent(title)}`,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [
+        project.coverImage
+          ? `${SITE_URL}${project.coverImage}`
+          : `${SITE_URL}/api/og?title=${encodeURIComponent(title)}`,
+      ],
+    },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -163,8 +205,21 @@ export default async function ProjectPage({ params }: Props) {
     .innerJoin(tags, eq(tags.id, projectTags.tagId))
     .where(eq(projectTags.projectId, project.id));
 
+  const jsonLd = creativeWorkJsonLd({
+    title: project.title,
+    description: project.description,
+    url: `${SITE_URL}/${currentLocale}/projects/${slug}`,
+    githubUrl: project.githubUrl,
+    liveUrl: project.liveUrl,
+  });
+
   return (
-    <article>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <article>
       {/* Hero */}
       <header className="border-b border-[var(--border)]">
         <div className="mx-auto max-w-4xl px-6 pt-32 pb-16">
@@ -280,5 +335,6 @@ export default async function ProjectPage({ params }: Props) {
         );
       })()}
     </article>
+    </>
   );
 }
