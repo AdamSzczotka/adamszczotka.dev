@@ -21,7 +21,8 @@ const content = {
     bio: [
       "I am Adam Szczotka, 24 years old, a Computer Science student (6th semester) at WSTI and Software Engineer at Euforia — a marketing and web agency. I have been writing code since I was 11.",
       "My strongest side is backend development — Python, Django, PostgreSQL, Docker — but I pick up new technologies fast. This portfolio and CMS is built with Next.js and TypeScript, which I learned specifically for this project.",
-      "Before tech, I was a competitive cyclist with a Polish Championship medal. The discipline from years of training carries over into how I build software: methodically, with attention to detail, shipping things that work.",
+      "I have been tutoring math and computer science for 7 years — first 2 years privately, then 5 years at a tutoring school. That experience directly led to building TutorHub, a management system that automates the workflows I saw breaking down daily.",
+      "I also have a background in competitive cycling, including a Polish Championship medal. The discipline from years of structured training shapes how I approach engineering — consistent effort, measurable progress, and delivering results.",
     ],
     whatDrives: "What drives me",
     whatDrivesText:
@@ -33,6 +34,11 @@ const content = {
         role: "Software Engineer",
         company: "Euforia — marketing & web agency",
       },
+      {
+        period: "2019 — present",
+        role: "Math & CS Tutor",
+        company: "Private (2 yrs) + tutoring school (5 yrs)",
+      },
     ],
     education: "Education",
     educationItems: [
@@ -42,9 +48,9 @@ const content = {
         school: "WSTI",
       },
     ],
-    sport: "Competitive cycling",
+    sport: "Cycling",
     sportText:
-      "Former competitive cyclist with a Polish Championship medal. Years of structured training built the discipline and work ethic I bring to engineering — consistency, measurable progress, and pushing through when it gets hard.",
+      "Former cyclist with a Polish Championship medal. Years of structured training built the discipline and work ethic I bring to engineering — consistency, measurable progress, and pushing through when it gets hard.",
     stack: "Stack",
     connect: "Connect",
   },
@@ -54,7 +60,8 @@ const content = {
     bio: [
       "Jestem Adam Szczotka, mam 24 lata, student informatyki (6. semestr) na WSTI i Software Engineer w Euforia — agencji marketingowej i webowej. Kod piszę od 11. roku życia.",
       "Moja najsilniejsza strona to backend — Python, Django, PostgreSQL, Docker — ale szybko przyswajam nowe technologie. To portfolio i CMS zbudowałem w Next.js i TypeScript, których nauczyłem się specjalnie pod ten projekt.",
-      "Przed IT byłem kolarzem wyczynowym z medalem Mistrzostw Polski. Dyscyplina z lat treningów przekłada się na to, jak buduję oprogramowanie: metodycznie, z dbałością o detale, dowożąc rzeczy które działają.",
+      "Od 7 lat udzielam korepetycji z matematyki i informatyki — pierwsze 2 lata prywatnie, od 5 lat w szkole korepetycji. To doświadczenie bezpośrednio doprowadziło do stworzenia TutorHub — systemu zarządzania, który automatyzuje procesy, które codziennie widziałem jak się sypią.",
+      "Mam też za sobą kolarstwo z medalem Mistrzostw Polski. Dyscyplina z lat strukturalnego treningu kształtuje moje podejście do inżynierii — konsekwentna praca, mierzalny postęp i dowożenie wyników.",
     ],
     whatDrives: "Co mnie napędza",
     whatDrivesText:
@@ -66,6 +73,11 @@ const content = {
         role: "Software Engineer",
         company: "Euforia — agencja marketingowa i webowa",
       },
+      {
+        period: "2019 — teraz",
+        role: "Korepetytor matematyki i informatyki",
+        company: "Prywatnie (2 lata) + szkoła korepetycji (5 lat)",
+      },
     ],
     education: "Wykształcenie",
     educationItems: [
@@ -75,9 +87,9 @@ const content = {
         school: "WSTI",
       },
     ],
-    sport: "Kolarstwo wyczynowe",
+    sport: "Kolarstwo",
     sportText:
-      "Były kolarz wyczynowy z medalem Mistrzostw Polski. Lata strukturalnego treningu zbudowały dyscyplinę i etykę pracy, które wnoszę do inżynierii — konsekwencja, mierzalny postęp i praca mimo trudności.",
+      "Były kolarz z medalem Mistrzostw Polski. Lata strukturalnego treningu zbudowały dyscyplinę i etykę pracy, które wnoszę do inżynierii — konsekwencja, mierzalny postęp i praca mimo trudności.",
     stack: "Stack",
     connect: "Kontakt",
   },
