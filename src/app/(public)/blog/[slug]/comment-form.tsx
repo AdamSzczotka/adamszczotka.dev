@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addComment } from "./actions";
+import { addComment } from "@/lib/actions/comments";
 
 interface CommentFormTranslations {
   submitted: string;

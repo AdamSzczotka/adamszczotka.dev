@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0a0a0a"/>
+  <!-- Outer frame -->
+  <rect x="16" y="16" width="480" height="480" fill="none" stroke="#1c1c1c" stroke-width="2"/>
+  <!-- Top bar like a terminal window -->
+  <rect x="16" y="16" width="480" height="40" fill="#141414"/>
+  <line x1="16" y1="56" x2="496" y2="56" stroke="#262626" stroke-width="1"/>
+  <!-- Window dots -->
+  <circle cx="40" cy="36" r="5" fill="#3b3b3b"/>
+  <circle cx="58" cy="36" r="5" fill="#3b3b3b"/>
+  <circle cx="76" cy="36" r="5" fill="#3b3b3b"/>
+  <!-- Prompt line -->
+  <text x="42" y="410" font-family="'Courier New', monospace" font-size="36" fill="#404040">~/dev</text>
+  <!-- AS big -->
+  <text x="256" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="250" font-weight="900" fill="#fafafa" text-anchor="middle" letter-spacing="-18">AS</text>
+  <!-- Blinking cursor -->
+  <rect x="42" y="420" width="20" height="3" fill="#3b82f6" opacity="0.8"/>
+</svg>
