@@ -24,15 +24,13 @@ export default function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
-  // ── Locale routing ───────────────────────────────────────────────
-  // /pl/* — Polish content, let it through
-  // /admin/* — no locale prefix, already handled above
-  // Everything else — English (default), no redirect needed
-  if (pathname.startsWith("/pl/") || pathname === "/pl") {
-    return NextResponse.next();
-  }
+  // ── Locale detection for html lang attribute ─────────────────────
+  const segment = pathname.split("/")[1];
+  const locale = segment === "pl" ? "pl" : "en";
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("x-locale", locale);
+  return response;
 }
 
 export const config = {
