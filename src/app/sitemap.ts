@@ -17,6 +17,7 @@ function withAlternates(
       languages: {
         en: `${BASE_URL}${enPath}`,
         pl: `${BASE_URL}${plPath}`,
+        "x-default": `${BASE_URL}${enPath}`,
       },
     },
     ...opts,
@@ -33,44 +34,56 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select({ slug: projects.slug, locale: projects.locale, createdAt: projects.createdAt })
     .from(projects);
 
+  const now = new Date();
+
   const staticPages: MetadataRoute.Sitemap = [
     withAlternates(`${BASE_URL}/en`, "/en", "/pl", {
+      lastModified: now,
       changeFrequency: "weekly",
       priority: 1.0,
     }),
     withAlternates(`${BASE_URL}/pl`, "/en", "/pl", {
+      lastModified: now,
       changeFrequency: "weekly",
       priority: 1.0,
     }),
     withAlternates(`${BASE_URL}/en/blog`, "/en/blog", "/pl/blog", {
+      lastModified: now,
       changeFrequency: "daily",
       priority: 0.8,
     }),
     withAlternates(`${BASE_URL}/pl/blog`, "/en/blog", "/pl/blog", {
+      lastModified: now,
       changeFrequency: "daily",
       priority: 0.8,
     }),
     withAlternates(`${BASE_URL}/en/projects`, "/en/projects", "/pl/projects", {
+      lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     }),
     withAlternates(`${BASE_URL}/pl/projects`, "/en/projects", "/pl/projects", {
+      lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     }),
     withAlternates(`${BASE_URL}/en/about`, "/en/about", "/pl/about", {
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
     }),
     withAlternates(`${BASE_URL}/pl/about`, "/en/about", "/pl/about", {
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
     }),
     withAlternates(`${BASE_URL}/en/privacy`, "/en/privacy", "/pl/privacy", {
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     }),
     withAlternates(`${BASE_URL}/pl/privacy`, "/en/privacy", "/pl/privacy", {
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     }),

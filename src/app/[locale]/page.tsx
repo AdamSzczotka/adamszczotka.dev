@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const title =
     locale === "pl"
-      ? "Adam Szczotka -- Software Engineer"
+      ? "Adam Szczotka -- Inzynier Oprogramowania"
       : "Adam Szczotka -- Software Engineer";
   const description =
     locale === "pl"
@@ -41,7 +41,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: `${SITE_URL}/${locale}`,
       type: "website",
+      siteName: "Adam Szczotka",
       locale: locale === "pl" ? "pl_PL" : "en_US",
+      alternateLocale: locale === "pl" ? "en_US" : "pl_PL",
       images: [
         {
           url: `${SITE_URL}/api/og?title=${encodeURIComponent(title)}`,

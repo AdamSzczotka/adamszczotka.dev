@@ -17,9 +17,9 @@ interface Props {
 const content = {
   en: {
     title: "About",
-    subtitle: "Junior Software Developer",
+    subtitle: "Software Developer",
     bio: [
-      "I am Adam Szczotka, 24 years old, a Computer Science student at Katowice School of Information Technology (WSTI) and Junior Web Developer at Euforia — a marketing and web agency based in Żory, Poland. I have been writing code since I was 11.",
+      "I am Adam Szczotka, 24 years old, a Computer Science student at Katowice School of Information Technology (WSTI) and Web Developer at Euforia — a marketing and web agency based in Żory, Poland. I have been writing code since I was 11.",
       "At Euforia, I build and ship web applications and mobile apps for clients — from AI-powered automation to production infrastructure on GCP. I work across the full stack, from backend APIs to React Native mobile apps published on app stores.",
       "My strongest side is backend development, but I pick up new technologies fast. This portfolio and CMS is built with Next.js and TypeScript, which I learned specifically for this project.",
       "I have been tutoring math and computer science for 7 years — first 2 years privately, then 5 years at a tutoring school. That experience directly led to building TutorHub, a management system that automates the workflows I saw breaking down daily.",
@@ -32,7 +32,7 @@ const content = {
     experienceItems: [
       {
         period: "Apr 2025 — present",
-        role: "Junior Web Developer",
+        role: "Web Developer",
         company: "Euforia SC, Żory",
         details: "Web and mobile apps, AI automation, GCP infrastructure",
       },
@@ -61,9 +61,9 @@ const content = {
   },
   pl: {
     title: "O mnie",
-    subtitle: "Junior Software Developer",
+    subtitle: "Software Developer",
     bio: [
-      "Jestem Adam Szczotka, mam 24 lata, student informatyki na Katowickiej Wyższej Szkole Technologii Informatycznych (WSTI) i Junior Web Developer w Euforia — agencji marketingowej i webowej z Żor. Kod piszę od 11. roku życia.",
+      "Jestem Adam Szczotka, mam 24 lata, student informatyki na Katowickiej Wyższej Szkole Technologii Informatycznych (WSTI) i Web Developer w Euforia — agencji marketingowej i webowej z Żor. Kod piszę od 11. roku życia.",
       "W Euforia buduję i wdrażam aplikacje webowe i mobilne dla klientów — od automatyzacji opartej na AI po infrastrukturę produkcyjną na GCP. Pracuję w pełnym stacku, od backendowych API po aplikacje mobilne w React Native publikowane w sklepach.",
       "Moja najsilniejsza strona to backend, ale szybko przyswajam nowe technologie. To portfolio i CMS zbudowałem w Next.js i TypeScript, których nauczyłem się specjalnie pod ten projekt.",
       "Od 7 lat udzielam korepetycji z matematyki i informatyki — pierwsze 2 lata prywatnie, od 5 lat w szkole korepetycji. To doświadczenie bezpośrednio doprowadziło do stworzenia TutorHub — systemu zarządzania, który automatyzuje procesy, które codziennie widziałem jak się sypią.",
@@ -76,7 +76,7 @@ const content = {
     experienceItems: [
       {
         period: "kwi 2025 — teraz",
-        role: "Junior Web Developer",
+        role: "Web Developer",
         company: "Euforia SC, Żory",
         details: "Aplikacje webowe i mobilne, automatyzacja AI, infrastruktura GCP",
       },
@@ -154,7 +154,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: c.bio[0],
       url: `${SITE_URL}/${locale}/about`,
       type: "profile",
+      siteName: "Adam Szczotka",
       locale: locale === "pl" ? "pl_PL" : "en_US",
+      alternateLocale: locale === "pl" ? "en_US" : "pl_PL",
       images: [
         {
           url: `${SITE_URL}/api/og?title=${encodeURIComponent(c.title)}`,

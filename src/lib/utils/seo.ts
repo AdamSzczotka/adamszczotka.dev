@@ -54,10 +54,12 @@ export function generatePostMetadata(
     },
     openGraph: {
       type: "article",
+      siteName: "Adam Szczotka",
       title: post.title,
       description,
       url: canonicalUrl,
       locale: locale === "pl" ? "pl_PL" : "en_US",
+      alternateLocale: locale === "pl" ? "en_US" : "pl_PL",
       publishedTime: (post.publishedAt || post.createdAt).toISOString(),
       images: [{ url: ogImage, width: 1200, height: 630 }],
     },
@@ -95,10 +97,12 @@ export function generatePageMetadata(
     },
     openGraph: {
       type: "website",
+      siteName: "Adam Szczotka",
       title: page.title,
       description: description || "",
       url: canonicalUrl,
       locale: locale === "pl" ? "pl_PL" : "en_US",
+      alternateLocale: locale === "pl" ? "en_US" : "pl_PL",
       images: [
         {
           url: `${SITE_URL}/api/og?title=${encodeURIComponent(page.title)}`,
