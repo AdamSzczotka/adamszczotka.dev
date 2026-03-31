@@ -1,14 +1,31 @@
 "use client";
 
 import { authClient } from "@/lib/auth/client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AdminLoginPage() {
+  const router = useRouter();
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    authClient.getSession().then((res) => {
+      if (res.data?.session) {
+        router.replace("/admin/dashboard");
+      } else {
+        setChecking(false);
+      }
+    });
+  }, [router]);
+
   const handleLogin = async () => {
     await authClient.signIn.social({
       provider: "github",
       callbackURL: "/admin/dashboard",
     });
   };
+
+  if (checking) return null;
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
