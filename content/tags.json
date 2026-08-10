@@ -1,0 +1,46 @@
+[
+  {
+    "name": "TypeScript",
+    "slug": "typescript"
+  },
+  {
+    "name": "React",
+    "slug": "react"
+  },
+  {
+    "name": "Next.js",
+    "slug": "nextjs"
+  },
+  {
+    "name": "Python",
+    "slug": "python"
+  },
+  {
+    "name": "Django",
+    "slug": "django"
+  },
+  {
+    "name": "PostgreSQL",
+    "slug": "postgresql"
+  },
+  {
+    "name": "Docker",
+    "slug": "docker"
+  },
+  {
+    "name": "Privacy",
+    "slug": "privacy"
+  },
+  {
+    "name": "SSG",
+    "slug": "ssg"
+  },
+  {
+    "name": "i18n",
+    "slug": "i18n"
+  },
+  {
+    "name": "B2B",
+    "slug": "b2b"
+  }
+]

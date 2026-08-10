@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "tech",
+    "nameEn": "Tech",
+    "namePl": "Tech",
+    "position": 0
+  },
+  {
+    "slug": "personal",
+    "nameEn": "Personal",
+    "namePl": "Osobiste",
+    "position": 1
+  }
+]
