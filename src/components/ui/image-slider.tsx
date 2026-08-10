@@ -10,6 +10,9 @@ interface Slide {
   description: string;
 }
 
+// Every slide stays in the DOM (inactive ones hidden with CSS) so the
+// titles, descriptions and image alts are part of the server-rendered
+// HTML that crawlers see — only visibility is client-side.
 export function ImageSlider({ slides }: { slides: Slide[] }) {
   const [current, setCurrent] = useState(0);
 
@@ -25,16 +28,19 @@ export function ImageSlider({ slides }: { slides: Slide[] }) {
 
   return (
     <div className="space-y-6">
-      {/* Image */}
       <div className="relative group">
         <div className="border border-[var(--border)] rounded-sm overflow-hidden bg-[var(--surface)]">
-          <Image
-            src={slides[current].src}
-            alt={slides[current].alt}
-            width={1200}
-            height={675}
-            className="w-full h-auto"
-          />
+          {slides.map((slide, i) => (
+            <Image
+              key={slide.src}
+              src={slide.src}
+              alt={slide.alt}
+              width={1200}
+              height={675}
+              className={i === current ? "w-full h-auto" : "hidden"}
+              priority={i === 0}
+            />
+          ))}
         </div>
 
         {/* Arrows */}
@@ -58,15 +64,19 @@ export function ImageSlider({ slides }: { slides: Slide[] }) {
         </button>
       </div>
 
-      {/* Info + dots */}
+      {/* Info + dots — all slide copy rendered, inactive hidden */}
       <div className="flex items-start justify-between gap-6">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold tracking-tight">
-            {slides[current].title}
-          </h3>
-          <p className="mt-1 text-sm text-[var(--muted)] leading-relaxed">
-            {slides[current].description}
-          </p>
+          {slides.map((slide, i) => (
+            <div key={slide.src} className={i === current ? "" : "hidden"}>
+              <h3 className="text-base font-semibold tracking-tight">
+                {slide.title}
+              </h3>
+              <p className="mt-1 text-sm text-[var(--muted)] leading-relaxed">
+                {slide.description}
+              </p>
+            </div>
+          ))}
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0 pt-1">

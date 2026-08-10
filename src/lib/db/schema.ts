@@ -174,6 +174,10 @@ export const projects = pgTable(
     imageUrl: text("image_url"),
     liveUrl: text("live_url"),
     githubUrl: text("github_url"),
+    // Screenshot gallery rendered under the case study; per-locale copy
+    slides: jsonb("slides").$type<
+      { src: string; alt: string; title: string; description: string }[]
+    >(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [uniqueIndex("projects_locale_slug_idx").on(table.locale, table.slug)],

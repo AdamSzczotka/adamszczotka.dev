@@ -11,103 +11,6 @@ import { creativeWorkJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
-const PROJECT_SLIDES: Record<string, { src: string; alt: string; title: string; description: string }[]> = {
-  formattedai: [
-    {
-      src: "/uploads/formatted_ai_main.avif",
-      alt: "FormattedAI - Homepage",
-      title: "Homepage",
-      description: "Landing page with all available tools. Built with vanilla HTML/SCSS/JS, no frameworks.",
-    },
-    {
-      src: "/uploads/formatted_ai_md.avif",
-      alt: "FormattedAI - Markdown Formatter",
-      title: "Markdown Formatter",
-      description: "Convert AI-generated markdown (ChatGPT, Claude) into formatted text. Export to HTML, DOCX, or copy to Google Docs.",
-    },
-    {
-      src: "/uploads/formatted_ai_avif.avif",
-      alt: "FormattedAI - AVIF Converter",
-      title: "AVIF Converter",
-      description: "Client-side image compression via WebAssembly (jSquash). Batch convert PNG/JPG/WebP to AVIF with ZIP download.",
-    },
-    {
-      src: "/uploads/formatted_ai_cssmini.avif",
-      alt: "FormattedAI - CSS Minifier",
-      title: "CSS Minifier & Formatter",
-      description: "Minify or beautify CSS using CSSO. Real-time size comparison, runs entirely in the browser.",
-    },
-    {
-      src: "/uploads/formatted_jsminifeir.avif",
-      alt: "FormattedAI - JS Minifier",
-      title: "JS Minifier & Formatter",
-      description: "Minify or beautify JavaScript using Terser. Handles ES6+ syntax, instant output with size savings.",
-    },
-    {
-      src: "/uploads/formatted_ai_seogeo.avif",
-      alt: "FormattedAI - SEO/GEO Tag Generator",
-      title: "SEO & GEO Tag Generator",
-      description: "Generate meta tags, Open Graph, Twitter Cards, JSON-LD, llms.txt, and AI-optimized robots.txt for search and AI crawlers.",
-    },
-  ],
-  tutorhub: [
-    {
-      src: "/uploads/tutorhub_dashbord.avif",
-      alt: "TutorHub - Dashboard",
-      title: "Dashboard",
-      description: "Admin overview with key stats: students, tutors, upcoming lessons, pending invoices, and revenue tracking.",
-    },
-    {
-      src: "/uploads/tutorhub_calendar.avif",
-      alt: "TutorHub - Calendar",
-      title: "Lesson Calendar",
-      description: "FullCalendar-based scheduling with tutor/room resource views, recurring lessons, and conflict detection.",
-    },
-    {
-      src: "/uploads/tutorhub_attend.avif",
-      alt: "TutorHub - Attendance",
-      title: "Attendance Tracking",
-      description: "Real-time attendance marking with present/absent/late/excused statuses, check-in times, and monthly reports.",
-    },
-    {
-      src: "/uploads/tutorhub_fak.avif",
-      alt: "TutorHub - Invoicing",
-      title: "Automated Invoicing",
-      description: "Monthly invoices auto-generated via Celery Beat. Net/VAT/Gross calculations, PDF generation, overdue detection.",
-    },
-    {
-      src: "/uploads/tutorhub_messa.avif",
-      alt: "TutorHub - Messages",
-      title: "Messaging System",
-      description: "Threaded conversations with group chat, file attachments, read receipts, and reply support.",
-    },
-    {
-      src: "/uploads/tutorhub_przemdioty.avif",
-      alt: "TutorHub - Subjects",
-      title: "Subject Management",
-      description: "Subject catalog with education levels (7A, 3LO), tutor expertise matching, and per-subject pricing.",
-    },
-    {
-      src: "/uploads/tutorhub_raportsd.avif",
-      alt: "TutorHub - Reports",
-      title: "Reports & Analytics",
-      description: "Attendance reports with PDF export, revenue breakdowns, tutor utilization, and student retention metrics.",
-    },
-    {
-      src: "/uploads/tutorhub_logi.avif",
-      alt: "TutorHub - Audit Logs",
-      title: "Audit Logs",
-      description: "Full CRUD audit trail with user activity logging, IP tracking, and timestamps for compliance.",
-    },
-    {
-      src: "/uploads/tutorhub_system.avif",
-      alt: "TutorHub - System Settings",
-      title: "System Settings",
-      description: "Configurable school name, lesson duration, cancellation notice, makeup expiry, invoice prefix, and notifications.",
-    },
-  ],
-};
-
 export const dynamic = "force-dynamic";
 
 interface Props {
@@ -281,58 +184,21 @@ export default async function ProjectPage({ params }: Props) {
       </header>
 
       {/* Content */}
-      {project.content && (() => {
-        const slides = PROJECT_SLIDES[project.slug];
-        const markerRegex = /<div[^>]*data-slider[^>]*><\/div>/;
-        const match = slides ? project.content.match(markerRegex) : null;
-        if (slides && match) {
-          const idx = project.content.indexOf(match[0]);
-          const before = project.content.slice(0, idx);
-          const after = project.content.slice(idx + match[0].length);
-          return (
-            <div className="mx-auto max-w-3xl px-6 py-16">
-              <div
-                className="prose prose-neutral dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: before }}
-              />
-              <div className="my-10">
-                <ImageSlider slides={slides} />
-              </div>
-              <div
-                className="prose prose-neutral dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: after }}
-              />
-            </div>
-          );
-        }
-        // Fallback: if no marker but slides exist, inject after <h2>Tools</h2>
-        if (slides && project.content.includes("<h2>Tools</h2>")) {
-          const parts = project.content.split("<h2>Tools</h2>");
-          return (
-            <div className="mx-auto max-w-3xl px-6 py-16">
-              <div
-                className="prose prose-neutral dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: parts[0] + "<h2>Tools</h2>" }}
-              />
-              <div className="my-10">
-                <ImageSlider slides={slides} />
-              </div>
-              <div
-                className="prose prose-neutral dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: parts.slice(1).join("") }}
-              />
-            </div>
-          );
-        }
-        return (
-          <div className="mx-auto max-w-3xl px-6 py-16">
-            <div
-              className="prose prose-neutral dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: project.content }}
-            />
-          </div>
-        );
-      })()}
+      {project.content && (
+        <div className="mx-auto max-w-3xl px-6 py-16">
+          <div
+            className="prose prose-neutral dark:prose-invert max-w-none"
+            dangerouslySetInnerHTML={{ __html: project.content }}
+          />
+        </div>
+      )}
+
+      {/* Screenshot gallery — slides come from the database per locale */}
+      {project.slides && project.slides.length > 0 && (
+        <div className="mx-auto max-w-3xl px-6 pb-16">
+          <ImageSlider slides={project.slides} />
+        </div>
+      )}
     </article>
     </>
   );

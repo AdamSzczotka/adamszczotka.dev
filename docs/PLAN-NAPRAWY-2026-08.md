@@ -115,13 +115,8 @@ zacząć zbierać dane zanim ruszą treści.
 - **Google Search Console + Bing Webmaster Tools** — weryfikacja przez meta tag,
   zgłoszenie sitemapy, przegląd stanu indeksacji (być może Google widzi dziś ułamek
   stron — nie wiemy).
-- **Analityka** — adamszczotka.dev nie jest projektem privacy-first (ta zasada dotyczy
-  FormattedAI), więc wybór jest otwarty: **GA4** (pełne dane, integracja z Search
-  Console, ale wymaga banera zgody wg RODO/ePrivacy) albo **Umami na VPS** (cookieless
-  — zero banera, mniej danych). Patrz decyzja D3.
-- **Aktualizacja polityki prywatności** — obecny tekst obiecuje wprost „żadnego Google
-  Analytics, żadnych trackerów", więc niezależnie od wyboru narzędzia trzeba go
-  zaktualizować; przy GA4 dochodzi baner zgody.
+- **Analityka** — decyzja D3: ŻADNEJ analityki. Wystarczy Search Console —
+  bez trackerów, bez banera, polityka prywatności zostaje bez zmian.
 - **Baseline** — zapisujemy stan zero (zaindeksowane strony, impresje), żeby po 2–3
   miesiącach móc ocenić efekt.
 
@@ -258,7 +253,7 @@ startuje kalendarz.
 |---|---|---|
 | D1 | **Co znaczą „zdjęcia AI"?** | **Rozstrzygnięte:** grafiki generowane przez AI — na stronie ich nie ma, temat wypada z planu. Wraca tylko, jeśli blog zacznie używać ilustracji AI. |
 | D2 | **Rendering: zostać przy force-dynamic czy wrócić do SSG/ISR?** Dynamic = harmonogram publikacji za darmo, prostota; ISR = szybsze TTFB, ale harmonogram wymaga triggera rewalidacji. | force-dynamic, rewizja przy realnym ruchu |
-| D3 | **Analityka: GA4 czy Umami?** Privacy-first nie obowiązuje (to zasada FormattedAI, nie tej strony). GA4 = najpełniejsze dane i integracja z Search Console, kosztem banera zgody (RODO) na minimalistycznym layoucie. Umami self-hosted = zero banera i czysty wygląd, mniej danych. | GA4, jeśli baner nie przeszkadza; inaczej Umami |
+| D3 | **Analityka** | **Rozstrzygnięte:** żadnej analityki — tylko Google Search Console (+ opcjonalnie Bing). Zero trackerów, zero banera. |
 | D4 | **Rytm bloga:** co tydzień czy co dwa tygodnie? Determinuje, ile artykułów kolejkować na start (min. 3 przed ogłoszeniem „regularnego bloga"). | co 2 tyg., podnieść gdy wejdzie w nawyk |
 | D5 | **Komentarze i moderacja:** panel widzi tylko oczekujące — zatwierdzone/odrzucone znikają bez możliwości cofnięcia. Naprawiać w 4D czy wyłączyć komentarze do czasu ruchu? | naprawić w 4D, to mały zakres |
 

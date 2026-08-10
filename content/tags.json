@@ -1,46 +1,50 @@
 [
   {
-    "name": "TypeScript",
-    "slug": "typescript"
-  },
-  {
-    "name": "React",
-    "slug": "react"
-  },
-  {
-    "name": "Next.js",
-    "slug": "nextjs"
-  },
-  {
-    "name": "Python",
-    "slug": "python"
+    "name": "B2B",
+    "slug": "b2b"
   },
   {
     "name": "Django",
     "slug": "django"
   },
   {
-    "name": "PostgreSQL",
-    "slug": "postgresql"
-  },
-  {
     "name": "Docker",
     "slug": "docker"
-  },
-  {
-    "name": "Privacy",
-    "slug": "privacy"
-  },
-  {
-    "name": "SSG",
-    "slug": "ssg"
   },
   {
     "name": "i18n",
     "slug": "i18n"
   },
   {
-    "name": "B2B",
-    "slug": "b2b"
+    "name": "JavaScript",
+    "slug": "javascript"
+  },
+  {
+    "name": "Next.js",
+    "slug": "nextjs"
+  },
+  {
+    "name": "PostgreSQL",
+    "slug": "postgresql"
+  },
+  {
+    "name": "Privacy",
+    "slug": "privacy"
+  },
+  {
+    "name": "Python",
+    "slug": "python"
+  },
+  {
+    "name": "React",
+    "slug": "react"
+  },
+  {
+    "name": "SSG",
+    "slug": "ssg"
+  },
+  {
+    "name": "TypeScript",
+    "slug": "typescript"
   }
 ]

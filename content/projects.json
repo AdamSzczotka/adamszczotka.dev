@@ -3,37 +3,125 @@
     "locale": "en",
     "slug": "formattedai",
     "title": "FormattedAI.pl",
-    "description": "Free, privacy-first developer tools. 100% client-side -- zero uploads, zero tracking, zero accounts. Markdown formatter, AVIF converter, CSS/JS minifiers, SEO/GEO tag generator.",
-    "content": "<p class=\"text-lg leading-relaxed\">FormattedAI is a collection of free, privacy-focused web tools for developers and content creators. Every tool runs entirely in the browser -- your data never leaves your device. No accounts, no uploads, no tracking.</p>\n\n<h2>The Problem</h2>\n<p>Every formatting and conversion tool on the market sends your data to external servers. For developers working under NDA or handling sensitive codebases, this is a direct violation of their agreements. Most tools also require accounts, track users with cookies, and serve ads.</p>\n<p>I needed tools I could trust with client code, API keys visible in configs, and proprietary business logic. Nothing on the market offered that guarantee.</p>\n\n<h2>The Solution</h2>\n<p>A suite of 5 production tools (+ 2 coming soon) that run 100% in the browser. The server delivers static HTML, CSS, and JavaScript -- after that, your machine does all the work.</p>\n\n<h2>Tools</h2>\n<div data-slider=\"true\"></div>\n\n<h2>Articles</h2>\n<p>A built-in knowledge base where I publish guides about web performance, image optimization, and the tools themselves. Serves as both documentation and a content hub for organic traffic.</p>\n<img src=\"/uploads/formatted_ai_articles.avif\" alt=\"FormattedAI - Articles section\" />\n\n<h2>Technical Architecture</h2>\n<p>The entire application is built with vanilla HTML, SCSS, and JavaScript -- no frameworks. Build tools are limited to Sass, esbuild, and a custom Node.js i18n generator. This keeps the bundle tiny and eliminates supply chain risk.</p>\n<ul>\n<li><strong>No frameworks</strong> -- pure HTML/SCSS/JS, zero runtime dependencies</li>\n<li><strong>WebAssembly</strong> -- AVIF conversion uses jSquash WASM encoder running in the browser</li>\n<li><strong>Client-side libraries</strong> -- Terser, CSSO, and Beautify bundled for in-browser minification/formatting</li>\n<li><strong>Marked + DOMPurify</strong> -- Markdown parsing with HTML sanitization</li>\n<li><strong>Static i18n</strong> -- custom build script generates separate HTML for Polish and English from JSON locale files and templates</li>\n<li><strong>Nginx</strong> -- production deployment with gzip, 1-year asset cache, security headers</li>\n</ul>\n\n<h2>SEO and GEO</h2>\n<p>The SEO/GEO Tag Generator is not just a tool -- FormattedAI itself is optimized for both traditional search and AI engines:</p>\n<ul>\n<li>JSON-LD structured data (WebSite, WebApplication, FAQPage, BreadcrumbList)</li>\n<li>Open Graph + Twitter Card meta tags on every page</li>\n<li>Hreflang alternates for PL/EN</li>\n<li>llms.txt for AI crawler discoverability</li>\n<li>AI-aware robots.txt (GPTBot, ClaudeBot, PerplexityBot)</li>\n</ul>\n\n<h2>Stack</h2>\n<ul>\n<li>Vanilla HTML / SCSS / JavaScript (no frameworks)</li>\n<li>esbuild + Dart Sass (build only)</li>\n<li>WebAssembly (jSquash AVIF encoder)</li>\n<li>Terser, CSSO, js-beautify (bundled for client-side)</li>\n<li>Marked + DOMPurify (Markdown processing)</li>\n<li>Custom Node.js i18n static generator</li>\n<li>Nginx (production server)</li>\n</ul>\n\n<h2>Results</h2>\n<ul>\n<li><strong>100/100</strong> Lighthouse score across all pages</li>\n<li><strong>Zero</strong> external API calls -- everything runs locally</li>\n<li><strong>2 languages</strong> -- full Polish and English, statically generated</li>\n<li><strong>5 live tools</strong> + 2 coming soon (JSON Formatter, Color Palette)</li>\n<li><strong>MIT licensed</strong> -- fully open-source</li>\n<li>Used by developers in companies with strict data handling policies</li>\n</ul>",
+    "description": "Free, privacy-first web tools for developers and content creators. 14 tools running in the browser, from an AI-tell text scanner with a local LLM to AVIF conversion, OCR and PDF utilities. Vanilla JS, open source, no accounts, no tracking.",
+    "content": "<h2>The Problem</h2>\n<p>Most online formatting and conversion tools upload your files to someone else's server. For developers working under NDA that is a contract breach waiting to happen, and for everyone else it means cookie banners, trackers and accounts for a task that should take seconds.</p>\n<h2>The Solution</h2>\n<p>FormattedAI is a suite of 14 free tools where privacy comes from architecture, not from a policy page: the site is static, has no accounts and no analytics, and the work happens in the browser through WebAssembly and Web Workers.</p>\n<ul>\n<li><strong>Text</strong> -- Text Humanizer, Markdown Formatter, JS and CSS minifiers, a JSON Formatter with tree view, diff and JSONPath, and a Regex Tester with a ReDoS watchdog</li>\n<li><strong>Images</strong> -- AVIF and HEIC converters (WebAssembly), OCR in 100+ languages (Tesseract.js), and a color palette generator with WCAG contrast checks</li>\n<li><strong>Documents</strong> -- PDF merge, split and compress, HTML to PDF, and an email-safe signature generator</li>\n<li><strong>SEO &amp; GEO</strong> -- a tag generator covering meta tags, Open Graph, Twitter Cards, Schema.org JSON-LD, llms.txt and robots.txt</li>\n</ul>\n<h2>Flagship: Text Humanizer</h2>\n<p>Instead of blindly rewriting text, the Humanizer scans it for AI tells -- buzzwords, hedge openers, cliche closers, em-dash overuse -- and proposes a fix for each finding that you accept or dismiss, with sentence rhythm shown as a signal rather than a verdict. An opt-in deep mode runs a Qwen 2.5 model directly in the browser via WebLLM, so even LLM-assisted analysis never sends your text anywhere.</p>\n<h2>Technical Decisions</h2>\n<p>The whole site is vanilla HTML, CSS and JavaScript: Sass compiles one stylesheet per tool, esbuild bundles the scripts, and client-side libraries (jSquash for AVIF, Tesseract.js, PDF.js with pdf-lib, Terser, CSSO, WebLLM) are vendored into the repo. No framework, no runtime dependencies.</p>\n<p>Two tools genuinely need a server -- HTML-to-PDF rendering through headless Chromium and metadata fetching for the SEO generator -- and run as small hardened Node services with SSRF guards that validate after DNS resolution, private-IP blocking and layered rate limits. Everything else runs fully client-side.</p>\n<p>The May 2026 \"Hybrid Console\" redesign rebuilt every page around a dark-first design system with a tool catalog, a command palette and a complete Polish/English mirror. Deployment is GitHub Actions with rsync to a VPS behind nginx.</p>\n<h2>Results</h2>\n<ul>\n<li>14 tools live -- five of them shipped in one August week, three in a single day</li>\n<li>12 of 14 tools run entirely in the browser; files never leave the machine</li>\n<li>Open source (MIT) with automated CI deployment</li>\n<li>Built to be cited by AI search engines: llms.txt, structured data and full AI-crawler access</li>\n</ul>",
     "tags": [
       "i18n",
+      "javascript",
       "privacy",
-      "ssg",
-      "typescript"
+      "ssg"
     ],
-    "coverImage": "/uploads/formatted_min.avif",
-    "imageUrl": "/uploads/formatted_ai_main.avif",
+    "coverImage": "/uploads/formattedai-cover.avif",
+    "imageUrl": "/uploads/formattedai-home.avif",
     "liveUrl": "https://formattedai.pl",
     "githubUrl": "https://github.com/AdamSzczotka/formattedai",
-    "createdAt": "2026-03-28 00:09:19.286921"
+    "createdAt": "2026-03-28 00:09:19.286921",
+    "slides": [
+      {
+        "src": "/uploads/formattedai-home.avif",
+        "alt": "FormattedAI homepage after the Hybrid Console redesign, dark theme with tool categories",
+        "title": "Homepage",
+        "description": "The Hybrid Console redesign: dark-first design system, four tool categories and a full Polish/English mirror."
+      },
+      {
+        "src": "/uploads/formattedai-catalog.avif",
+        "alt": "FormattedAI tool catalog with category filters and command palette",
+        "title": "Tool Catalog",
+        "description": "All 14 tools with sticky category filters and a Cmd+K command palette."
+      },
+      {
+        "src": "/uploads/formattedai-humanizer.avif",
+        "alt": "Text Humanizer scanning text for AI tells",
+        "title": "Text Humanizer",
+        "description": "Scans text for AI tells: buzzwords, hedge openers, cliche closers, em-dash overuse. Each finding comes with a fix you accept or dismiss."
+      },
+      {
+        "src": "/uploads/formattedai-humanizer-tells.avif",
+        "alt": "Text Humanizer findings view with per-issue fixes and sentence rhythm signal",
+        "title": "Humanizer Findings",
+        "description": "Findings with sentence rhythm as a signal, not a verdict. Deep mode runs a Qwen 2.5 model locally in the browser via WebLLM."
+      },
+      {
+        "src": "/uploads/formattedai-markdown.avif",
+        "alt": "Markdown Formatter converting AI chat output into clean rich text",
+        "title": "Markdown Formatter",
+        "description": "Turns raw ChatGPT/Claude markdown into clean text for Google Docs and Word, with HTML and DOCX export."
+      },
+      {
+        "src": "/uploads/formattedai-seo-geo.avif",
+        "alt": "SEO and GEO tag generator with live SERP preview",
+        "title": "SEO & GEO Generator",
+        "description": "Meta tags, Open Graph, JSON-LD, llms.txt and robots.txt with a live SERP and social preview."
+      },
+      {
+        "src": "/uploads/formattedai-avif.avif",
+        "alt": "AVIF converter processing images in the browser",
+        "title": "AVIF Converter",
+        "description": "Batch PNG/JPG/WebP to AVIF compression in the browser via WebAssembly (jSquash), with ZIP download."
+      }
+    ]
   },
   {
     "locale": "pl",
     "slug": "formattedai",
     "title": "FormattedAI.pl",
-    "description": "Darmowe narzędzia deweloperskie stawiające na prywatność. 100% po stronie klienta -- zero uploadu, zero śledzenia, zero kont. Formater Markdown, konwerter AVIF, minifikatory CSS/JS, generator tagów SEO/GEO.",
-    "content": "<p class=\"text-lg leading-relaxed\">FormattedAI to kolekcja darmowych narzędzi webowych dla deweloperów i twórców treści, stawiających na prywatność. Każde narzędzie działa całkowicie w przeglądarce -- Twoje dane nigdy nie opuszczają urządzenia. Bez kont, bez uploadu, bez śledzenia.</p>\n\n<h2>Problem</h2>\n<p>Każde narzędzie do formatowania i konwersji na rynku wysyła dane na zewnętrzne serwery. Dla deweloperów pracujących pod NDA lub obsługujących wrażliwe bazy kodu, jest to bezpośrednie naruszenie ich umów. Większość narzędzi wymaga też kont, śledzi użytkowników ciasteczkami i serwuje reklamy.</p>\n<p>Potrzebowałem narzędzi, którym mogę zaufać z kodem klienta, kluczami API widocznymi w konfigach i zastrzeżoną logiką biznesową. Nic na rynku nie oferowało takiej gwarancji.</p>\n\n<h2>Rozwiązanie</h2>\n<p>Zestaw 5 produkcyjnych narzędzi (+ 2 w przygotowaniu), które działają w 100% w przeglądarce. Serwer dostarcza statyczny HTML, CSS i JavaScript -- potem Twoja maszyna wykonuje całą pracę.</p>\n\n<h2>Narzędzia</h2>\n<div data-slider=\"true\"></div>\n\n<h2>Artykuły</h2>\n<p>Wbudowana baza wiedzy, gdzie publikuję poradniki o wydajności stron, optymalizacji obrazów i samych narzędziach. Służy zarówno jako dokumentacja, jak i hub treści dla ruchu organicznego.</p>\n<img src=\"/uploads/formatted_ai_articles.avif\" alt=\"FormattedAI - Sekcja artykułów\" />\n\n<h2>Architektura techniczna</h2>\n<p>Cała aplikacja zbudowana jest z czystego HTML, SCSS i JavaScript -- bez frameworków. Narzędzia budowania ograniczają się do Sass, esbuild i własnego generatora i18n w Node.js. To utrzymuje bundle minimalny i eliminuje ryzyko supply chain.</p>\n<ul>\n<li><strong>Bez frameworków</strong> -- czysty HTML/SCSS/JS, zero zależności runtime</li>\n<li><strong>WebAssembly</strong> -- konwersja AVIF używa enkodera jSquash WASM działającego w przeglądarce</li>\n<li><strong>Biblioteki klienckie</strong> -- Terser, CSSO i Beautify zbundlowane do minifikacji/formatowania w przeglądarce</li>\n<li><strong>Marked + DOMPurify</strong> -- parsowanie Markdown z sanityzacją HTML</li>\n<li><strong>Statyczne i18n</strong> -- własny skrypt budowania generuje osobny HTML dla polskiego i angielskiego z plików JSON i szablonów</li>\n<li><strong>Nginx</strong> -- wdrożenie produkcyjne z gzip, rocznym cache assetów, nagłówkami bezpieczeństwa</li>\n</ul>\n\n<h2>SEO i GEO</h2>\n<p>Generator tagów SEO/GEO to nie tylko narzędzie -- sam FormattedAI jest zoptymalizowany zarówno pod tradycyjne wyszukiwarki, jak i silniki AI:</p>\n<ul>\n<li>Dane strukturalne JSON-LD (WebSite, WebApplication, FAQPage, BreadcrumbList)</li>\n<li>Tagi Open Graph + Twitter Card na każdej stronie</li>\n<li>Alternates hreflang dla PL/EN</li>\n<li>llms.txt dla discoverability przez AI crawlery</li>\n<li>AI-aware robots.txt (GPTBot, ClaudeBot, PerplexityBot)</li>\n</ul>\n\n<h2>Stack</h2>\n<ul>\n<li>Vanilla HTML / SCSS / JavaScript (bez frameworków)</li>\n<li>esbuild + Dart Sass (tylko build)</li>\n<li>WebAssembly (enkoder jSquash AVIF)</li>\n<li>Terser, CSSO, js-beautify (zbundlowane kliencko)</li>\n<li>Marked + DOMPurify (przetwarzanie Markdown)</li>\n<li>Własny generator statyczny i18n w Node.js</li>\n<li>Nginx (serwer produkcyjny)</li>\n</ul>\n\n<h2>Wyniki</h2>\n<ul>\n<li><strong>100/100</strong> wynik Lighthouse na wszystkich stronach</li>\n<li><strong>Zero</strong> zewnętrznych wywołań API -- wszystko działa lokalnie</li>\n<li><strong>2 języki</strong> -- pełny polski i angielski, generowane statycznie</li>\n<li><strong>5 aktywnych narzędzi</strong> + 2 w przygotowaniu (JSON Formatter, Color Palette)</li>\n<li><strong>Licencja MIT</strong> -- w pełni open-source</li>\n<li>Używane przez deweloperów w firmach ze ścisłymi politykami przetwarzania danych</li>\n</ul>",
+    "description": "Darmowe narzędzia webowe dla deweloperów i twórców treści. 14 narzędzi działających w przeglądarce: od skanera śladów AI z lokalnym LLM po konwersję AVIF, OCR i narzędzia PDF. Vanilla JS, open source, bez kont i bez śledzenia.",
+    "content": "<h2>Problem</h2>\n<p>Większość narzędzi do formatowania i konwersji online wysyła pliki na cudzy serwer. Dla deweloperów pracujących pod NDA to naruszenie umowy czekające na swój moment, a dla wszystkich innych: banery cookies, trackery i zakładanie kont do zadania, które powinno zająć kilka sekund.</p>\n<h2>Rozwiązanie</h2>\n<p>FormattedAI to zestaw 14 darmowych narzędzi, w których prywatność wynika z architektury, a nie z podstrony z polityką: strona jest statyczna, nie ma kont ani analityki, a cała praca dzieje się w przeglądarce dzięki WebAssembly i Web Workerom.</p>\n<ul>\n<li><strong>Tekst</strong> -- Text Humanizer, formater Markdown, minifikatory JS i CSS, formater JSON z widokiem drzewa, diffem i JSONPath oraz tester regexów z ochroną przed ReDoS</li>\n<li><strong>Obrazy</strong> -- konwertery AVIF i HEIC (WebAssembly), OCR w ponad 100 językach (Tesseract.js) i generator palet kolorów ze sprawdzaniem kontrastu WCAG</li>\n<li><strong>Dokumenty</strong> -- łączenie, dzielenie i kompresja PDF, HTML do PDF oraz generator stopek e-mail</li>\n<li><strong>SEO i GEO</strong> -- generator tagów: meta tagi, Open Graph, Twitter Cards, JSON-LD Schema.org, llms.txt i robots.txt</li>\n</ul>\n<h2>Flagowiec: Text Humanizer</h2>\n<p>Zamiast ślepo przepisywać tekst, Humanizer skanuje go w poszukiwaniu śladów AI -- buzzwordów, asekuracyjnych otwarć, kliszowych zakończeń, nadmiaru myślników -- i przy każdym znalezisku proponuje poprawkę, którą akceptujesz albo odrzucasz; rytm zdań pokazywany jest jako sygnał, nie werdykt. Opcjonalny tryb głęboki uruchamia model Qwen 2.5 bezpośrednio w przeglądarce przez WebLLM, więc nawet analiza wspierana przez LLM nigdzie nie wysyła Twojego tekstu.</p>\n<h2>Decyzje techniczne</h2>\n<p>Cała strona to czysty HTML, CSS i JavaScript: Sass kompiluje jeden arkusz na narzędzie, esbuild skleja skrypty, a biblioteki client-side (jSquash do AVIF, Tesseract.js, PDF.js z pdf-lib, Terser, CSSO, WebLLM) są zavendorowane w repozytorium. Zero frameworków, zero zależności runtime.</p>\n<p>Dwa narzędzia naprawdę potrzebują serwera -- renderowanie HTML do PDF przez headless Chromium i pobieranie metadanych dla generatora SEO -- i działają jako małe, utwardzone usługi Node z ochroną przed SSRF walidującą po rozwiązaniu DNS, blokadą prywatnych IP i warstwowym rate limitingiem. Cała reszta działa w pełni po stronie klienta.</p>\n<p>Majowy redesign \"Hybrid Console\" (2026) przebudował każdą podstronę wokół dark-first design systemu z katalogiem narzędzi, paletą poleceń i pełnym lustrem polsko-angielskim. Deploy to GitHub Actions z rsync na VPS za nginxem.</p>\n<h2>Efekty</h2>\n<ul>\n<li>14 działających narzędzi -- pięć z nich wydanych w jednym sierpniowym tygodniu, trzy jednego dnia</li>\n<li>12 z 14 narzędzi działa w całości w przeglądarce; pliki nie opuszczają urządzenia</li>\n<li>Open source (MIT) z automatycznym deployem CI</li>\n<li>Zbudowane pod cytowanie przez wyszukiwarki AI: llms.txt, dane strukturalne i pełny dostęp dla crawlerów AI</li>\n</ul>",
     "tags": [
       "i18n",
+      "javascript",
       "privacy",
-      "ssg",
-      "typescript"
+      "ssg"
     ],
-    "coverImage": "/uploads/formatted_min.avif",
-    "imageUrl": "/uploads/formatted_ai_main.avif",
+    "coverImage": "/uploads/formattedai-cover.avif",
+    "imageUrl": "/uploads/formattedai-home.avif",
     "liveUrl": "https://formattedai.pl",
     "githubUrl": "https://github.com/AdamSzczotka/formattedai",
-    "createdAt": "2026-03-29 13:44:58.447235"
+    "createdAt": "2026-03-29 13:44:58.447235",
+    "slides": [
+      {
+        "src": "/uploads/formattedai-home.avif",
+        "alt": "Strona główna FormattedAI po redesignie Hybrid Console, ciemny motyw z kategoriami narzędzi",
+        "title": "Strona główna",
+        "description": "Redesign Hybrid Console: dark-first design system, cztery kategorie narzędzi i pełne lustro PL/EN."
+      },
+      {
+        "src": "/uploads/formattedai-catalog.avif",
+        "alt": "Katalog narzędzi FormattedAI z filtrami kategorii i paletą poleceń",
+        "title": "Katalog narzędzi",
+        "description": "Wszystkie 14 narzędzi z przyklejonymi filtrami kategorii i paletą poleceń Cmd+K."
+      },
+      {
+        "src": "/uploads/formattedai-humanizer.avif",
+        "alt": "Text Humanizer skanujący tekst w poszukiwaniu śladów AI",
+        "title": "Text Humanizer",
+        "description": "Skanuje tekst pod kątem śladów AI: buzzwordy, asekuracyjne otwarcia, kliszowe zakończenia, nadmiar myślników. Każde znalezisko ma poprawkę do zaakceptowania albo odrzucenia."
+      },
+      {
+        "src": "/uploads/formattedai-humanizer-tells.avif",
+        "alt": "Widok znalezisk Text Humanizera z poprawkami i sygnałem rytmu zdań",
+        "title": "Znaleziska Humanizera",
+        "description": "Znaleziska z rytmem zdań jako sygnałem, nie werdyktem. Tryb głęboki uruchamia model Qwen 2.5 lokalnie w przeglądarce przez WebLLM."
+      },
+      {
+        "src": "/uploads/formattedai-markdown.avif",
+        "alt": "Formater Markdown zamieniający output czatów AI na czysty tekst",
+        "title": "Formater Markdown",
+        "description": "Zamienia surowy markdown z ChatGPT/Claude na czysty tekst do Google Docs i Worda, z eksportem HTML i DOCX."
+      },
+      {
+        "src": "/uploads/formattedai-seo-geo.avif",
+        "alt": "Generator tagów SEO i GEO z podglądem SERP na żywo",
+        "title": "Generator SEO i GEO",
+        "description": "Meta tagi, Open Graph, JSON-LD, llms.txt i robots.txt z podglądem SERP i kart social na żywo."
+      },
+      {
+        "src": "/uploads/formattedai-avif.avif",
+        "alt": "Konwerter AVIF przetwarzający obrazy w przeglądarce",
+        "title": "Konwerter AVIF",
+        "description": "Wsadowa kompresja PNG/JPG/WebP do AVIF w przeglądarce przez WebAssembly (jSquash), z pobraniem ZIP."
+      }
+    ]
   },
   {
     "locale": "en",
@@ -52,7 +140,63 @@
     "imageUrl": "/uploads/tutorhub.avif",
     "liveUrl": "https://tutorhub.adamszczotka-pokaz.pl/",
     "githubUrl": "https://github.com/AdamSzczotka/TutorHub",
-    "createdAt": "2026-03-28 00:09:19.292024"
+    "createdAt": "2026-03-28 00:09:19.292024",
+    "slides": [
+      {
+        "src": "/uploads/tutorhub_dashbord.avif",
+        "alt": "TutorHub admin dashboard with student, tutor and revenue statistics",
+        "title": "Dashboard",
+        "description": "Admin overview with key stats: students, tutors, upcoming lessons, pending invoices, and revenue tracking."
+      },
+      {
+        "src": "/uploads/tutorhub_calendar.avif",
+        "alt": "TutorHub lesson calendar with tutor and room resource views",
+        "title": "Lesson Calendar",
+        "description": "FullCalendar-based scheduling with tutor/room resource views, recurring lessons, and conflict detection."
+      },
+      {
+        "src": "/uploads/tutorhub_attend.avif",
+        "alt": "TutorHub attendance tracking screen with per-student statuses",
+        "title": "Attendance Tracking",
+        "description": "Real-time attendance marking with present/absent/late/excused statuses, check-in times, and monthly reports."
+      },
+      {
+        "src": "/uploads/tutorhub_fak.avif",
+        "alt": "TutorHub automated invoicing with VAT calculations",
+        "title": "Automated Invoicing",
+        "description": "Monthly invoices auto-generated via Celery Beat. Net/VAT/Gross calculations, PDF generation, overdue detection."
+      },
+      {
+        "src": "/uploads/tutorhub_messa.avif",
+        "alt": "TutorHub threaded messaging with group chat",
+        "title": "Messaging System",
+        "description": "Threaded conversations with group chat, file attachments, read receipts, and reply support."
+      },
+      {
+        "src": "/uploads/tutorhub_przemdioty.avif",
+        "alt": "TutorHub subject catalog with education levels and pricing",
+        "title": "Subject Management",
+        "description": "Subject catalog with education levels (7A, 3LO), tutor expertise matching, and per-subject pricing."
+      },
+      {
+        "src": "/uploads/tutorhub_raportsd.avif",
+        "alt": "TutorHub reports and analytics with PDF export",
+        "title": "Reports & Analytics",
+        "description": "Attendance reports with PDF export, revenue breakdowns, tutor utilization, and student retention metrics."
+      },
+      {
+        "src": "/uploads/tutorhub_logi.avif",
+        "alt": "TutorHub audit log with user activity and IP tracking",
+        "title": "Audit Logs",
+        "description": "Full CRUD audit trail with user activity logging, IP tracking, and timestamps for compliance."
+      },
+      {
+        "src": "/uploads/tutorhub_system.avif",
+        "alt": "TutorHub system settings panel",
+        "title": "System Settings",
+        "description": "Configurable school name, lesson duration, cancellation notice, makeup expiry, invoice prefix, and notifications."
+      }
+    ]
   },
   {
     "locale": "pl",
@@ -71,6 +215,62 @@
     "imageUrl": "/uploads/tutorhub.avif",
     "liveUrl": "https://tutorhub.adamszczotka-pokaz.pl/",
     "githubUrl": "https://github.com/AdamSzczotka/TutorHub",
-    "createdAt": "2026-03-29 13:45:37.023345"
+    "createdAt": "2026-03-29 13:45:37.023345",
+    "slides": [
+      {
+        "src": "/uploads/tutorhub_dashbord.avif",
+        "alt": "Panel główny TutorHub ze statystykami uczniów, korepetytorów i przychodów",
+        "title": "Panel główny",
+        "description": "Przegląd administratora: uczniowie, korepetytorzy, nadchodzące lekcje, oczekujące faktury i przychody."
+      },
+      {
+        "src": "/uploads/tutorhub_calendar.avif",
+        "alt": "Kalendarz lekcji TutorHub z widokami zasobów korepetytor i sala",
+        "title": "Kalendarz lekcji",
+        "description": "Planowanie oparte na FullCalendar z widokami zasobów (korepetytor/sala), lekcjami cyklicznymi i wykrywaniem konfliktów."
+      },
+      {
+        "src": "/uploads/tutorhub_attend.avif",
+        "alt": "Ekran obecności TutorHub ze statusami per uczeń",
+        "title": "Śledzenie obecności",
+        "description": "Oznaczanie obecności w czasie rzeczywistym: obecny/nieobecny/spóźniony/usprawiedliwiony, godziny wejścia i raporty miesięczne."
+      },
+      {
+        "src": "/uploads/tutorhub_fak.avif",
+        "alt": "Automatyczne fakturowanie TutorHub z wyliczeniami VAT",
+        "title": "Automatyczne fakturowanie",
+        "description": "Faktury miesięczne generowane automatycznie przez Celery Beat. Netto/VAT/brutto, generowanie PDF i wykrywanie zaległości."
+      },
+      {
+        "src": "/uploads/tutorhub_messa.avif",
+        "alt": "Komunikator TutorHub z wątkami i czatem grupowym",
+        "title": "Komunikator",
+        "description": "Wątki rozmów z czatem grupowym, załącznikami, potwierdzeniami odczytu i odpowiedziami."
+      },
+      {
+        "src": "/uploads/tutorhub_przemdioty.avif",
+        "alt": "Katalog przedmiotów TutorHub z poziomami nauczania i cennikiem",
+        "title": "Przedmioty",
+        "description": "Katalog przedmiotów z poziomami nauczania (7A, 3LO), dopasowaniem kompetencji korepetytorów i cennikiem per przedmiot."
+      },
+      {
+        "src": "/uploads/tutorhub_raportsd.avif",
+        "alt": "Raporty i analityka TutorHub z eksportem PDF",
+        "title": "Raporty i analityka",
+        "description": "Raporty obecności z eksportem PDF, przychody, obłożenie korepetytorów i retencja uczniów."
+      },
+      {
+        "src": "/uploads/tutorhub_logi.avif",
+        "alt": "Logi audytowe TutorHub z aktywnością użytkowników i adresami IP",
+        "title": "Logi audytowe",
+        "description": "Pełny ślad operacji CRUD z aktywnością użytkowników, adresami IP i znacznikami czasu."
+      },
+      {
+        "src": "/uploads/tutorhub_system.avif",
+        "alt": "Panel ustawień systemowych TutorHub",
+        "title": "Ustawienia systemu",
+        "description": "Konfigurowalna nazwa szkoły, długość lekcji, terminy odwołań, wygasanie odrabianych lekcji, prefiks faktur i powiadomienia."
+      }
+    ]
   }
 ]

@@ -55,6 +55,7 @@ async function seed() {
           imageUrl: p.imageUrl,
           liveUrl: p.liveUrl,
           githubUrl: p.githubUrl,
+          slides: p.slides ?? null,
           createdAt: new Date(p.createdAt),
         })
         .returning();
