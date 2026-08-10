@@ -39,7 +39,7 @@ export function Footer() {
               GitHub
             </a>
             <a
-              href="https://linkedin.com/in/adamszczotka"
+              href="https://www.linkedin.com/in/adam-szczotka"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-foreground transition-colors"

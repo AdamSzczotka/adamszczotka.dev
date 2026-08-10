@@ -131,7 +131,7 @@ const links = [
     label: "LinkedIn",
     url: "https://www.linkedin.com/in/adam-szczotka",
   },
-  { label: "Email", url: "mailto:adam@adamszczotka.dev" },
+  { label: "Email", url: "mailto:adam.szczotka0@gmail.com" },
 ];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

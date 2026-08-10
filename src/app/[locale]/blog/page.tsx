@@ -74,8 +74,8 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const translations = await getTranslations(currentLocale);
   const localePath = currentLocale === "pl" ? "/pl" : "";
 
-  // Resolve category filter -- default to "tech" if no param
-  const activeCategory = category || "tech";
+  // Resolve category filter -- default to "all" so uncategorized posts stay visible
+  const activeCategory = category || "all";
   let categoryId: number | undefined;
   if (activeCategory !== "all") {
     const [cat] = await db

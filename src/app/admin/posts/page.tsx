@@ -6,6 +6,7 @@ import Link from "next/link";
 import { togglePublished, deletePost } from "./actions";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 export default async function AdminPostsPage() {
   await requireAdmin();
@@ -72,12 +73,12 @@ export default async function AdminPostsPage() {
                   await deletePost(post.id);
                 }}
               >
-                <button
-                  type="submit"
+                <ConfirmButton
+                  message={`Delete post "${post.title}"? Its comments are deleted too. This cannot be undone.`}
                   className="text-xs text-red-500 hover:text-red-400 transition-colors"
                 >
                   {t(translations, "admin.delete", "Delete")}
-                </button>
+                </ConfirmButton>
               </form>
             </div>
           </div>

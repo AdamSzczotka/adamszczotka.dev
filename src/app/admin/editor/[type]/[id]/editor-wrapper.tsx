@@ -76,15 +76,24 @@ export function EditorWrapper({
   const [meta, setMeta] = useState(initial);
   const [metaSaving, setMetaSaving] = useState(false);
   const [metaSaved, setMetaSaved] = useState(false);
+  const [metaError, setMetaError] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const handleMetaSave = async () => {
     setMetaSaving(true);
-    await saveMetadata(type, id, meta);
-    setMetaSaving(false);
-    setMetaSaved(true);
-    setTimeout(() => setMetaSaved(false), 2000);
+    setMetaError(null);
+    try {
+      await saveMetadata(type, id, meta);
+      setMetaSaved(true);
+      setTimeout(() => setMetaSaved(false), 2000);
+    } catch {
+      setMetaError(
+        "Save failed. Check that the slug is unique and try again.",
+      );
+    } finally {
+      setMetaSaving(false);
+    }
   };
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,7 +157,7 @@ export function EditorWrapper({
           <div className="flex items-center gap-3">
             {isPost && meta.slug && (
               <a
-                href={`/admin/preview/${meta.slug}`}
+                href={`/admin/preview/${meta.slug}?locale=${meta.locale}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs border border-border px-3 py-1.5 hover:bg-foreground/5 transition-colors rounded-sm text-muted hover:text-foreground"
@@ -158,6 +167,9 @@ export function EditorWrapper({
             )}
             {metaSaved && (
               <span className="text-xs text-green-500">Saved</span>
+            )}
+            {metaError && (
+              <span className="text-xs text-red-500">{metaError}</span>
             )}
             <button
               onClick={handleMetaSave}

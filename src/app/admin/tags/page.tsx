@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { createTag, deleteTag } from "./actions";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 export default async function AdminTagsPage() {
   await requireAdmin();
@@ -47,12 +48,12 @@ export default async function AdminTagsPage() {
                 await deleteTag(tag.id);
               }}
             >
-              <button
-                type="submit"
+              <ConfirmButton
+                message={`Delete tag "${tag.name}"? This cannot be undone.`}
                 className="text-xs text-muted hover:text-red-500 transition-colors"
               >
                 x
-              </button>
+              </ConfirmButton>
             </form>
           </div>
         ))}

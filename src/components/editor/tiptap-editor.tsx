@@ -2,6 +2,7 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Blockquote from "@tiptap/extension-blockquote";
 import TiptapImage from "@tiptap/extension-image";
 import TiptapLink from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -10,6 +11,22 @@ import { common, createLowlight } from "lowlight";
 import { useCallback, useRef, useState } from "react";
 
 const lowlight = createLowlight(common);
+
+// Blockquote that keeps its class attribute, so callouts survive the
+// HTML -> editor -> HTML round trip (styling comes from CSS, which the
+// sanitizer allows — inline style attributes get stripped).
+const CalloutBlockquote = Blockquote.extend({
+  addAttributes() {
+    return {
+      class: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("class"),
+        renderHTML: (attributes) =>
+          attributes.class ? { class: attributes.class } : {},
+      },
+    };
+  },
+});
 
 interface TiptapEditorProps {
   content: string;
@@ -32,13 +49,12 @@ function MenuBar({
   };
 
   const insertCallout = (type: "info" | "warning" | "tip") => {
-    const colors = { info: "#3b82f6", warning: "#f59e0b", tip: "#22c55e" };
     const labels = { info: "Info", warning: "Warning", tip: "Tip" };
     editor
       .chain()
       .focus()
       .insertContent(
-        `<blockquote style="border-left: 3px solid ${colors[type]}; padding: 12px 16px; background: ${colors[type]}11;"><strong>${labels[type]}:</strong> </blockquote>`,
+        `<blockquote class="callout callout-${type}"><p><strong>${labels[type]}:</strong> </p></blockquote>`,
       )
       .run();
   };
@@ -116,13 +132,15 @@ function MenuBar({
 
 export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
-      StarterKit.configure({ codeBlock: false }),
+      StarterKit.configure({ codeBlock: false, blockquote: false }),
+      CalloutBlockquote,
       CodeBlockLowlight.configure({ lowlight }),
       TiptapImage.configure({ inline: false, allowBase64: false }),
       TiptapLink.configure({
@@ -182,8 +200,14 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
   const handleSave = async () => {
     if (!editor) return;
     setSaving(true);
-    await onSave(editor.getHTML());
-    setSaving(false);
+    setSaveError(null);
+    try {
+      await onSave(editor.getHTML());
+    } catch {
+      setSaveError("Save failed. Your changes are still in the editor — try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -208,9 +232,13 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
 
       <div className="flex items-center justify-between border-t border-border p-2">
         <span className="text-xs text-muted px-2">
-          {editor
-            ? `${editor.getText().length} chars`
-            : ""}
+          {saveError ? (
+            <span className="text-red-500">{saveError}</span>
+          ) : editor ? (
+            `${editor.getText().length} chars`
+          ) : (
+            ""
+          )}
         </span>
         <button
           type="button"

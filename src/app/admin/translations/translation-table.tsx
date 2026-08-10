@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef } from "react";
 import { upsertTranslation, deleteTranslation } from "./actions";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 interface Translation {
   id: number;
@@ -109,12 +110,12 @@ function TranslationRow({ t }: { t: Translation }) {
                   await deleteTranslation(t.id);
                 }}
               >
-                <button
-                  type="submit"
+                <ConfirmButton
+                  message={`Delete translation "${t.key}"? This cannot be undone.`}
                   className="text-xs text-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                 >
                   Delete
-                </button>
+                </ConfirmButton>
               </form>
             </>
           )}

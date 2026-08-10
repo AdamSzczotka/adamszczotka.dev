@@ -8,17 +8,22 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
 import sanitizeHtml from "sanitize-html";
 import { CONTENT_SANITIZE_OPTIONS } from "@/lib/utils/sanitize";
+import { slugify, uniqueSlug } from "@/lib/utils/slug";
 
 export async function createPage(formData: FormData) {
   await requireAdmin();
 
   const title = formData.get("title") as string;
-  const slug =
-    (formData.get("slug") as string) ||
-    title
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
+  const slug = await uniqueSlug(
+    slugify((formData.get("slug") as string) || title),
+    async (candidate) => {
+      const [row] = await db
+        .select({ id: pages.id })
+        .from(pages)
+        .where(eq(pages.slug, candidate));
+      return !!row;
+    },
+  );
 
   const [page] = await db.insert(pages).values({ title, slug }).returning();
 

@@ -9,6 +9,7 @@ import { calculateReadTime } from "@/lib/utils/read-time";
 import { extractToc } from "@/lib/utils/toc";
 import sanitizeHtml from "sanitize-html";
 import { CONTENT_SANITIZE_OPTIONS } from "@/lib/utils/sanitize";
+import { slugify } from "@/lib/utils/slug";
 
 export async function saveContent(type: string, id: number, html: string) {
   await requireAdmin();
@@ -58,6 +59,8 @@ export async function saveMetadata(
 ) {
   await requireAdmin();
 
+  const slug = slugify(data.slug || data.title);
+
   if (type === "post") {
     const isPublished = data.isPublished ?? false;
 
@@ -77,7 +80,7 @@ export async function saveMetadata(
       .update(posts)
       .set({
         title: data.title,
-        slug: data.slug,
+        slug,
         excerpt: data.excerpt || null,
         coverImage: data.coverImage || null,
         isPublished: isPublished,
@@ -127,7 +130,7 @@ export async function saveMetadata(
       .update(projects)
       .set({
         title: data.title,
-        slug: data.slug,
+        slug,
         description: data.description || null,
         coverImage: data.coverImage || null,
         imageUrl: data.imageUrl || null,

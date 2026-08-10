@@ -69,6 +69,7 @@ export function PageEditor({
   }
 
   function handleDeleteBlock(blockId: number) {
+    if (!window.confirm("Delete this block? This cannot be undone.")) return;
     startTransition(async () => {
       await deleteBlock(blockId);
     });
@@ -140,8 +141,11 @@ export function PageEditor({
             No blocks yet. Add one below.
           </p>
         )}
+        {/* Keyed by locale so block forms remount with the right language's
+            data — otherwise a locale switch keeps stale state and a save
+            overwrites the other language's content */}
         {blocks.map((block, index) => (
-          <div key={block.id}>
+          <div key={`${block.id}-${locale}`}>
             {/* Block header */}
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">

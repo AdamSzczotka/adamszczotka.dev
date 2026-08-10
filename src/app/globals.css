@@ -237,6 +237,28 @@ body {
   font-style: normal;
   color: var(--muted);
 }
+blockquote.callout,
+.prose blockquote.callout {
+  border-left-width: 3px;
+  padding: 0.75rem 1rem;
+  font-style: normal;
+  color: var(--foreground);
+}
+blockquote.callout-info,
+.prose blockquote.callout-info {
+  border-left-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.07);
+}
+blockquote.callout-warning,
+.prose blockquote.callout-warning {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.07);
+}
+blockquote.callout-tip,
+.prose blockquote.callout-tip {
+  border-left-color: #22c55e;
+  background: rgba(34, 197, 94, 0.07);
+}
 .prose a {
   color: var(--accent);
   text-decoration: none;

@@ -15,7 +15,7 @@ interface CategoryFilterProps {
 
 export function CategoryFilter({ basePath }: CategoryFilterProps) {
   const searchParams = useSearchParams();
-  const active = searchParams.get("category") || "tech";
+  const active = searchParams.get("category") || "all";
 
   return (
     <div className="flex flex-wrap gap-2">

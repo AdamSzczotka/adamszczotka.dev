@@ -2,16 +2,26 @@
 
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
+import { slugify, uniqueSlug } from "@/lib/utils/slug";
 
 export async function createProject(formData: FormData) {
   await requireAdmin();
 
   const title = formData.get("title") as string;
-  const slug = (formData.get("slug") as string) || title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const slug = await uniqueSlug(
+    slugify((formData.get("slug") as string) || title),
+    async (candidate) => {
+      const [row] = await db
+        .select({ id: projects.id })
+        .from(projects)
+        .where(and(eq(projects.slug, candidate), eq(projects.locale, "en")));
+      return !!row;
+    },
+  );
   const description = formData.get("description") as string;
   const liveUrl = formData.get("liveUrl") as string;
   const githubUrl = formData.get("githubUrl") as string;

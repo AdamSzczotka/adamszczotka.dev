@@ -23,6 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://adamszczotka.dev"),
   title: {
     default: "Adam Szczotka — Software Engineer",
     template: "%s | Adam Szczotka",

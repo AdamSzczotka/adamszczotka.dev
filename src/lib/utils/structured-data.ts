@@ -65,7 +65,10 @@ export function personJsonLd(): object {
     name: "Adam Szczotka",
     jobTitle: "Software Engineer",
     url: SITE_URL,
-    sameAs: ["https://github.com/adamszczotka"],
+    sameAs: [
+      "https://github.com/AdamSzczotka",
+      "https://www.linkedin.com/in/adam-szczotka",
+    ],
   };
 }
 

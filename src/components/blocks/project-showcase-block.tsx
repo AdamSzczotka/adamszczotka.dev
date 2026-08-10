@@ -16,11 +16,19 @@ export function ProjectShowcaseBlock({
   project,
   index,
   locale,
+  viewLiveLabel,
+  caseStudyLabel,
 }: {
   project: ProjectData;
   index: number;
   locale: string;
+  viewLiveLabel?: string;
+  caseStudyLabel?: string;
 }) {
+  const viewLive =
+    viewLiveLabel || (locale === "pl" ? "Zobacz na żywo" : "View Live");
+  const caseStudy =
+    caseStudyLabel || (locale === "pl" ? "Case study" : "Case Study");
   const isReversed = index % 2 === 1;
   const prefix = locale === "pl" ? "/pl" : "";
   const num = String(index + 1).padStart(2, "0");
@@ -42,14 +50,14 @@ export function ProjectShowcaseBlock({
             rel="noopener noreferrer"
             className="btn-spring text-sm border border-border px-4 py-2 hover:border-accent/50 rounded-sm"
           >
-            View Live
+            {viewLive}
           </a>
         )}
         <Link
           href={`${prefix}/projects/${project.slug}`}
           className="btn-spring text-sm border border-border px-4 py-2 hover:border-accent/50 rounded-sm"
         >
-          Case Study
+          {caseStudy}
         </Link>
       </div>
     </div>

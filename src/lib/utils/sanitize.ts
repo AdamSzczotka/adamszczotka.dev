@@ -21,6 +21,10 @@ export const CONTENT_SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
     h2: ["id"],
     h3: ["id"],
     h4: ["id"],
+    blockquote: ["class"],
+  },
+  allowedClasses: {
+    blockquote: ["callout", "callout-info", "callout-warning", "callout-tip"],
   },
   allowedSchemes: ["http", "https", "mailto"],
   allowedSchemesByTag: {

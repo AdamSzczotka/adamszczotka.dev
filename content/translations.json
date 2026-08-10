@@ -435,6 +435,11 @@
     "pl": "Polityka prywatności"
   },
   {
+    "key": "projects.case_study",
+    "en": "Case Study",
+    "pl": "Case study"
+  },
+  {
     "key": "projects.description",
     "en": "Case studies and things I have built.",
     "pl": "Case studies i rzeczy, które zbudowałem."

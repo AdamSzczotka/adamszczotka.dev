@@ -18,7 +18,7 @@ export function CtaBlock({ data }: { data: CtaData }) {
           </p>
         )}
         <a
-          href={`mailto:${data.email || "contact@adamszczotka.dev"}`}
+          href={`mailto:${data.email || "adam.szczotka0@gmail.com"}`}
           className="btn-spring mt-8 inline-flex items-center gap-2 border-2 border-accent text-accent px-8 py-3 text-sm font-medium rounded-sm hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           {data.buttonText || "Send a message"}

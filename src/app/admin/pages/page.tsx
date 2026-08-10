@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createPage, deletePage } from "./actions";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 export default async function AdminPagesPage() {
   await requireAdmin();
@@ -98,12 +99,12 @@ export default async function AdminPagesPage() {
                   await deletePage(page.id);
                 }}
               >
-                <button
-                  type="submit"
+                <ConfirmButton
+                  message={`Delete page "${page.title}" and all its blocks? This cannot be undone.`}
                   className="text-xs text-red-500 hover:text-red-400 transition-colors"
                 >
                   {t(translations, "admin.delete", "Delete")}
-                </button>
+                </ConfirmButton>
               </form>
             </div>
           </div>

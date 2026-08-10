@@ -59,6 +59,8 @@ export async function PageRenderer({ pageSlug, locale }: PageRendererProps) {
                 project={item.project}
                 index={i}
                 locale={locale}
+                viewLiveLabel={t["projects.view_live"]}
+                caseStudyLabel={t["projects.case_study"]}
               />
             ))}
           </div>

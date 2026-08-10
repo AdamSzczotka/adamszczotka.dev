@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { posts, postTags, tags } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
 import type { Metadata } from "next";
@@ -11,17 +11,22 @@ export const metadata: Metadata = {
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ locale?: string }>;
 }
 
-export default async function PreviewPage({ params }: Props) {
+export default async function PreviewPage({ params, searchParams }: Props) {
   await requireAdmin();
 
   const { slug } = await params;
+  const { locale } = await searchParams;
+  // Slug is only unique per locale — without this filter a translated post
+  // previews an arbitrary one of the two language versions
+  const postLocale = locale === "pl" ? "pl" : "en";
 
   const [post] = await db
     .select()
     .from(posts)
-    .where(eq(posts.slug, slug));
+    .where(and(eq(posts.slug, slug), eq(posts.locale, postLocale)));
 
   if (!post) notFound();
 
