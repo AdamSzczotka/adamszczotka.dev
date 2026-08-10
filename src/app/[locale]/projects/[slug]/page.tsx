@@ -4,7 +4,6 @@ import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import { ImageSlider } from "@/components/ui/image-slider";
@@ -109,9 +108,7 @@ const PROJECT_SLIDES: Record<string, { src: string; alt: string; title: string; 
   ],
 };
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;

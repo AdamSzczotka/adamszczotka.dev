@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { posts } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 const SITE_URL = "https://adamszczotka.dev";
 
 function escapeXml(str: string): string {

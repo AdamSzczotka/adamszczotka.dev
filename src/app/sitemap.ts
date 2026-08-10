@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { posts, projects } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = "https://adamszczotka.dev";
 
 function withAlternates(

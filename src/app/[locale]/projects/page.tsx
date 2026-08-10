@@ -2,7 +2,6 @@ import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
-import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import type { Metadata } from "next";
@@ -10,9 +9,7 @@ import { collectionPageJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ locale: string }>;
