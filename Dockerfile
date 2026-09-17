@@ -12,6 +12,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
+FROM deps AS migrator
+COPY drizzle.config.ts ./
+COPY drizzle ./drizzle
+COPY src/lib/db ./src/lib/db
+CMD ["npx", "drizzle-kit", "migrate"]
+
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
