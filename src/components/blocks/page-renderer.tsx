@@ -40,7 +40,6 @@ export async function PageRenderer({ pageSlug, locale }: PageRendererProps) {
   // Group consecutive project_showcase blocks
   const elements: React.ReactNode[] = [];
   let projectGroup: { block: typeof blocks[0]; project: typeof projects.$inferSelect }[] = [];
-  let projectIndex = 0;
 
   const flushProjects = () => {
     if (projectGroup.length === 0) return;

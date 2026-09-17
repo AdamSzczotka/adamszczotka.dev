@@ -10,6 +10,7 @@ import {
   index,
   jsonb,
   uniqueIndex,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -280,7 +281,7 @@ export const comments = pgTable(
     postId: integer("post_id")
       .references(() => posts.id, { onDelete: "cascade" })
       .notNull(),
-    parentId: integer("parent_id").references((): any => comments.id, {
+    parentId: integer("parent_id").references((): AnyPgColumn => comments.id, {
       onDelete: "cascade",
     }),
     authorName: varchar("author_name", { length: 100 }).notNull(),
