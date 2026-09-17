@@ -31,5 +31,16 @@ services:
       db:
         condition: service_healthy
 
+  migrate:
+    build:
+      context: .
+      target: migrator
+    profiles: ["tools"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD_ENCODED}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   postgres_data:
