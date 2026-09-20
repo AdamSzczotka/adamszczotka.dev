@@ -3,6 +3,12 @@
 # Installed as /usr/local/bin/deploy-adamszczotka-dev (root:root, 755) and
 # allowed for user "adam" via /etc/sudoers.d/deploy-adamszczotka-dev.
 # Triggered by GitHub Actions (deploy.yml) through a forced-command SSH key.
+#
+# THIS FILE IS A REFERENCE COPY. The running script lives on the server and does
+# not update itself from git, so editing this file deploys nothing — it only
+# drifts from production until someone reinstalls it by hand over sudo.
+# Per-release steps belong in scripts/sync-content.ts, which this script calls
+# and which therefore ships with every push. See docs/DEPLOY.md.
 set -euo pipefail
 
 REPO=/var/www/adamszczotka.dev

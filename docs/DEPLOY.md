@@ -19,6 +19,43 @@ Produkcja: VPS `57.129.141.64`, repo w `/var/www/adamszczotka.dev`, aplikacja w 
 Workflow **CI** (`ci.yml`) robi te same checki na każdym pushu na inne gałęzie i na PR-ach
 do `main`/`develop`.
 
+## Zasada: deploy nie wymaga SSH
+
+**Wdrożenie to wyłącznie push na `main`.** Nigdy nie trzeba logować się na serwer, żeby coś
+wdrożyć — jeśli kiedykolwiek pojawia się taka potrzeba, to znaczy, że zmiana została zrobiona
+w złym miejscu.
+
+Powód: skrypt `/usr/local/bin/deploy-adamszczotka-dev` żyje **poza repo** (musi, bo działa jako
+root) i nie aktualizuje się z gita. Dlatego jest celowo ogólny i stabilny — robi tylko:
+aktualizacja repo → build → uruchom serwis `migrate` → uruchom sync treści → restart → healthcheck.
+
+Wszystko, co może się zmieniać z wydania na wydanie, siedzi **w repo**, w dwóch miejscach, które
+ten skrypt wywołuje:
+
+| Gdzie | Co tam wrzucać |
+| --- | --- |
+| `Dockerfile`, stage `migrator` (CMD) | migracje schematu bazy |
+| `scripts/sync-content.ts` | wszystkie zadania wydaniowe: sync treści i cokolwiek dojdzie później |
+
+**Nowy krok deployu dopisujesz do `scripts/sync-content.ts`, nie do skryptu powłoki.** Dopisanie
+linijki do `scripts/deploy/deploy-adamszczotka-dev.sh` nic nie da, dopóki ktoś ręcznie nie
+przeinstaluje skryptu na serwerze przez sudo — i to jest dokładnie ten scenariusz, którego
+unikamy.
+
+> **Nie zmieniaj nazwy ani ścieżki `scripts/sync-content.ts`.** Jest zaszyta w skrypcie na
+> serwerze (`docker compose run --rm migrate npx tsx scripts/sync-content.ts`). Przeniesienie
+> tego pliku wywali deploy, a naprawa będzie wymagała wejścia na serwer.
+
+`scripts/deploy/deploy-adamszczotka-dev.sh` w repo to **kopia referencyjna** tego, co jest
+zainstalowane na serwerze — trzymana po to, żeby było widać, co się dzieje. Zmiana w niej nie
+jest wdrożeniem. Sprawdzenie, czy kopia nie rozjechała się z serwerem (porównuje same
+instrukcje, bez komentarzy):
+
+```bash
+diff <(ssh adam@57.129.141.64 cat /usr/local/bin/deploy-adamszczotka-dev | grep -v '^#') \
+     <(grep -v '^#' scripts/deploy/deploy-adamszczotka-dev.sh)
+```
+
 ## Kto jest właścicielem treści
 
 - **Projekty i strony blokowe** (`home`, `about`, `privacy`) — źródłem prawdy jest `content/*.json`
