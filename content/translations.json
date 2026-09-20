@@ -75,6 +75,11 @@
     "pl": "Szkic"
   },
   {
+    "key": "admin.drafts",
+    "en": "Drafts",
+    "pl": "Szkice"
+  },
+  {
     "key": "admin.edit",
     "en": "Edit",
     "pl": "Edytuj"

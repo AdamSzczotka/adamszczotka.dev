@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { posts, comments } from "@/lib/db/schema";
-import { eq, count } from "drizzle-orm";
+import { eq, count, countDistinct } from "drizzle-orm";
 import Link from "next/link";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
@@ -12,7 +12,15 @@ export default async function AdminDashboardPage() {
   const locale = await getLocaleFromCookies();
   const translations = await getTranslations(locale);
 
-  const [postCount] = await db.select({ count: count() }).from(posts);
+  // Counted over distinct slugs: a post written in both languages is one post,
+  // not two.
+  const [postCount] = await db
+    .select({ count: countDistinct(posts.slug) })
+    .from(posts);
+  const [draftCount] = await db
+    .select({ count: countDistinct(posts.slug) })
+    .from(posts)
+    .where(eq(posts.isPublished, false));
   const [pendingCount] = await db
     .select({ count: count() })
     .from(comments)
@@ -33,6 +41,10 @@ export default async function AdminDashboardPage() {
         <div className="border border-border p-6">
           <p className="text-sm text-muted">{t(translations, "admin.posts", "Posts")}</p>
           <p className="mt-1 text-3xl font-medium">{postCount.count}</p>
+        </div>
+        <div className="border border-border p-6">
+          <p className="text-sm text-muted">{t(translations, "admin.drafts", "Drafts")}</p>
+          <p className="mt-1 text-3xl font-medium">{draftCount.count}</p>
         </div>
         <div className="border border-border p-6">
           <p className="text-sm text-muted">{t(translations, "admin.pending_comments", "Pending Comments")}</p>

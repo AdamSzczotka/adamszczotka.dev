@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminNav } from "@/components/admin/admin-nav";
 import { requireAdmin } from "@/lib/auth/session";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
@@ -69,25 +70,14 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
-      <aside className="w-60 shrink-0 border-r border-border bg-surface hidden sm:block">
+      <aside className="w-60 shrink-0 border-r border-border bg-surface hidden sm:flex sm:flex-col">
         <div className="p-4 border-b border-border">
           <p className="text-xs font-mono text-muted uppercase tracking-widest">
             {t(translations, "admin.title", "Admin")}
           </p>
           <p className="mt-1 text-sm truncate">{session.user.name}</p>
         </div>
-        <nav className="p-2 space-y-0.5">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-foreground/5 rounded-sm transition-colors"
-            >
-              <span className="text-muted">{icons[item.icon]}</span>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <AdminNav items={navItems} icons={icons} variant="sidebar" />
         <div className="mt-auto p-2 border-t border-border">
           <Link
             href="/"
@@ -101,17 +91,7 @@ export default async function AdminLayout({
       <div className="flex-1 min-w-0">
         {/* Mobile admin nav */}
         <div className="sm:hidden border-b border-border overflow-x-auto">
-          <div className="flex px-2 py-1.5 gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="shrink-0 px-3 py-1.5 text-xs text-muted hover:text-foreground hover:bg-foreground/5 rounded-sm transition-colors"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          <AdminNav items={navItems} icons={icons} variant="bar" />
         </div>
         {children}
       </div>

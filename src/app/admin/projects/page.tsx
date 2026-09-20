@@ -40,16 +40,25 @@ export default async function AdminProjectsPage() {
             key={project.id}
             className="flex items-center justify-between p-4"
           >
-            <div>
-              <Link
-                href={`/admin/editor/project/${project.id}`}
-                className="font-medium hover:text-accent transition-colors"
-              >
-                {project.title}
-              </Link>
-              <p className="mt-0.5 text-xs text-muted">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                {/* Both language versions share a slug, so without this the rows
+                    are indistinguishable. */}
+                <span className="shrink-0 font-mono text-[10px] uppercase border border-border px-1.5 py-0.5 text-muted rounded-sm">
+                  {project.locale}
+                </span>
+                <Link
+                  href={`/admin/editor/project/${project.id}`}
+                  className="font-medium truncate hover:text-accent transition-colors"
+                >
+                  {project.title}
+                </Link>
+              </div>
+              <p className="mt-0.5 text-xs text-muted truncate">
                 {project.slug} &middot;{" "}
-                {project.createdAt.toLocaleDateString("en-US")}
+                {project.createdAt.toLocaleDateString(
+                  locale === "pl" ? "pl-PL" : "en-US",
+                )}
               </p>
             </div>
             <form
