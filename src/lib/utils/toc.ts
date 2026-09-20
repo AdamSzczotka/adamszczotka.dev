@@ -1,11 +1,6 @@
-export type TocEntry = { id: string; text: string; level: 2 | 3 };
+import { slugify } from "./slug";
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+export type TocEntry = { id: string; text: string; level: 2 | 3 };
 
 export function extractToc(html: string): { toc: TocEntry[]; html: string } {
   const toc: TocEntry[] = [];

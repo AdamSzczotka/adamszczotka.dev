@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminNav } from "@/components/admin/admin-nav";
+import { SignOutButton } from "@/components/admin/sign-out-button";
 import { requireAdmin } from "@/lib/auth/session";
 import { getLocaleFromCookies } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
@@ -69,7 +70,7 @@ export default async function AdminLayout({
   ];
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
+    <div className="flex flex-1 min-h-screen">
       <aside className="w-60 shrink-0 border-r border-border bg-surface hidden sm:flex sm:flex-col">
         <div className="p-4 border-b border-border">
           <p className="text-xs font-mono text-muted uppercase tracking-widest">
@@ -85,6 +86,7 @@ export default async function AdminLayout({
           >
             {t(translations, "admin.back_to_site", "Back to site")}
           </Link>
+          <SignOutButton label={t(translations, "admin.sign_out", "Sign out")} />
         </div>
       </aside>
 

@@ -15,7 +15,7 @@ import { getTranslations, t } from "@/lib/i18n/get-translations";
 import { generatePostMetadata } from "@/lib/utils/seo";
 import { blogPostJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
 import { getRelatedPosts } from "@/lib/utils/related-posts";
-import type { TocEntry } from "@/lib/utils/toc";
+import { extractToc, type TocEntry } from "@/lib/utils/toc";
 import { PostHero } from "@/components/blog/post-hero";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { ShareButtons } from "@/components/blog/share-buttons";
@@ -158,7 +158,16 @@ export default async function BlogPostPage({ params }: Props) {
 
   const translations = await getTranslations(currentLocale);
   const dateLocale = currentLocale === "pl" ? "pl-PL" : "en-US";
-  const toc = (post.toc as TocEntry[]) || [];
+  // Posts saved before the editor started storing a toc (and everything seeded
+  // from content/) have none, and their headings carry no id to link to. Derive
+  // both here rather than requiring every old post to be re-saved.
+  const storedToc = (post.toc as TocEntry[]) || [];
+  const derived =
+    storedToc.length === 0 && post.content
+      ? extractToc(post.content)
+      : null;
+  const toc = derived ? derived.toc : storedToc;
+  const contentHtml = derived ? derived.html : post.content;
   const url = `https://adamszczotka.dev/${currentLocale}/blog/${post.slug}`;
 
   // JSON-LD structured data
@@ -182,7 +191,7 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Mobile TOC */}
         {toc.length >= 2 && (
           <div className="lg:hidden mt-8 mb-12 border border-[var(--border)] p-4 rounded-sm">
-            <TableOfContents headings={toc} />
+            <TableOfContents headings={toc} label={t(translations, "blog.toc", "On this page")} />
           </div>
         )}
 
@@ -190,8 +199,16 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Sidebar */}
           <aside className="hidden lg:block lg:w-56 shrink-0">
             <div className="sticky top-24">
-              <TableOfContents headings={toc} />
-              <div className="mt-8 pt-8 border-t border-[var(--border)]">
+              <TableOfContents headings={toc} label={t(translations, "blog.toc", "On this page")} />
+              {/* Without a table of contents above it, the divider would be a
+                  stray line at the top of the column. */}
+              <div
+                className={
+                  toc.length >= 2
+                    ? "mt-8 pt-8 border-t border-[var(--border)]"
+                    : ""
+                }
+              >
                 <ShareButtons url={url} title={post.title} />
               </div>
             </div>
@@ -210,10 +227,10 @@ export default async function BlogPostPage({ params }: Props) {
               </time>
             </header>
 
-            {post.content && (
+            {contentHtml && (
               <div
                 className="prose prose-neutral dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
             )}
 

@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { JetBrains_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import { ThemeProvider } from "@/components/layout/theme-provider";
-import { Nav } from "@/components/layout/nav";
-import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -68,12 +66,10 @@ export default async function RootLayout({
           href="/feed.xml"
         />
       </head>
+      {/* Nav and Footer belong to the public site and live in the [locale]
+          layout; the admin panel brings its own chrome. */}
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>
-          <Nav />
-          <main className="flex-1 pt-16">{children}</main>
-          <Footer />
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

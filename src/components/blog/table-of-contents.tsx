@@ -5,9 +5,10 @@ import type { TocEntry } from "@/lib/utils/toc";
 
 interface TableOfContentsProps {
   headings: TocEntry[];
+  label: string;
 }
 
-export function TableOfContents({ headings }: TableOfContentsProps) {
+export function TableOfContents({ headings, label }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
@@ -35,9 +36,9 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   if (headings.length < 2) return null;
 
   return (
-    <nav aria-label="Table of contents">
+    <nav aria-label={label}>
       <p className="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)] mb-3">
-        On this page
+        {label}
       </p>
       <ul className="space-y-1.5">
         {headings.map((heading) => (

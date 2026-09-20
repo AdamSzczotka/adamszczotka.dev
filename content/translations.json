@@ -190,6 +190,11 @@
     "pl": "Odrzuć"
   },
   {
+    "key": "admin.sign_out",
+    "en": "Sign out",
+    "pl": "Wyloguj"
+  },
+  {
     "key": "admin.tag_name",
     "en": "Tag name",
     "pl": "Nazwa tagu"
@@ -273,6 +278,11 @@
     "key": "blog.title",
     "en": "Blog",
     "pl": "Blog"
+  },
+  {
+    "key": "blog.toc",
+    "en": "On this page",
+    "pl": "Na tej stronie"
   },
   {
     "key": "blog.your_comment",
