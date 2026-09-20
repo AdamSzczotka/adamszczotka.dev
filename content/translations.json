@@ -12,7 +12,7 @@
   {
     "key": "about.bio_3",
     "en": "I believe in building tools that respect user privacy. My projects like FormattedAI are 100% client-side with zero cookies and zero tracking. When I write code, I think about the person using it.",
-    "pl": "Wierzę w budowanie narzędzi, które szanują prywatność użytkowników. Moje projekty, takie jak FormattedAI, działają w 100% po stronie klienta — zero ciasteczek, zero śledzenia. Kiedy piszę kod, myślę o osobie, która go używa."
+    "pl": "Wierzę w budowanie narzędzi, które szanują prywatność użytkowników. Moje projekty, takie jak FormattedAI, działają w 100% po stronie klienta - zero ciasteczek, zero śledzenia. Kiedy piszę kod, myślę o osobie, która go używa."
   },
   {
     "key": "about.stack",
@@ -236,8 +236,8 @@
   },
   {
     "key": "blog.empty.body",
-    "en": "The first posts are on the way — engineering notes from things I actually build and ship.",
-    "pl": "Pierwsze wpisy są w drodze — notatki inżynierskie z rzeczy, które faktycznie buduję i wdrażam."
+    "en": "The first posts are on the way - engineering notes from things I actually build and ship.",
+    "pl": "Pierwsze wpisy są w drodze - notatki inżynierskie z rzeczy, które faktycznie buduję i wdrażam."
   },
   {
     "key": "blog.empty.category",

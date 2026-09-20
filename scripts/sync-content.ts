@@ -4,6 +4,7 @@ import {
   pageBlockTypeEnum,
   pageBlocks,
   pages,
+  posts,
   projectTags,
   projects,
   tags,
@@ -17,8 +18,10 @@ import translationData from "../content/translations.json";
 // content/ is the source of truth for repo-managed content: projects and the
 // block-based pages (home, about, privacy). This script pushes it into the
 // database, inserting or updating by slug, and runs on every production deploy.
-// Blog posts are CMS-managed and deliberately never touched here; translations
-// are CMS-editable too, so new keys are added but existing ones are left alone.
+// Blog posts stay CMS-owned: their text is never replaced from content/, and
+// the only thing done to them here is normalising em dashes to plain hyphens.
+// Translations are CMS-editable too, so new keys are added but existing ones
+// are left alone.
 //
 // Usage: npx tsx --env-file=.env scripts/sync-content.ts
 
@@ -163,12 +166,60 @@ async function syncTranslations() {
   );
 }
 
+// Blog posts live in the database, not in content/, so the em dashes Adam does
+// not want in his writing can only be reached here. Idempotent: once a post
+// holds none, it is left alone.
+async function normalizeDashes() {
+  const all = await db
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      locale: posts.locale,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      content: posts.content,
+      metaDescription: posts.metaDescription,
+      toc: posts.toc,
+    })
+    .from(posts);
+
+  const strip = (v: string | null) => (v ? v.replaceAll("—", "-") : v);
+  let changed = 0;
+
+  for (const p of all) {
+    const next = {
+      title: strip(p.title) as string,
+      excerpt: strip(p.excerpt),
+      content: strip(p.content),
+      metaDescription: strip(p.metaDescription),
+      toc: p.toc
+        ? (JSON.parse(JSON.stringify(p.toc).replaceAll("—", "-")) as typeof p.toc)
+        : p.toc,
+    };
+
+    const untouched =
+      next.title === p.title &&
+      next.excerpt === p.excerpt &&
+      next.content === p.content &&
+      next.metaDescription === p.metaDescription &&
+      JSON.stringify(next.toc) === JSON.stringify(p.toc);
+    if (untouched) continue;
+
+    await db.update(posts).set(next).where(eq(posts.id, p.id));
+    console.log(`Dashes normalised in post: ${p.slug} (${p.locale})`);
+    changed++;
+  }
+
+  if (changed === 0) console.log("Dashes: nothing to normalise");
+}
+
 async function syncContent() {
   await db.insert(tags).values(tagData).onConflictDoNothing();
   const allTags = await db.select().from(tags);
   const tagIdBySlug = Object.fromEntries(allTags.map((t) => [t.slug, t.id]));
 
   await syncTranslations();
+  await normalizeDashes();
   await syncProjects(tagIdBySlug);
   await syncPages();
   console.log("Content sync done.");

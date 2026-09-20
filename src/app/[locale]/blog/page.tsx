@@ -212,7 +212,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
                 ? t(
                     translations,
                     "blog.empty.body",
-                    "The first posts are on the way — engineering notes from things I actually build and ship.",
+                    "The first posts are on the way - engineering notes from things I actually build and ship.",
                   )
                 : t(
                     translations,

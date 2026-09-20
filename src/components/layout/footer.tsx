@@ -4,14 +4,8 @@ import { usePathname } from "next/navigation";
 import { LocaleLink } from "./locale-link";
 
 const footerTranslations = {
-  en: {
-    status: "All systems operational",
-    privacy: "Privacy",
-  },
-  pl: {
-    status: "Wszystkie systemy sprawne",
-    privacy: "Prywatnosc",
-  },
+  en: { privacy: "Privacy" },
+  pl: { privacy: "Prywatność" },
 };
 
 export function Footer() {
@@ -23,11 +17,6 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-6 py-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted">
           <span>&copy; 2026 Adam Szczotka</span>
-
-          <div className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-green-500/20 bg-green-500/5 text-green-500">
-            <span className="pulse-dot" />
-            {ft.status}
-          </div>
 
           <div className="flex items-center gap-4 text-xs">
             <a

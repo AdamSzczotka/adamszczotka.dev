@@ -16,10 +16,10 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const title =
-    locale === "pl" ? "Polityka prywatnosci" : "Privacy Policy";
+    locale === "pl" ? "Polityka prywatności" : "Privacy Policy";
   const description =
     locale === "pl"
-      ? "Polityka prywatnosci i zasady przetwarzania danych."
+      ? "Polityka prywatności i zasady przetwarzania danych."
       : "Privacy policy and data handling.";
 
   return {

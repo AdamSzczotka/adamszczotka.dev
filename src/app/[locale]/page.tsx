@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : "Adam Szczotka -- Software Engineer";
   const description =
     locale === "pl"
-      ? "Software Engineer & Product Architect. Skalowalne backendy, szybkie aplikacje mobilne, narzedzia webowe z priorytetem prywatnosci."
+      ? "Software Engineer & Product Architect. Skalowalne backendy, szybkie aplikacje mobilne, narzędzia webowe z priorytetem prywatności."
       : "Software Engineer & Product Architect. Scalable backends, fast mobile apps, privacy-first web tools.";
 
   return {
