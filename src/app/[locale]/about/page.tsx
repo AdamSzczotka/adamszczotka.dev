@@ -1,8 +1,9 @@
 import { locales } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
 import Image from "next/image";
-import { personJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
+import { personJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -194,10 +195,7 @@ export default async function AboutPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <article className="mx-auto max-w-4xl px-6 pt-32 pb-24">
         {/* Hero: photo + intro */}
         <div className="flex flex-col sm:flex-row gap-10 sm:gap-14 items-start">

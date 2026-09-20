@@ -4,10 +4,11 @@ import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import { ImageSlider } from "@/components/ui/image-slider";
-import { creativeWorkJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
+import { creativeWorkJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -117,10 +118,7 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <article>
       {/* Hero */}
       <header className="border-b border-[var(--border)]">

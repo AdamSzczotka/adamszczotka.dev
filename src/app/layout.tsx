@@ -46,6 +46,7 @@ export default async function RootLayout({
 }>) {
   const headersList = await headers();
   const locale = headersList.get("x-locale") || "en";
+  const nonce = headersList.get("x-nonce") ?? undefined;
 
   return (
     <html
@@ -55,6 +56,7 @@ export default async function RootLayout({
     >
       <head>
         <script
+          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var d=document.documentElement,t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){d.classList.add('dark')}}catch(e){}})()`,
           }}

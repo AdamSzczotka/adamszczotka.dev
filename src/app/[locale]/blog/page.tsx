@@ -4,13 +4,14 @@ import { desc, eq, and, sql } from "drizzle-orm";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
 import { BlogHeader } from "@/components/blog/blog-header";
 import { CategoryFilter } from "@/components/blog/category-filter";
 import { BlogGrid } from "@/components/blog/blog-grid";
 import { BlogCard } from "@/components/blog/blog-card";
 import Link from "next/link";
 import { Suspense } from "react";
-import { collectionPageJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
+import { collectionPageJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -173,10 +174,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <BlogHeader
         title={t(translations, "blog.title", "Blog")}
         description={t(

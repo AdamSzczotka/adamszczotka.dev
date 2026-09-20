@@ -1,23 +1,13 @@
 import type { NextConfig } from "next";
 
-const isDev = process.env.NODE_ENV === "development";
-
-const csp = isDev
-  ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws://localhost:*; frame-ancestors 'none';"
-  : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none';";
-
+// Security headers are not set here. The CSP carries a per-request nonce, so it
+// is built in src/proxy.ts; X-Content-Type-Options, X-Frame-Options,
+// Referrer-Policy and HSTS come from nginx on the server (see docs/DEPLOY.md).
+// Setting any of them in both places sends the header twice, which is what
+// made a scanner report X-Content-Type-Options as unrecognised.
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
-  headers: async () => [
-    {
-      source: "/(.*)",
-      headers: [
-        { key: "X-Content-Type-Options", value: "nosniff" },
-        { key: "Content-Security-Policy", value: csp },
-      ],
-    },
-  ],
 };
 
 export default nextConfig;

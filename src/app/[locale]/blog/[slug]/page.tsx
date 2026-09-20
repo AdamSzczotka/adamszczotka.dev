@@ -10,10 +10,11 @@ import {
 import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import { generatePostMetadata } from "@/lib/utils/seo";
-import { blogPostJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
+import { blogPostJsonLd } from "@/lib/utils/structured-data";
 import { getRelatedPosts } from "@/lib/utils/related-posts";
 import { extractToc, type TocEntry } from "@/lib/utils/toc";
 import { PostHero } from "@/components/blog/post-hero";
@@ -175,10 +176,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
 
       <PostHero
         post={post}

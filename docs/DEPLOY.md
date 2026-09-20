@@ -102,6 +102,39 @@ z panelu CMS**. Leżą w wolumenie Dockera `uploads_data`, zamontowanym w konten
   `--chown=nextjs:nodejs` przy `COPY ... /app/public` w `Dockerfile`.
 - **Backup:** `docker run --rm -v uploads_data:/data -v "$PWD":/out alpine tar czf /out/uploads.tgz -C /data .`
 
+## Nagłówki bezpieczeństwa
+
+Podzielone między dwa miejsca i **nie wolno ustawiać tego samego w obu** — przeglądarka dostanie
+wtedy nagłówek dwa razy, a skanery raportują to jako błąd (tak było z `X-Content-Type-Options`).
+
+| Gdzie | Co ustawia |
+| --- | --- |
+| `src/proxy.ts` | `Content-Security-Policy` — musi być tu, bo zawiera nonce generowany per żądanie |
+| `nginx.conf` na serwerze (blok `http`) | `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Strict-Transport-Security` — globalnie dla wszystkich stron na VPS |
+
+`next.config.ts` **nie** ustawia żadnych nagłówków.
+
+### CSP i skrypty inline
+
+`script-src` nie ma `'unsafe-inline'`. Każdy skrypt inline musi mieć nonce z żądania:
+
+- skrypty Next.js dostają go automatycznie (proxy podaje CSP także w nagłówkach **żądania**),
+- nasz skrypt motywu w `app/layout.tsx` — przez `headers().get("x-nonce")`,
+- dane strukturalne — przez komponent `components/json-ld.tsx`.
+
+Wyjątek: `next-themes` renderuje własny skrypt i na React 19 gubi wszystkie przekazane mu propsy
+(sprawdzone — nie przechodzi nawet zwykły `data-*`), więc jest dopuszczony **po hashu**.
+Po aktualizacji `next-themes` albo zmianie opcji `ThemeProvider` przelicz hash:
+
+```bash
+npm run build && node .next/standalone/server.js   # w drugim terminalu:
+npm run csp:hash http://localhost:3000/pl
+```
+
+i wstaw wynik do `THEME_SCRIPT_HASH` w `src/proxy.ts`. Gdy hash się rozjedzie, skrypt zostanie
+zablokowany — nic się wizualnie nie psuje, bo nasz własny skrypt i tak ustawia motyw przed
+pierwszym renderem, ale w konsoli pojawi się błąd CSP.
+
 ## Rollback
 
 `git revert <zły-commit>` na `main` i push — Actions wdroży poprzedni stan aplikacji.

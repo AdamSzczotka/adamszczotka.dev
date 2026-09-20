@@ -5,7 +5,8 @@ import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { getTranslations, t } from "@/lib/i18n/get-translations";
 import type { Metadata } from "next";
-import { collectionPageJsonLd, safeJsonLd } from "@/lib/utils/structured-data";
+import { JsonLd } from "@/components/json-ld";
+import { collectionPageJsonLd } from "@/lib/utils/structured-data";
 
 const SITE_URL = "https://adamszczotka.dev";
 
@@ -92,10 +93,7 @@ export default async function ProjectsPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <section className="mx-auto max-w-5xl px-6 py-24">
       <h1 className="text-3xl font-medium tracking-tight">
         {t(translations, "projects.title", "Projects")}
