@@ -39,10 +39,24 @@ Push `main` na GitHuba automatycznie wdraża produkcję. Nic więcej nie trzeba 
   albo `gh workflow run deploy.yml`.
 - Z serwera (interaktywnie): `ssh adam@57.129.141.64`, potem `sudo /usr/local/bin/deploy-adamszczotka-dev`.
 
+## Stan trwały na produkcji
+
+Poza bazą danych serwer trzyma jeszcze jedną rzecz, której nie ma w repo: **obrazy wgrane
+z panelu CMS**. Leżą w wolumenie Dockera `uploads_data`, zamontowanym w kontenerze pod
+`/app/public/uploads/cms`.
+
+- Obrazy wersjonowane w repo (`public/uploads/*`) jadą w obrazie Dockera i wolumen ich
+  nie dotyczy — dlatego CMS-owe siedzą w podkatalogu `cms/`.
+- Katalog musi istnieć w obrazie i należeć do użytkownika `nextjs`, bo świeży wolumen
+  dziedziczy właściciela po katalogu z obrazu. Stąd `public/uploads/cms/.gitkeep` i
+  `--chown=nextjs:nodejs` przy `COPY ... /app/public` w `Dockerfile`.
+- **Backup:** `docker run --rm -v uploads_data:/data -v "$PWD":/out alpine tar czf /out/uploads.tgz -C /data .`
+
 ## Rollback
 
 `git revert <zły-commit>` na `main` i push — Actions wdroży poprzedni stan aplikacji.
 Uwaga: migracje bazy nie cofają się same; rollback migracji trzeba zrobić ręcznie.
+Wolumen z uploadami przeżywa rollback aplikacji.
 
 ## Konfiguracja jednorazowa na serwerze
 
