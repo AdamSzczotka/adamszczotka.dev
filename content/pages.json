@@ -92,8 +92,18 @@
         }
       },
       {
-        "type": "blog_feed",
+        "type": "project_showcase",
         "position": 3,
+        "dataEn": {
+          "projectSlug": "karta-wedkarska"
+        },
+        "dataPl": {
+          "projectSlug": "karta-wedkarska"
+        }
+      },
+      {
+        "type": "blog_feed",
+        "position": 4,
         "dataEn": {
           "count": 3
         },
@@ -103,7 +113,7 @@
       },
       {
         "type": "cta",
-        "position": 4,
+        "position": 5,
         "dataEn": {
           "text": "I am always happy to exchange experience, discuss architecture, or explore a new B2B project. Let's talk.",
           "email": "adam.szczotka0@gmail.com",
@@ -117,7 +127,8 @@
           "buttonText": "Wyślij wiadomość"
         }
       }
-    ]
+    ],
+    "repoManaged": true
   },
   {
     "slug": "privacy",

@@ -174,8 +174,8 @@ export default async function ProjectPage({ params }: Props) {
                 src={project.coverImage}
                 alt={
                   currentLocale === "pl"
-                    ? `Zrzut ekranu projektu ${project.title}`
-                    : `Screenshot of the ${project.title} project`
+                    ? `Podgląd projektu ${project.title}`
+                    : `Preview of the ${project.title} project`
                 }
                 width={1200}
                 height={675}

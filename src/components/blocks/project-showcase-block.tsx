@@ -71,10 +71,11 @@ export function ProjectShowcaseBlock({
         {imageSrc ? (
           <Image
             src={imageSrc}
+            // Not every cover is a screenshot, so the wording stays neutral.
             alt={
               locale === "pl"
-                ? `Zrzut ekranu projektu ${project.title}`
-                : `Screenshot of the ${project.title} project`
+                ? `Podgląd projektu ${project.title}`
+                : `Preview of the ${project.title} project`
             }
             width={640}
             height={360}

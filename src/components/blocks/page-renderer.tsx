@@ -81,20 +81,30 @@ export async function PageRenderer({ pageSlug, locale }: PageRendererProps) {
       // between databases). Both have to resolve, or the section silently
       // disappears from the page.
       const projectId = data.projectId as number | undefined;
-      const projectSlug = data.projectSlug as string | undefined;
-      if (!projectId && !projectSlug) continue;
+      let slug = data.projectSlug as string | undefined;
 
-      const matches = projectId
-        ? eq(projects.id, projectId)
-        : eq(projects.slug, projectSlug!);
+      // An id names one language's row, so resolve it to a slug first and then
+      // pick the row for the language being rendered. Without this, a block
+      // added in the CMS shows English copy on the Polish page.
+      if (!slug && projectId) {
+        const [byId] = await db
+          .select({ slug: projects.slug })
+          .from(projects)
+          .where(eq(projects.id, projectId));
+        slug = byId?.slug;
+      }
+      if (!slug) continue;
 
       let [project] = await db
         .select()
         .from(projects)
-        .where(and(matches, eq(projects.locale, locale)));
+        .where(and(eq(projects.slug, slug), eq(projects.locale, locale)));
 
       if (!project) {
-        [project] = await db.select().from(projects).where(matches);
+        [project] = await db
+          .select()
+          .from(projects)
+          .where(eq(projects.slug, slug));
       }
 
       if (project) {
