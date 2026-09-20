@@ -36,11 +36,8 @@ export function PostHero({ post, tags, locale, categoryName }: PostHeroProps) {
       <section className="relative h-[50vh] sm:h-[60vh] -mt-16 flex items-end overflow-hidden">
         <Image
           src={getCoverUrl(post.coverImage, "hero")}
-          alt={
-            locale === "pl"
-              ? `Okładka wpisu: ${post.title}`
-              : `Cover image for the post: ${post.title}`
-          }
+          // Decorative: the post title follows immediately in the h1 below.
+          alt=""
           fill
           priority
           className="cover-image object-cover"

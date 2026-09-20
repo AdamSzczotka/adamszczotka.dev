@@ -61,11 +61,8 @@ export function BlogCard({
         >
           <Image
             src={getCoverUrl(post.coverImage, "card")}
-            alt={
-              locale === "pl"
-                ? `Okładka wpisu: ${post.title}`
-                : `Cover image for the post: ${post.title}`
-            }
+            // Decorative: the card's link text is the post title right next to it.
+            alt=""
             fill
             className="cover-image object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             {...(post.coverBlurDataUrl
