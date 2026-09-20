@@ -18,10 +18,18 @@ function buildCsp(nonce: string) {
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' ${THEME_SCRIPT_HASH}${isDev ? " 'unsafe-eval'" : ""}`,
-    // Next injects inline styles it does not nonce, so this one stays.
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https:",
-    "font-src 'self' https://fonts.gstatic.com",
+    // No page renders a <style> block, so stylesheets are same-origin only.
+    // Inline style="" attributes are a separate directive, and React writes a
+    // handful of them, so those stay allowed.
+    "style-src 'self'",
+    "style-src-attr 'unsafe-inline'",
+    // Every image is served from this origin; data: covers the blur
+    // placeholders on post covers. An externally hosted image in a post would
+    // need its host added here.
+    "img-src 'self' data: blob:",
+    // next/font self-hosts the font files at build time, so nothing is fetched
+    // from Google at runtime.
+    "font-src 'self'",
     `connect-src 'self'${isDev ? " ws://localhost:*" : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
