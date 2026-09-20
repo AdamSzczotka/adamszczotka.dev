@@ -103,6 +103,7 @@ export async function PageRenderer({ pageSlug, locale }: PageRendererProps) {
           <HeroBlock
             key={block.id}
             data={data as { title?: string; subtitle?: string; description?: string; buttonText?: string; buttonUrl?: string }}
+            locale={locale}
           />,
         );
         break;

@@ -172,7 +172,11 @@ export default async function ProjectPage({ params }: Props) {
             <div className="border border-[var(--border)] rounded-sm overflow-hidden">
               <Image
                 src={project.coverImage}
-                alt={project.title}
+                alt={
+                  currentLocale === "pl"
+                    ? `Zrzut ekranu projektu ${project.title}`
+                    : `Screenshot of the ${project.title} project`
+                }
                 width={1200}
                 height={675}
                 className="w-full h-auto"

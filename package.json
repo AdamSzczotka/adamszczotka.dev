@@ -11,7 +11,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "npx tsx --env-file=.env src/lib/db/seed.ts",
-    "content:sync": "npx tsx --env-file=.env scripts/sync-projects.ts"
+    "content:sync": "npx tsx --env-file=.env scripts/sync-content.ts"
   },
   "dependencies": {
     "@tiptap/extension-code-block-lowlight": "^3.21.0",

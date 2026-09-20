@@ -8,7 +8,13 @@ interface HeroData {
   buttonUrl?: string;
 }
 
-export function HeroBlock({ data }: { data: HeroData }) {
+export function HeroBlock({
+  data,
+  locale,
+}: {
+  data: HeroData;
+  locale: string;
+}) {
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden -mt-16 pt-16">
       <div className="hero-bg">
@@ -55,7 +61,7 @@ export function HeroBlock({ data }: { data: HeroData }) {
             <div className="w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-sm border border-border bg-surface overflow-hidden shadow-lg shadow-black/10 dark:shadow-black/30">
               <Image
                 src="/uploads/hero-adam.avif"
-                alt="Adam Szczotka"
+                alt={locale === "pl" ? "Adam Szczotka, portret" : "Portrait of Adam Szczotka"}
                 width={320}
                 height={320}
                 className="w-full h-full object-cover"

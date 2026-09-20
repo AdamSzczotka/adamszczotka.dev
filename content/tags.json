@@ -24,12 +24,24 @@
     "slug": "nextjs"
   },
   {
+    "name": "PHP",
+    "slug": "php"
+  },
+  {
     "name": "PostgreSQL",
     "slug": "postgresql"
   },
   {
+    "name": "Prisma",
+    "slug": "prisma"
+  },
+  {
     "name": "Privacy",
     "slug": "privacy"
+  },
+  {
+    "name": "PWA",
+    "slug": "pwa"
   },
   {
     "name": "Python",
@@ -46,5 +58,9 @@
   {
     "name": "TypeScript",
     "slug": "typescript"
+  },
+  {
+    "name": "WordPress",
+    "slug": "wordpress"
   }
 ]

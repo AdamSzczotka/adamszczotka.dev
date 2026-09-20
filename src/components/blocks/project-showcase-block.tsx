@@ -71,7 +71,11 @@ export function ProjectShowcaseBlock({
         {imageSrc ? (
           <Image
             src={imageSrc}
-            alt={project.title}
+            alt={
+              locale === "pl"
+                ? `Zrzut ekranu projektu ${project.title}`
+                : `Screenshot of the ${project.title} project`
+            }
             width={640}
             height={360}
             className="w-full h-full object-cover"

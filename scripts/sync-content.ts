@@ -1,0 +1,162 @@
+import { and, eq } from "drizzle-orm";
+import { db } from "../src/lib/db";
+import {
+  pageBlockTypeEnum,
+  pageBlocks,
+  pages,
+  projectTags,
+  projects,
+  tags,
+} from "../src/lib/db/schema";
+import pageData from "../content/pages.json";
+import projectData from "../content/projects.json";
+import tagData from "../content/tags.json";
+
+// content/ is the source of truth for repo-managed content: projects and the
+// block-based pages (home, about, privacy). This script pushes it into the
+// database, inserting or updating by slug, and runs on every production deploy.
+// Blog posts are CMS-managed and deliberately never touched here.
+//
+// Usage: npx tsx --env-file=.env scripts/sync-content.ts
+
+type BlockType = (typeof pageBlockTypeEnum)["enumValues"][number];
+type Slide = { src: string; alt: string; title: string; description: string };
+
+type ProjectRow = {
+  locale: "en" | "pl";
+  slug: string;
+  title: string;
+  description: string | null;
+  content: string | null;
+  coverImage: string | null;
+  imageUrl: string | null;
+  liveUrl: string | null;
+  githubUrl: string | null;
+  slides: Slide[] | null;
+  tags: string[];
+  createdAt: string;
+};
+
+type PageRow = {
+  slug: string;
+  title: string;
+  metaDescriptionEn: string | null;
+  metaDescriptionPl: string | null;
+  isPublished: boolean;
+  blocks: {
+    type: BlockType;
+    position: number;
+    dataEn: Record<string, unknown>;
+    dataPl: Record<string, unknown>;
+  }[];
+};
+
+async function syncProjects(tagIdBySlug: Record<string, number>) {
+  for (const p of projectData as ProjectRow[]) {
+    const values = {
+      title: p.title,
+      description: p.description,
+      content: p.content,
+      coverImage: p.coverImage,
+      imageUrl: p.imageUrl,
+      liveUrl: p.liveUrl,
+      githubUrl: p.githubUrl,
+      slides: p.slides ?? null,
+    };
+
+    const [existing] = await db
+      .select({ id: projects.id })
+      .from(projects)
+      .where(and(eq(projects.slug, p.slug), eq(projects.locale, p.locale)));
+
+    let projectId: number;
+    if (existing) {
+      await db.update(projects).set(values).where(eq(projects.id, existing.id));
+      projectId = existing.id;
+      console.log(`Project updated: ${p.slug} (${p.locale})`);
+    } else {
+      const [created] = await db
+        .insert(projects)
+        .values({
+          ...values,
+          slug: p.slug,
+          locale: p.locale,
+          createdAt: new Date(p.createdAt),
+        })
+        .returning();
+      projectId = created.id;
+      console.log(`Project created: ${p.slug} (${p.locale})`);
+    }
+
+    await db.delete(projectTags).where(eq(projectTags.projectId, projectId));
+    for (const tagSlug of p.tags) {
+      if (tagIdBySlug[tagSlug]) {
+        await db
+          .insert(projectTags)
+          .values({ projectId, tagId: tagIdBySlug[tagSlug] })
+          .onConflictDoNothing();
+      }
+    }
+  }
+}
+
+// Blocks are positional, so the whole set is replaced rather than diffed.
+// Editing these pages in the CMS is therefore not durable: content/pages.json
+// wins on the next deploy.
+async function syncPages() {
+  for (const p of pageData as PageRow[]) {
+    const values = {
+      title: p.title,
+      metaDescriptionEn: p.metaDescriptionEn,
+      metaDescriptionPl: p.metaDescriptionPl,
+      isPublished: p.isPublished,
+    };
+
+    const [existing] = await db
+      .select({ id: pages.id })
+      .from(pages)
+      .where(eq(pages.slug, p.slug));
+
+    let pageId: number;
+    if (existing) {
+      await db.update(pages).set(values).where(eq(pages.id, existing.id));
+      pageId = existing.id;
+      console.log(`Page updated: ${p.slug}`);
+    } else {
+      const [created] = await db
+        .insert(pages)
+        .values({ ...values, slug: p.slug })
+        .returning();
+      pageId = created.id;
+      console.log(`Page created: ${p.slug}`);
+    }
+
+    await db.delete(pageBlocks).where(eq(pageBlocks.pageId, pageId));
+    for (const block of p.blocks) {
+      await db.insert(pageBlocks).values({
+        pageId,
+        type: block.type,
+        position: block.position,
+        dataEn: block.dataEn,
+        dataPl: block.dataPl,
+      });
+    }
+    console.log(`  ${p.blocks.length} blocks`);
+  }
+}
+
+async function syncContent() {
+  await db.insert(tags).values(tagData).onConflictDoNothing();
+  const allTags = await db.select().from(tags);
+  const tagIdBySlug = Object.fromEntries(allTags.map((t) => [t.slug, t.id]));
+
+  await syncProjects(tagIdBySlug);
+  await syncPages();
+  console.log("Content sync done.");
+  process.exit(0);
+}
+
+syncContent().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

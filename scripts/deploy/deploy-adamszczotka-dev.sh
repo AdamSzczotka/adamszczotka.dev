@@ -20,6 +20,9 @@ $COMPOSE build app migrate
 echo "==> Running database migrations"
 $COMPOSE run --rm migrate
 
+echo "==> Syncing repo-managed content (projects, pages)"
+$COMPOSE run --rm migrate npx tsx scripts/sync-content.ts
+
 echo "==> Restarting app"
 $COMPOSE up -d app
 

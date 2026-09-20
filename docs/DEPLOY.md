@@ -12,11 +12,21 @@ Produkcja: VPS `57.129.141.64`, repo w `/var/www/adamszczotka.dev`, aplikacja w 
    więc ten klucz nie może zrobić nic innego niż deploy.
 4. Skrypt `/usr/local/bin/deploy-adamszczotka-dev` (kopia: `scripts/deploy/deploy-adamszczotka-dev.sh`):
    `git reset --hard origin/main` (jako `adamszczotka`) → build obrazów → **migracje Drizzle**
-   (serwis `migrate` w compose) → `up -d app` → healthcheck na `127.0.0.1:3000`.
+   (serwis `migrate` w compose) → **sync treści** (`scripts/sync-content.ts`) → `up -d app` →
+   healthcheck na `127.0.0.1:3000`.
 5. Na końcu workflow sprawdza `https://adamszczotka.dev/` z zewnątrz.
 
 Workflow **CI** (`ci.yml`) robi te same checki na każdym pushu na inne gałęzie i na PR-ach
 do `main`/`develop`.
+
+## Kto jest właścicielem treści
+
+- **Projekty i strony blokowe** (`home`, `about`, `privacy`) — źródłem prawdy jest `content/*.json`
+  w repo. Każdy deploy wgrywa je do bazy przez `scripts/sync-content.ts` (upsert po slugu, bloki
+  stron podmieniane w całości). Edycja tych rzeczy w panelu CMS **nie jest trwała** — następny
+  deploy ją nadpisze. Zmieniasz je w repo.
+- **Wpisy na blogu** — źródłem prawdy jest baza (panel CMS). Sync ich nie dotyka.
+  `content/posts.json` to eksport/kopia zapasowa, nie wejście.
 
 ## Release = deploy
 

@@ -13,9 +13,11 @@ COPY . .
 RUN npm run build
 
 FROM deps AS migrator
-COPY drizzle.config.ts ./
+COPY drizzle.config.ts tsconfig.json ./
 COPY drizzle ./drizzle
 COPY src/lib/db ./src/lib/db
+COPY content ./content
+COPY scripts ./scripts
 CMD ["npx", "drizzle-kit", "migrate"]
 
 FROM base AS runner

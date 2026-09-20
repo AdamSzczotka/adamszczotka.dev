@@ -17,10 +17,10 @@ interface Props {
 const content = {
   en: {
     title: "About",
-    subtitle: "Software Developer",
+    subtitle: "AI Specialist / Software Developer",
     bio: [
-      "I am Adam Szczotka, 24 years old, a Computer Science student at Katowice School of Information Technology (WSTI) and Web Developer at Euforia — a marketing and web agency based in Żory, Poland. I have been writing code since I was 11.",
-      "At Euforia, I build and ship web applications and mobile apps for clients — from AI-powered automation to production infrastructure on GCP. I work across the full stack, from backend APIs to React Native mobile apps published on app stores.",
+      "I am Adam Szczotka, 24 years old, a Computer Science student at Katowice School of Information Technology (WSTI) and AI Specialist / Software Developer at Sova Agency (formerly Euforia) — a marketing and web agency based in Żory, Poland. I have been writing code since I was 11.",
+      "At Sova Agency, I build and ship web applications and mobile apps for clients — from AI-powered automation to production infrastructure on GCP. I work across the full stack, from backend APIs to React Native mobile apps published on app stores.",
       "My strongest side is backend development, but I pick up new technologies fast. This portfolio and CMS is built with Next.js and TypeScript, which I learned specifically for this project.",
       "I have been tutoring math and computer science for 7 years — first 2 years privately, then 5 years at a tutoring school. That experience directly led to building TutorHub, a management system that automates the workflows I saw breaking down daily.",
       "I also have a background in cycling, including a Polish Championship medal. The discipline from years of structured training shapes how I approach engineering — consistent effort, measurable progress, and delivering results.",
@@ -31,9 +31,15 @@ const content = {
     experience: "Experience",
     experienceItems: [
       {
-        period: "Apr 2025 — present",
+        period: "Sep 2026 — present",
+        role: "AI Specialist / Software Developer",
+        company: "Sova Agency, Żory",
+        details: "AI automation and integrations, web and mobile apps, production infrastructure",
+      },
+      {
+        period: "Apr 2025 — Sep 2026",
         role: "Web Developer",
-        company: "Euforia SC, Żory",
+        company: "Euforia SC (now Sova Agency), Żory",
         details: "Web and mobile apps, AI automation, GCP infrastructure",
       },
       {
@@ -61,10 +67,10 @@ const content = {
   },
   pl: {
     title: "O mnie",
-    subtitle: "Software Developer",
+    subtitle: "AI Specialist / Software Developer",
     bio: [
-      "Jestem Adam Szczotka, mam 24 lata, student informatyki na Katowickiej Wyższej Szkole Technologii Informatycznych (WSTI) i Web Developer w Euforia — agencji marketingowej i webowej z Żor. Kod piszę od 11. roku życia.",
-      "W Euforia buduję i wdrażam aplikacje webowe i mobilne dla klientów — od automatyzacji opartej na AI po infrastrukturę produkcyjną na GCP. Pracuję w pełnym stacku, od backendowych API po aplikacje mobilne w React Native publikowane w sklepach.",
+      "Jestem Adam Szczotka, mam 24 lata, student informatyki na Katowickiej Wyższej Szkole Technologii Informatycznych (WSTI) i AI Specialist / Software Developer w Sova Agency (dawniej Euforia) — agencji marketingowej i webowej z Żor. Kod piszę od 11. roku życia.",
+      "W Sova Agency buduję i wdrażam aplikacje webowe i mobilne dla klientów — od automatyzacji opartej na AI po infrastrukturę produkcyjną na GCP. Pracuję w pełnym stacku, od backendowych API po aplikacje mobilne w React Native publikowane w sklepach.",
       "Moja najsilniejsza strona to backend, ale szybko przyswajam nowe technologie. To portfolio i CMS zbudowałem w Next.js i TypeScript, których nauczyłem się specjalnie pod ten projekt.",
       "Od 7 lat udzielam korepetycji z matematyki i informatyki — pierwsze 2 lata prywatnie, od 5 lat w szkole korepetycji. To doświadczenie bezpośrednio doprowadziło do stworzenia TutorHub — systemu zarządzania, który automatyzuje procesy, które codziennie widziałem jak się sypią.",
       "Mam też za sobą kolarstwo z medalem Mistrzostw Polski. Dyscyplina z lat strukturalnego treningu kształtuje moje podejście do inżynierii — konsekwentna praca, mierzalny postęp i dowożenie wyników.",
@@ -75,9 +81,15 @@ const content = {
     experience: "Doświadczenie",
     experienceItems: [
       {
-        period: "kwi 2025 — teraz",
+        period: "wrz 2026 — teraz",
+        role: "AI Specialist / Software Developer",
+        company: "Sova Agency, Żory",
+        details: "Automatyzacje i wdrożenia AI, aplikacje webowe i mobilne, infrastruktura produkcyjna",
+      },
+      {
+        period: "kwi 2025 — wrz 2026",
         role: "Web Developer",
-        company: "Euforia SC, Żory",
+        company: "Euforia SC (dziś Sova Agency), Żory",
         details: "Aplikacje webowe i mobilne, automatyzacja AI, infrastruktura GCP",
       },
       {
@@ -193,7 +205,7 @@ export default async function AboutPage({ params }: Props) {
             <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-sm border border-[var(--border)] bg-[var(--surface)] overflow-hidden shadow-lg shadow-black/10 dark:shadow-black/30">
               <Image
                 src="/uploads/hero-adam.avif"
-                alt="Adam Szczotka"
+                alt={locale === "pl" ? "Adam Szczotka, portret" : "Portrait of Adam Szczotka"}
                 width={192}
                 height={192}
                 className="w-full h-full object-cover"

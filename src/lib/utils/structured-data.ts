@@ -63,8 +63,12 @@ export function personJsonLd(): object {
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Adam Szczotka",
-    jobTitle: "Software Engineer",
+    jobTitle: "AI Specialist / Software Developer",
     url: SITE_URL,
+    worksFor: {
+      "@type": "Organization",
+      name: "Sova Agency",
+    },
     sameAs: [
       "https://github.com/AdamSzczotka",
       "https://www.linkedin.com/in/adam-szczotka",
