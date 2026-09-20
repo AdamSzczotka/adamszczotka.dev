@@ -27,6 +27,9 @@ services:
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
     ports:
       - "127.0.0.1:3000:3000"
+    volumes:
+      # Images uploaded from the CMS; repo-managed images stay in the image.
+      - uploads_data:/app/public/uploads/cms
     depends_on:
       db:
         condition: service_healthy
@@ -44,3 +47,4 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:

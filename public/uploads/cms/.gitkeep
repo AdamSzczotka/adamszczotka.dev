@@ -1,0 +1,3 @@
+# Images uploaded from the CMS land here. In production this directory is a
+# Docker volume, so its contents survive redeploys; the directory itself must
+# exist in the image (owned by nextjs) for the volume to inherit that ownership.

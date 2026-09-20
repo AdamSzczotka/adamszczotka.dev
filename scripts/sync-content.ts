@@ -7,15 +7,18 @@ import {
   projectTags,
   projects,
   tags,
+  translations,
 } from "../src/lib/db/schema";
 import pageData from "../content/pages.json";
 import projectData from "../content/projects.json";
 import tagData from "../content/tags.json";
+import translationData from "../content/translations.json";
 
 // content/ is the source of truth for repo-managed content: projects and the
 // block-based pages (home, about, privacy). This script pushes it into the
 // database, inserting or updating by slug, and runs on every production deploy.
-// Blog posts are CMS-managed and deliberately never touched here.
+// Blog posts are CMS-managed and deliberately never touched here; translations
+// are CMS-editable too, so new keys are added but existing ones are left alone.
 //
 // Usage: npx tsx --env-file=.env scripts/sync-content.ts
 
@@ -145,11 +148,27 @@ async function syncPages() {
   }
 }
 
+// UI strings are editable in the CMS, so existing keys are left alone; this
+// only delivers keys newly added in the repo.
+async function syncTranslations() {
+  const inserted = await db
+    .insert(translations)
+    .values(translationData)
+    .onConflictDoNothing()
+    .returning({ key: translations.key });
+  console.log(
+    inserted.length > 0
+      ? `Translations added: ${inserted.map((t) => t.key).join(", ")}`
+      : "Translations: no new keys",
+  );
+}
+
 async function syncContent() {
   await db.insert(tags).values(tagData).onConflictDoNothing();
   const allTags = await db.select().from(tags);
   const tagIdBySlug = Object.fromEntries(allTags.map((t) => [t.slug, t.id]));
 
+  await syncTranslations();
   await syncProjects(tagIdBySlug);
   await syncPages();
   console.log("Content sync done.");

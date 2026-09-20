@@ -8,7 +8,11 @@ import crypto from "crypto";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+// Uploads land in a subdirectory of public/uploads that production mounts as a
+// Docker volume, so CMS images survive a redeploy. Images committed to the repo
+// keep living in public/uploads itself and stay part of the image.
+const UPLOAD_URL_PREFIX = "/uploads/cms";
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "cms");
 const ADMIN_EMAILS = ["adam.szczotka0@gmail.com"];
 
 export async function POST(request: NextRequest) {
@@ -98,7 +102,7 @@ export async function POST(request: NextRequest) {
         writeFile(path.join(UPLOAD_DIR, `${uuid}-og.jpg`), ogBuffer),
       ]);
 
-      const basePath = `/uploads/${uuid}`;
+      const basePath = `${UPLOAD_URL_PREFIX}/${uuid}`;
 
       return NextResponse.json({ basePath, blurDataUrl });
     }
@@ -112,7 +116,7 @@ export async function POST(request: NextRequest) {
 
     await writeFile(path.join(UPLOAD_DIR, filename), optimized);
 
-    const url = `/uploads/${filename}`;
+    const url = `${UPLOAD_URL_PREFIX}/${filename}`;
     return NextResponse.json({ url });
   } catch {
     return NextResponse.json(

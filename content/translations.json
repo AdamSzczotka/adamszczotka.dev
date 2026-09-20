@@ -225,9 +225,34 @@
     "pl": "Przemyślenia o inżynierii, architekturze i budowaniu produktów."
   },
   {
+    "key": "blog.empty.body",
+    "en": "The first posts are on the way — engineering notes from things I actually build and ship.",
+    "pl": "Pierwsze wpisy są w drodze — notatki inżynierskie z rzeczy, które faktycznie buduję i wdrażam."
+  },
+  {
+    "key": "blog.empty.category",
+    "en": "No posts in this category yet.",
+    "pl": "W tej kategorii nie ma jeszcze wpisów."
+  },
+  {
+    "key": "blog.empty.title",
+    "en": "Nothing here yet",
+    "pl": "Jeszcze nic tu nie ma"
+  },
+  {
+    "key": "blog.filter.all",
+    "en": "All",
+    "pl": "Wszystkie"
+  },
+  {
     "key": "blog.leave_comment",
     "en": "Leave a comment",
     "pl": "Zostaw komentarz"
+  },
+  {
+    "key": "blog.rss",
+    "en": "RSS feed",
+    "pl": "Kanał RSS"
   },
   {
     "key": "blog.submit_comment",
