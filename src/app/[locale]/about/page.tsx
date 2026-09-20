@@ -237,13 +237,17 @@ export default async function AboutPage({ params }: Props) {
           </p>
         </section>
 
-        {/* Experience + Education side by side */}
+        {/* Experience, with the shorter sections stacked beside it */}
         <div className="mt-16 pt-12 border-t border-[var(--border)] grid grid-cols-1 sm:grid-cols-2 gap-12">
           <section>
             <h2 className="text-lg font-semibold tracking-tight">{c.experience}</h2>
-            <div className="mt-6 space-y-6">
+            <div className="mt-6 space-y-8 border-l border-[var(--border)]">
               {c.experienceItems.map((item, i) => (
-                <div key={i}>
+                <div key={i} className="relative pl-6">
+                  <span
+                    aria-hidden
+                    className="absolute left-0 top-[7px] h-2 w-2 -translate-x-1/2 rounded-full bg-[var(--accent)] ring-4 ring-[var(--background)]"
+                  />
                   <p className="text-xs font-mono text-[var(--muted)]">{item.period}</p>
                   <p className="mt-1 font-medium">{item.role}</p>
                   <p className="text-sm text-[var(--muted)]">{item.company}</p>
@@ -254,29 +258,29 @@ export default async function AboutPage({ params }: Props) {
               ))}
             </div>
           </section>
-          <section>
-            <h2 className="text-lg font-semibold tracking-tight">{c.education}</h2>
-            <div className="mt-6 space-y-6">
-              {c.educationItems.map((item, i) => (
-                <div key={i}>
-                  <p className="text-xs font-mono text-[var(--muted)]">{item.period}</p>
-                  <p className="mt-1 font-medium">{item.degree}</p>
-                  <p className="text-sm text-[var(--muted)]">{item.school}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        {/* Languages */}
-        <section className="mt-16 pt-12 border-t border-[var(--border)]">
-          <h2 className="text-lg font-semibold tracking-tight">{c.languages}</h2>
-          <div className="mt-4 space-y-2">
-            {c.languageItems.map((lang, i) => (
-              <p key={i} className="text-sm text-[var(--muted)]">{lang}</p>
-            ))}
+          <div className="space-y-12">
+            <section>
+              <h2 className="text-lg font-semibold tracking-tight">{c.education}</h2>
+              <div className="mt-6 space-y-6">
+                {c.educationItems.map((item, i) => (
+                  <div key={i}>
+                    <p className="text-xs font-mono text-[var(--muted)]">{item.period}</p>
+                    <p className="mt-1 font-medium">{item.degree}</p>
+                    <p className="text-sm text-[var(--muted)]">{item.school}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+            <section>
+              <h2 className="text-lg font-semibold tracking-tight">{c.languages}</h2>
+              <div className="mt-6 space-y-2">
+                {c.languageItems.map((lang, i) => (
+                  <p key={i} className="text-sm text-[var(--muted)]">{lang}</p>
+                ))}
+              </div>
+            </section>
           </div>
-        </section>
+        </div>
 
         {/* Sport */}
         <section className="mt-16 pt-12 border-t border-[var(--border)]">
