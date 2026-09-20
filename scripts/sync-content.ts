@@ -15,9 +15,9 @@ import projectData from "../content/projects.json";
 import tagData from "../content/tags.json";
 import translationData from "../content/translations.json";
 
-// content/ is the source of truth for repo-managed content: projects and the
-// block-based pages (home, about, privacy). This script pushes it into the
-// database, inserting or updating by slug, and runs on every production deploy.
+// content/ is the source of truth for projects and for the block-based pages
+// that opt in with repoManaged (currently only privacy). This script pushes
+// them into the database by slug, and runs on every production deploy.
 // Blog posts stay CMS-owned: their text is never replaced from content/, and
 // the only thing done to them here is normalising em dashes to plain hyphens.
 // Translations are CMS-editable too, so new keys are added but existing ones
@@ -49,6 +49,8 @@ type PageRow = {
   metaDescriptionEn: string | null;
   metaDescriptionPl: string | null;
   isPublished: boolean;
+  // Opt-in. Without it the page is CMS-owned and this script leaves it alone.
+  repoManaged?: boolean;
   blocks: {
     type: BlockType;
     position: number;
@@ -106,11 +108,27 @@ async function syncProjects(tagIdBySlug: Record<string, number>) {
   }
 }
 
-// Blocks are positional, so the whole set is replaced rather than diffed.
-// Editing these pages in the CMS is therefore not durable: content/pages.json
-// wins on the next deploy.
-async function syncPages() {
+// Only pages that opt in with repoManaged are pushed from the repo, because
+// replacing their blocks destroys anything edited in the CMS since the snapshot
+// was taken — which is exactly what happened to the homepage on 2026-09-20.
+// A page left out here is CMS-owned and never touched.
+async function syncPages(projectIdBySlug: Record<string, number>) {
+  // content/pages.json refers to projects by slug; the database stores an id.
+  const resolveBlockData = (data: Record<string, unknown> | null) => {
+    if (!data) return data;
+    if (typeof data.projectSlug === "string") {
+      const { projectSlug, ...rest } = data;
+      return { ...rest, projectId: projectIdBySlug[projectSlug] };
+    }
+    return data;
+  };
+
   for (const p of pageData as PageRow[]) {
+    if (!p.repoManaged) {
+      console.log(`Page skipped (CMS-owned): ${p.slug}`);
+      continue;
+    }
+
     const values = {
       title: p.title,
       metaDescriptionEn: p.metaDescriptionEn,
@@ -143,8 +161,8 @@ async function syncPages() {
         pageId,
         type: block.type,
         position: block.position,
-        dataEn: block.dataEn,
-        dataPl: block.dataPl,
+        dataEn: resolveBlockData(block.dataEn) ?? {},
+        dataPl: resolveBlockData(block.dataPl) ?? {},
       });
     }
     console.log(`  ${p.blocks.length} blocks`);
@@ -221,7 +239,14 @@ async function syncContent() {
   await syncTranslations();
   await normalizeDashes();
   await syncProjects(tagIdBySlug);
-  await syncPages();
+
+  // Page blocks point at projects by slug, so ids must be read after the
+  // projects themselves are in place.
+  const enProjects = await db
+    .select({ id: projects.id, slug: projects.slug })
+    .from(projects)
+    .where(eq(projects.locale, "en"));
+  await syncPages(Object.fromEntries(enProjects.map((p) => [p.slug, p.id])));
   console.log("Content sync done.");
   process.exit(0);
 }

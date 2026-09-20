@@ -58,12 +58,25 @@ diff <(ssh adam@57.129.141.64 cat /usr/local/bin/deploy-adamszczotka-dev | grep 
 
 ## Kto jest właścicielem treści
 
-- **Projekty i strony blokowe** (`home`, `about`, `privacy`) — źródłem prawdy jest `content/*.json`
-  w repo. Każdy deploy wgrywa je do bazy przez `scripts/sync-content.ts` (upsert po slugu, bloki
-  stron podmieniane w całości). Edycja tych rzeczy w panelu CMS **nie jest trwała** — następny
-  deploy ją nadpisze. Zmieniasz je w repo.
-- **Wpisy na blogu** — źródłem prawdy jest baza (panel CMS). Sync ich nie dotyka.
-  `content/posts.json` to eksport/kopia zapasowa, nie wejście.
+- **Projekty** — źródłem prawdy jest `content/projects.json`. Deploy robi upsert po slugu.
+  Edycja projektu w panelu nie jest trwała; zmieniasz go w repo.
+- **Strony blokowe** — domyślnie **należą do CMS-a** i sync ich nie dotyka. Z repo jedzie tylko
+  strona z `"repoManaged": true` w `content/pages.json` (dziś wyłącznie `privacy`). Dla takiej
+  strony bloki są kasowane i wstawiane od nowa, więc wszystko, co zmienisz w niej w panelu,
+  zniknie przy najbliższym deployu.
+- **Wpisy na blogu** — źródłem prawdy jest baza (panel CMS). Sync zmienia w nich wyłącznie
+  długie myślniki na zwykłe. `content/posts.json` to eksport/kopia zapasowa, nie wejście.
+- **Tłumaczenia** — edytowalne w panelu; sync tylko **dodaje** klucze nowe w repo.
+
+> **Dlaczego `home` nie jest repo-managed.** 2026-09-20 sync wgrał na produkcję sierpniowy
+> snapshot strony głównej i skasował to, co było dopisane w panelu później. Strona blokowa
+> dostaje `repoManaged` dopiero wtedy, gdy `content/pages.json` zawiera jej **pełną, aktualną**
+> treść — a nie stary eksport.
+
+> **Bloki `project_showcase`.** W bazie wskazują projekt przez `projectId`, a w
+> `content/pages.json` przez `projectSlug` (bo id nie są przenośne między bazami). Sync mapuje
+> jedno na drugie, a renderer obsługuje oba — jeśli któryś z tych dwóch elementów zawiedzie,
+> sekcja projektów po prostu znika ze strony, bez żadnego błędu.
 
 ## Release = deploy
 

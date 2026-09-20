@@ -16,17 +16,15 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const title =
-    locale === "pl"
-      ? "Adam Szczotka -- Inzynier Oprogramowania"
-      : "Adam Szczotka -- Software Engineer";
+  const title = "Adam Szczotka - AI Specialist / Software Developer";
   const description =
     locale === "pl"
       ? "Software Engineer & Product Architect. Skalowalne backendy, szybkie aplikacje mobilne, narzędzia webowe z priorytetem prywatności."
       : "Software Engineer & Product Architect. Scalable backends, fast mobile apps, privacy-first web tools.";
 
   return {
-    title,
+    // Absolute: the layout template would otherwise append the name a second time.
+    title: { absolute: title },
     description,
     alternates: {
       canonical: `${SITE_URL}/${locale}`,

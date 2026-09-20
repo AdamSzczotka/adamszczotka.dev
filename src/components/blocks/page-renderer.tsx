@@ -76,16 +76,25 @@ export async function PageRenderer({ pageSlug, locale }: PageRendererProps) {
       : (block.dataEn as Record<string, unknown>);
 
     if (block.type === "project_showcase") {
-      const projectId = data.projectId as number;
-      if (!projectId) continue;
+      // Blocks reference a project either by id (what the CMS writes) or by
+      // slug (what content/pages.json carries, since ids are not portable
+      // between databases). Both have to resolve, or the section silently
+      // disappears from the page.
+      const projectId = data.projectId as number | undefined;
+      const projectSlug = data.projectSlug as string | undefined;
+      if (!projectId && !projectSlug) continue;
+
+      const matches = projectId
+        ? eq(projects.id, projectId)
+        : eq(projects.slug, projectSlug!);
 
       let [project] = await db
         .select()
         .from(projects)
-        .where(and(eq(projects.id, projectId), eq(projects.locale, locale)));
+        .where(and(matches, eq(projects.locale, locale)));
 
       if (!project) {
-        [project] = await db.select().from(projects).where(eq(projects.id, projectId));
+        [project] = await db.select().from(projects).where(matches);
       }
 
       if (project) {
