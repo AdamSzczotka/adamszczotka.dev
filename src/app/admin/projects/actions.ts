@@ -26,17 +26,20 @@ export async function createProject(formData: FormData) {
   const liveUrl = formData.get("liveUrl") as string;
   const githubUrl = formData.get("githubUrl") as string;
 
-  await db.insert(projects).values({
-    title,
-    slug,
-    description,
-    content: "",
-    liveUrl: liveUrl || null,
-    githubUrl: githubUrl || null,
-  });
+  const [created] = await db
+    .insert(projects)
+    .values({
+      title,
+      slug,
+      description,
+      content: "",
+      liveUrl: liveUrl || null,
+      githubUrl: githubUrl || null,
+    })
+    .returning({ id: projects.id });
 
   revalidatePath("/admin/projects");
-  redirect("/admin/projects");
+  redirect(`/admin/editor/project/${created.id}`);
 }
 
 export async function deleteProject(id: number) {
