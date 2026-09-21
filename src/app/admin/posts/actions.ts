@@ -24,16 +24,19 @@ export async function createPost(formData: FormData) {
     },
   );
 
-  await db.insert(posts).values({
-    title,
-    slug,
-    excerpt,
-    content: "",
-    isPublished: false,
-  });
+  const [created] = await db
+    .insert(posts)
+    .values({
+      title,
+      slug,
+      excerpt,
+      content: "",
+      isPublished: false,
+    })
+    .returning({ id: posts.id });
 
   revalidatePath("/admin/posts");
-  redirect("/admin/posts");
+  redirect(`/admin/editor/post/${created.id}`);
 }
 
 export async function togglePublished(id: number, isPublished: boolean) {
