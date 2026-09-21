@@ -83,7 +83,8 @@
       "Bash(npx tsx:*)",
       "Bash(npx dotenv:*)",
       "Bash(ls \"C:/Users/Euforia/Documents/GitHub/adamszczotka.dev/src/app/\\(public\\)/\")",
-      "Bash(ls \"src/app/[locale]/privacy/page.tsx\" \"src/app/\\(public\\)/privacy/page.tsx\")"
+      "Bash(ls \"src/app/[locale]/privacy/page.tsx\" \"src/app/\\(public\\)/privacy/page.tsx\")",
+      "Bash(scp *)"
     ]
   }
 }
