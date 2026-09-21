@@ -8,9 +8,17 @@ import TiptapLink from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
-import { useCallback, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 const lowlight = createLowlight(common);
+
+const AUTOSAVE_DELAY_MS = 2000;
 
 // Blockquote that keeps its class attribute, so callouts survive the
 // HTML -> editor -> HTML round trip (styling comes from CSS, which the
@@ -28,9 +36,24 @@ const CalloutBlockquote = Blockquote.extend({
   },
 });
 
+export interface TiptapEditorHandle {
+  /** Flushes any pending autosave and stores the current content. */
+  save: () => Promise<boolean>;
+}
+
 interface TiptapEditorProps {
   content: string;
   onSave: (html: string) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  ref?: React.Ref<TiptapEditorHandle>;
+}
+
+function formatSavedAt(date: Date) {
+  return date.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 }
 
 function MenuBar({
@@ -130,14 +153,123 @@ function MenuBar({
   );
 }
 
-export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+export function TiptapEditor({
+  content,
+  onSave,
+  onDirtyChange,
+  ref,
+}: TiptapEditorProps) {
   const [uploading, setUploading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(
+    "idle",
+  );
+  const [dirty, setDirty] = useState(false);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  // useEditor does not re-render on transactions, so the counter needs state.
+  const [charCount, setCharCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // HTML as it currently sits in the editor vs. as it was last persisted.
+  const currentHtmlRef = useRef<string | null>(null);
+  const savedHtmlRef = useRef<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inFlightRef = useRef<Promise<boolean> | null>(null);
+  const onSaveRef = useRef(onSave);
+
+  useEffect(() => {
+    onSaveRef.current = onSave;
+  }, [onSave]);
+
+  const performSave = useCallback(async (html: string): Promise<boolean> => {
+    // Serialise concurrent saves so the last write always wins.
+    while (inFlightRef.current) await inFlightRef.current;
+    if (html === savedHtmlRef.current) return true;
+
+    setStatus("saving");
+    const run = (async () => {
+      try {
+        await onSaveRef.current(html);
+        savedHtmlRef.current = html;
+        setSavedAt(new Date());
+        setStatus("saved");
+        setDirty(currentHtmlRef.current !== html);
+        return true;
+      } catch {
+        setStatus("error");
+        return false;
+      }
+    })();
+    inFlightRef.current = run;
+
+    const ok = await run;
+    if (inFlightRef.current === run) inFlightRef.current = null;
+    return ok;
+  }, []);
+
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = null;
+  }, []);
+
+  const scheduleAutosave = useCallback(() => {
+    clearTimer();
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      const html = currentHtmlRef.current;
+      if (html !== null && html !== savedHtmlRef.current) void performSave(html);
+    }, AUTOSAVE_DELAY_MS);
+  }, [clearTimer, performSave]);
+
+  const flush = useCallback(async (): Promise<boolean> => {
+    clearTimer();
+    const html = currentHtmlRef.current;
+    if (html === null) return true;
+    return performSave(html);
+  }, [clearTimer, performSave]);
+
+  useImperativeHandle(ref, () => ({ save: flush }), [flush]);
+
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
+
+  // Don't lose a draft when the tab is hidden — save right away instead of
+  // waiting out the debounce.
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState !== "hidden") return;
+      const html = currentHtmlRef.current;
+      if (html === null || html === savedHtmlRef.current) return;
+      clearTimer();
+      void performSave(html);
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibility);
+  }, [clearTimer, performSave]);
+
+  useEffect(() => clearTimer, [clearTimer]);
 
   const editor = useEditor({
     immediatelyRender: false,
+    onCreate: ({ editor }) => {
+      const html = editor.getHTML();
+      currentHtmlRef.current = html;
+      savedHtmlRef.current = html;
+      setCharCount(editor.getText().length);
+    },
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      currentHtmlRef.current = html;
+      setCharCount(editor.getText().length);
+      const isDirty = html !== savedHtmlRef.current;
+      setDirty(isDirty);
+      if (!isDirty) {
+        clearTimer();
+        return;
+      }
+      scheduleAutosave();
+    },
     extensions: [
       StarterKit.configure({ codeBlock: false, blockquote: false }),
       CalloutBlockquote,
@@ -197,18 +329,19 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
     [editor],
   );
 
-  const handleSave = async () => {
-    if (!editor) return;
-    setSaving(true);
-    setSaveError(null);
-    try {
-      await onSave(editor.getHTML());
-    } catch {
-      setSaveError("Save failed. Your changes are still in the editor — try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
+  let statusLabel = "";
+  let statusClass = "text-muted";
+  if (status === "saving") {
+    statusLabel = "Saving...";
+  } else if (status === "error") {
+    statusLabel = "Autosave failed - changes kept in editor";
+    statusClass = "text-red-500";
+  } else if (dirty) {
+    statusLabel = "Unsaved changes";
+    statusClass = "text-foreground";
+  } else if (savedAt) {
+    statusLabel = `Saved ${formatSavedAt(savedAt)}`;
+  }
 
   return (
     <div className="border border-border rounded-sm overflow-hidden">
@@ -232,22 +365,11 @@ export function TiptapEditor({ content, onSave }: TiptapEditorProps) {
 
       <div className="flex items-center justify-between border-t border-border p-2">
         <span className="text-xs text-muted px-2">
-          {saveError ? (
-            <span className="text-red-500">{saveError}</span>
-          ) : editor ? (
-            `${editor.getText().length} chars`
-          ) : (
-            ""
-          )}
+          {editor ? `${charCount} chars` : ""}
         </span>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={saving}
-          className="bg-accent text-accent-foreground px-4 py-1.5 text-sm font-medium hover:opacity-90 transition-opacity rounded-sm disabled:opacity-50"
-        >
-          {saving ? "Saving..." : "Save"}
-        </button>
+        <span className={`text-xs px-2 ${statusClass}`} aria-live="polite">
+          {statusLabel}
+        </span>
       </div>
     </div>
   );

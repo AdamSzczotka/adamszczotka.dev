@@ -1,8 +1,11 @@
 "use client";
 
-import { TiptapEditor } from "@/components/editor/tiptap-editor";
+import {
+  TiptapEditor,
+  type TiptapEditorHandle,
+} from "@/components/editor/tiptap-editor";
 import { saveContent, saveMetadata } from "./actions";
-import { useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface Tag {
   id: number;
@@ -63,6 +66,14 @@ interface EditorWrapperProps {
   allPosts?: PostOption[];
 }
 
+// Tag order is irrelevant to what gets stored, related post order is not.
+function metaFingerprint(meta: Metadata) {
+  return JSON.stringify({
+    ...meta,
+    selectedTagIds: [...meta.selectedTagIds].sort((a, b) => a - b),
+  });
+}
+
 export function EditorWrapper({
   type,
   id,
@@ -74,26 +85,54 @@ export function EditorWrapper({
   allPosts = [],
 }: EditorWrapperProps) {
   const [meta, setMeta] = useState(initial);
+  const [savedMeta, setSavedMeta] = useState(initial);
   const [metaSaving, setMetaSaving] = useState(false);
   const [metaSaved, setMetaSaved] = useState(false);
   const [metaError, setMetaError] = useState<string | null>(null);
+  const [contentDirty, setContentDirty] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<TiptapEditorHandle>(null);
 
-  const handleMetaSave = async () => {
+  const metaDirty = useMemo(
+    () => metaFingerprint(meta) !== metaFingerprint(savedMeta),
+    [meta, savedMeta],
+  );
+
+  useEffect(() => {
+    if (!metaDirty && !contentDirty) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [metaDirty, contentDirty]);
+
+  // One Save for the whole document: content first (the expensive thing to
+  // lose), then metadata, which is what can fail on a duplicate slug.
+  const handleSave = async () => {
     setMetaSaving(true);
     setMetaError(null);
+
+    const contentOk = (await editorRef.current?.save()) ?? true;
+
     try {
       await saveMetadata(type, id, meta);
+      setSavedMeta(meta);
+    } catch {
+      setMetaError("Save failed. Check that the slug is unique and try again.");
+      setMetaSaving(false);
+      return;
+    }
+
+    if (contentOk) {
       setMetaSaved(true);
       setTimeout(() => setMetaSaved(false), 2000);
-    } catch {
-      setMetaError(
-        "Save failed. Check that the slug is unique and try again.",
-      );
-    } finally {
-      setMetaSaving(false);
+    } else {
+      setMetaError("Content save failed - changes are kept in the editor.");
     }
+    setMetaSaving(false);
   };
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,6 +204,9 @@ export function EditorWrapper({
                 Preview
               </a>
             )}
+            {metaDirty && !metaSaving && (
+              <span className="text-xs text-muted">Unsaved</span>
+            )}
             {metaSaved && (
               <span className="text-xs text-green-500">Saved</span>
             )}
@@ -172,11 +214,11 @@ export function EditorWrapper({
               <span className="text-xs text-red-500">{metaError}</span>
             )}
             <button
-              onClick={handleMetaSave}
+              onClick={handleSave}
               disabled={metaSaving}
               className="text-sm border border-border px-3 py-1.5 hover:bg-foreground/5 transition-colors rounded-sm disabled:opacity-50"
             >
-              {metaSaving ? "Saving..." : "Save Settings"}
+              {metaSaving ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
@@ -513,7 +555,9 @@ export function EditorWrapper({
           Content
         </h2>
         <TiptapEditor
+          ref={editorRef}
           content={content}
+          onDirtyChange={setContentDirty}
           onSave={async (html) => {
             await saveContent(type, id, html);
           }}
